@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Info, ExternalLink } from "lucide-react";
 
 interface InContentAdProps {
@@ -10,11 +10,14 @@ interface InContentAdProps {
 
 export default function InContentAd({ slotId = "1234567890", format = "auto" }: InContentAdProps) {
   const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+  const adRef = useRef<HTMLModElement>(null);
 
   useEffect(() => {
     if (adClientId && typeof window !== "undefined") {
       try {
-        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
+          ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        }
       } catch (err) {
         console.error("AdSense in-content error:", err);
       }
@@ -25,6 +28,7 @@ export default function InContentAd({ slotId = "1234567890", format = "auto" }: 
     return (
       <div className="my-8 text-center overflow-hidden">
         <ins
+          ref={adRef}
           className="adsbygoogle"
           style={{ display: "block" }}
           data-ad-client={adClientId}

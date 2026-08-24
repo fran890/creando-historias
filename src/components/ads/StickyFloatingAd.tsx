@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X, ChevronDown, ChevronUp, Info, ExternalLink } from "lucide-react";
 
 interface StickyFloatingAdProps {
@@ -11,11 +11,14 @@ export default function StickyFloatingAd({ slotId = "555666777" }: StickyFloatin
   const [closed, setClosed] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+  const adRef = useRef<HTMLModElement>(null);
 
   useEffect(() => {
     if (adClientId && typeof window !== "undefined") {
       try {
-        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
+          ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        }
       } catch (err) {
         console.error("AdSense floating error:", err);
       }
@@ -35,6 +38,7 @@ export default function StickyFloatingAd({ slotId = "555666777" }: StickyFloatin
           <X className="w-4 h-4" />
         </button>
         <ins
+          ref={adRef}
           className="adsbygoogle"
           style={{ display: "block", width: "100%", maxHeight: "90px" }}
           data-ad-client={adClientId}

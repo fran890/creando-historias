@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Info, ExternalLink } from "lucide-react";
 
 interface HeaderBannerAdProps {
@@ -9,11 +9,14 @@ interface HeaderBannerAdProps {
 
 export default function HeaderBannerAd({ slotId = "777888999" }: HeaderBannerAdProps) {
   const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+  const adRef = useRef<HTMLModElement>(null);
 
   useEffect(() => {
     if (adClientId && typeof window !== "undefined") {
       try {
-        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
+          ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        }
       } catch (err) {
         console.error("AdSense header banner error:", err);
       }
@@ -24,6 +27,7 @@ export default function HeaderBannerAd({ slotId = "777888999" }: HeaderBannerAdP
     return (
       <div className="w-full my-4 text-center overflow-hidden">
         <ins
+          ref={adRef}
           className="adsbygoogle"
           style={{ display: "block", minHeight: "90px" }}
           data-ad-client={adClientId}

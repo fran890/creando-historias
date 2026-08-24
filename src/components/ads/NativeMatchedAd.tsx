@@ -1,14 +1,29 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { Info, ExternalLink } from "lucide-react";
 
 export default function NativeMatchedAd() {
   const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+  const adRef = useRef<HTMLModElement>(null);
+
+  useEffect(() => {
+    if (adClientId && typeof window !== "undefined") {
+      try {
+        if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
+          ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        }
+      } catch (err) {
+        console.error("AdSense native matched ad error:", err);
+      }
+    }
+  }, [adClientId]);
 
   if (adClientId) {
     return (
       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 text-center overflow-hidden">
         <ins
+          ref={adRef}
           className="adsbygoogle"
           style={{ display: "block" }}
           data-ad-format="autorelaxed"

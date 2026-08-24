@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Info } from "lucide-react";
 
 interface SidebarAdProps {
@@ -9,11 +9,14 @@ interface SidebarAdProps {
 
 export default function SidebarAd({ slotId = "9876543210" }: SidebarAdProps) {
   const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+  const adRef = useRef<HTMLModElement>(null);
 
   useEffect(() => {
     if (adClientId && typeof window !== "undefined") {
       try {
-        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
+          ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        }
       } catch (err) {
         console.error("AdSense sidebar error:", err);
       }
@@ -24,6 +27,7 @@ export default function SidebarAd({ slotId = "9876543210" }: SidebarAdProps) {
     return (
       <div className="sticky top-24 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 text-center overflow-hidden">
         <ins
+          ref={adRef}
           className="adsbygoogle"
           style={{ display: "block" }}
           data-ad-client={adClientId}
