@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  username     String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("AUTHOR") // ADMIN | AUTHOR
+  isBlocked    Boolean  @default(false)
+  avatarUrl    String?
+  bio          String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  articles       Article[]
+  views          ArticleView[]
+  revenueRecords RevenueRecord[]
+  authorRevenues AuthorRevenue[]
+  auditLogs      AuditLog[]
+
+  @@index([role])
+  @@index([username])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  articles    Article[]
+
+  @@index([slug])
+}
+
+model Tag {
+  id        String       @id @default(cuid())
+  name      String       @unique
+  slug      String       @unique
+  createdAt DateTime     @default(now())
+  articles  ArticleTag[]
+
+  @@index([slug])
+}
+
+model Article {
+  id              String    @id @default(cuid())
+  authorId        String
+  title           String
+  slug            String    @unique
+  excerpt         String?
+  content         String
+  featuredImage   String?
+  status          String    @default("DRAFT") // DRAFT | PENDING_REVIEW | PUBLISHED | REJECTED | ARCHIVED
+  categoryId      String?
+  readingTime     Int       @default(1)
+  viewCount       Int       @default(0)
+  seoTitle        String?
+  seoDescription  String?
+  canonicalUrl    String?
+  rejectionReason String?
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  author         User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category       Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags           ArticleTag[]
+  views          ArticleView[]
+  revenueRecords RevenueRecord[]
+
+  @@index([slug])
+  @@index([authorId])
+  @@index([status])
+  @@index([publishedAt])
+  @@index([categoryId])
+  @@index([createdAt])
+}
+
+model ArticleTag {
+  articleId String
+  tagId     String
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+}
+
+model ArticleView {
+  id                   String   @id @default(cuid())
+  articleId            String
+  authorId             String
+  country              String   @default("UNKNOWN")
+  deviceType           String   @default("desktop")
+  referrer             String?
+  anonymousSessionHash String
+  timestamp            DateTime @default(now())
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  author  User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([articleId, timestamp])
+  @@index([authorId, timestamp])
+  @@index([timestamp])
+}
+
+model RevenueRecord {
+  id               String   @id @default(cuid())
+  date             DateTime
+  articleId        String?
+  authorId         String?
+  impressions      Int      @default(0)
+  estimatedRevenue Float    @default(0.0)
+  currency         String   @default("USD")
+  source           String   @default("ADSENSE_ESTIMATE")
+  createdAt        DateTime @default(now())
+
+  article Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
+  author  User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([date])
+  @@index([articleId])
+  @@index([authorId])
+}
+
+model AuthorRevenue {
+  id                    String   @id @default(cuid())
+  authorId              String
+  periodStart           DateTime
+  periodEnd             DateTime
+  totalEstimatedRevenue Float    @default(0.0)
+  authorShareAmount     Float    @default(0.0)
+  platformShareAmount   Float    @default(0.0)
+  currency              String   @default("USD")
+  createdAt             DateTime @default(now())
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([authorId])
+  @@index([periodStart, periodEnd])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String
+  action     String
+  entityType String
+  entityId   String
+  metadata   String?
+  timestamp  DateTime @default(now())
+
+  actor User @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([actorId])
+  @@index([action])
+  @@index([timestamp])
+}
+
+model PlatformSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
