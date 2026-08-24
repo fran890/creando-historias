@@ -55,7 +55,6 @@ export default function ArticleReader({ content, className = "", enableInArticle
         elements.push(
           <InContentAd
             key={`ad-${index}`}
-            slotId={`in-article-ad-${index}`}
           />
         );
       }

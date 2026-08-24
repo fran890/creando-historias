@@ -8,7 +8,6 @@ import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
 import SidebarAd from "@/components/ads/SidebarAd";
 import NativeMatchedAd from "@/components/ads/NativeMatchedAd";
 import StickyFloatingAd from "@/components/ads/StickyFloatingAd";
-import AdSenseScript from "@/components/ads/AdSenseScript";
 import { Clock, Eye, Calendar, Tag as TagIcon, ArrowLeft, Sparkles } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -95,9 +94,6 @@ export default async function StoryPage({ params }: Props) {
 
   return (
     <div className="relative pb-24 bg-gray-50 dark:bg-gray-950 min-h-screen">
-      {/* Dynamic AdSense Script Loader */}
-      <AdSenseScript />
-
       {/* Background Analytics Tracker */}
       <AnalyticsTracker articleId={article.id} authorId={article.author.id} />
 
@@ -120,7 +116,7 @@ export default async function StoryPage({ params }: Props) {
         </div>
 
         {/* Header Ad Placement */}
-        <HeaderBannerAd slotId="1000000000" />
+        <HeaderBannerAd />
 
         {/* Main 2-Column Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -253,13 +249,13 @@ export default async function StoryPage({ params }: Props) {
 
           {/* Right Sidebar Column (4 cols) */}
           <aside className="lg:col-span-4 space-y-8">
-            <SidebarAd slotId="2000000001" />
+            <SidebarAd />
           </aside>
         </div>
       </div>
 
       {/* Floating Bottom Sticky Ad */}
-      <StickyFloatingAd slotId="3000000001" />
+      <StickyFloatingAd />
     </div>
   );
 }
