@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import AdSenseScript from "@/components/ads/AdSenseScript";
 
 export const metadata: Metadata = {
   title: "CreandoHistorias – Plataforma Editorial Multiusuario",
@@ -13,7 +14,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className="h-full">
+      <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6105500451798195"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="h-full antialiased bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+        <AdSenseScript />
         {children}
       </body>
     </html>
