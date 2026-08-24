@@ -8,26 +8,27 @@ interface InContentAdProps {
   format?: "auto" | "fluid" | "rectangle";
 }
 
-export default function InContentAd({ slotId = "1234567890", format = "auto" }: InContentAdProps) {
+export default function InContentAd({ slotId, format = "auto" }: InContentAdProps) {
   const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
   const adRef = useRef<HTMLModElement>(null);
+  const isRealSlot = slotId && /^\d{10,}$/.test(slotId);
 
   useEffect(() => {
-    if (adClientId && typeof window !== "undefined") {
+    if (adClientId && isRealSlot && typeof window !== "undefined") {
       const timer = setTimeout(() => {
         try {
           if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
             ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
           }
         } catch (err) {
-          // Suppress AdSense TagError gracefully
+          // Suppress AdSense TagError
         }
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [adClientId]);
+  }, [adClientId, isRealSlot]);
 
-  if (adClientId) {
+  if (adClientId && isRealSlot) {
     return (
       <div className="my-8 text-center overflow-hidden">
         <ins

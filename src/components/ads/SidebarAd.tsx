@@ -7,26 +7,27 @@ interface SidebarAdProps {
   slotId?: string;
 }
 
-export default function SidebarAd({ slotId = "9876543210" }: SidebarAdProps) {
+export default function SidebarAd({ slotId }: SidebarAdProps) {
   const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
   const adRef = useRef<HTMLModElement>(null);
+  const isRealSlot = slotId && /^\d{10,}$/.test(slotId);
 
   useEffect(() => {
-    if (adClientId && typeof window !== "undefined") {
+    if (adClientId && isRealSlot && typeof window !== "undefined") {
       const timer = setTimeout(() => {
         try {
           if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
             ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
           }
         } catch (err) {
-          // Suppress AdSense TagError gracefully
+          // Suppress AdSense TagError
         }
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [adClientId]);
+  }, [adClientId, isRealSlot]);
 
-  if (adClientId) {
+  if (adClientId && isRealSlot) {
     return (
       <div className="sticky top-24 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 text-center overflow-hidden">
         <ins

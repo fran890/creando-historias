@@ -3,26 +3,31 @@
 import { useEffect, useRef } from "react";
 import { Info, ExternalLink } from "lucide-react";
 
-export default function NativeMatchedAd() {
+interface NativeMatchedAdProps {
+  slotId?: string;
+}
+
+export default function NativeMatchedAd({ slotId }: NativeMatchedAdProps) {
   const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
   const adRef = useRef<HTMLModElement>(null);
+  const isRealSlot = slotId && /^\d{10,}$/.test(slotId);
 
   useEffect(() => {
-    if (adClientId && typeof window !== "undefined") {
+    if (adClientId && isRealSlot && typeof window !== "undefined") {
       const timer = setTimeout(() => {
         try {
           if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
             ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
           }
         } catch (err) {
-          // Suppress AdSense TagError gracefully
+          // Suppress AdSense TagError
         }
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [adClientId]);
+  }, [adClientId, isRealSlot]);
 
-  if (adClientId) {
+  if (adClientId && isRealSlot) {
     return (
       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 text-center overflow-hidden">
         <ins
@@ -31,7 +36,7 @@ export default function NativeMatchedAd() {
           style={{ display: "block" }}
           data-ad-format="autorelaxed"
           data-ad-client={adClientId}
-          data-ad-slot="9988776655"
+          data-ad-slot={slotId}
         />
       </div>
     );
