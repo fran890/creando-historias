@@ -9,13 +9,16 @@ export default function NativeMatchedAd() {
 
   useEffect(() => {
     if (adClientId && typeof window !== "undefined") {
-      try {
-        if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
-          ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+      const timer = setTimeout(() => {
+        try {
+          if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
+            ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+          }
+        } catch (err) {
+          // Suppress AdSense TagError gracefully
         }
-      } catch (err) {
-        console.error("AdSense native matched ad error:", err);
-      }
+      }, 300);
+      return () => clearTimeout(timer);
     }
   }, [adClientId]);
 

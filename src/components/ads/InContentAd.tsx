@@ -14,13 +14,16 @@ export default function InContentAd({ slotId = "1234567890", format = "auto" }: 
 
   useEffect(() => {
     if (adClientId && typeof window !== "undefined") {
-      try {
-        if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
-          ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+      const timer = setTimeout(() => {
+        try {
+          if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
+            ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+          }
+        } catch (err) {
+          // Suppress AdSense TagError gracefully
         }
-      } catch (err) {
-        console.error("AdSense in-content error:", err);
-      }
+      }, 300);
+      return () => clearTimeout(timer);
     }
   }, [adClientId]);
 
