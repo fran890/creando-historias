@@ -122,26 +122,38 @@ export default async function StoryPage({ params }: Props) {
   }
 
   // Fetch 4 related articles for recommendation section at the end of the post
-  const relatedArticles = await prisma.article.findMany({
-    where: {
-      status: "PUBLISHED",
-      NOT: { id: article.id },
-      ...(article.categoryId ? { categoryId: article.categoryId } : {}),
-    },
-    take: 4,
-    orderBy: { publishedAt: "desc" },
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      excerpt: true,
-      featuredImage: true,
-      readingTime: true,
-      publishedAt: true,
-      author: { select: { name: true, username: true } },
-      category: { select: { name: true, slug: true } },
-    },
-  });
+  let relatedArticles: Array<{
+    id: string; title: string; slug: string; excerpt: string | null;
+    featuredImage: string | null; readingTime: number;
+    publishedAt: Date | null;
+    author: { name: string; username: string };
+    category: { name: string; slug: string } | null;
+  }> = [];
+  try {
+    relatedArticles = await prisma.article.findMany({
+      where: {
+        status: "PUBLISHED",
+        NOT: { id: article.id },
+        ...(article.categoryId ? { categoryId: article.categoryId } : {}),
+      },
+      take: 4,
+      orderBy: { publishedAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        featuredImage: true,
+        readingTime: true,
+        publishedAt: true,
+        author: { select: { name: true, username: true } },
+        category: { select: { name: true, slug: true } },
+      },
+    });
+  } catch (e) {
+    // Gracefully degrade if related articles query fails
+    console.error("Failed to fetch related articles:", e);
+  }
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -235,7 +247,7 @@ export default async function StoryPage({ params }: Props) {
                   {article.publishedAt && (
                     <span className="flex items-center space-x-1">
                       <Calendar className="w-4 h-4 text-gray-400" />
-                      <time itemProp="datePublished" dateTime={article.publishedAt.toISOString()}>
+                      <time itemProp="datePublished" dateTime={new Date(article.publishedAt).toISOString()}>
                         {format(new Date(article.publishedAt), "dd MMMM, yyyy", { locale: es })}
                       </time>
                     </span>
@@ -305,6 +317,9 @@ export default async function StoryPage({ params }: Props) {
                     <span>Te puede interesar</span>
                   </span>
                 </div>
+
+                {/* Ad placement within recommendations section */}
+                <InContentAd />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {relatedArticles.map((rel) => (

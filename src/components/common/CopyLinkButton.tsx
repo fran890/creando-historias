@@ -16,9 +16,10 @@ export default function CopyLinkButton({ slug, variant = "full", className = "" 
     e.preventDefault();
     e.stopPropagation();
 
-    const fullUrl = `${window.location.origin}/stories/${slug}`;
-
     try {
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      const fullUrl = `${origin}/stories/${slug}`;
+
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(fullUrl);
       } else {
@@ -37,7 +38,7 @@ export default function CopyLinkButton({ slug, variant = "full", className = "" 
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error("Error al copiar enlace:", err);
+      // Silently handle errors (e.g. inside AdSense preview iframe)
     }
   };
 
