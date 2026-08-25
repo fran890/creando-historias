@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <Link href="/" className="flex items-center space-x-2 group">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-500 to-brand-800 text-white flex items-center justify-center shadow-sm">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-500 to-brand-800 text-white flex items-center justify-center shadow-xs">
                 <BookOpen className="w-4 h-4" />
               </div>
               <span className="font-serif text-2xl font-black tracking-tight text-white">
@@ -16,7 +16,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-xs leading-relaxed text-gray-400">
-              Plataforma editorial multiusuario con atribución transparente de ingresos, alta monetización y analíticas en tiempo real.
+              Descubre las mejores publicaciones y las historias más interesantes escritas por autores apasionados. Conocimiento, inspiración y relatos fascinantes en un solo lugar.
             </p>
           </div>
 
