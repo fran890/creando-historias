@@ -32,4 +32,11 @@
     max-width: 100%;
     overflow-x: auto;
   }
+
+  /* Fix: Prevent Google AdSense top anchor / floating ads from shifting header navbar downwards on mobile */
+  .google-anno-top ~ header,
+  body.google-anno-top header,
+  div[class*="google-anno"] ~ header {
+    top: 0 !important;
+  }
 }

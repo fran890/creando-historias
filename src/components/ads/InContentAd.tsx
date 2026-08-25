@@ -11,13 +11,12 @@ interface InContentAdProps {
 export default function InContentAd({ slotId, format = "auto" }: InContentAdProps) {
   const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-6105500451798195";
   const effectiveSlotId = slotId || process.env.NEXT_PUBLIC_ADSENSE_INCONTENT_SLOT_ID;
-  const isValidSlot = effectiveSlotId && /^\d{10,}$/.test(effectiveSlotId);
   const adRef = useRef<HTMLModElement>(null);
 
   useEffect(() => {
     const adElement = adRef.current;
 
-    if (!adElement || !adClientId || !isValidSlot) {
+    if (!adElement || !adClientId) {
       return;
     }
 
@@ -34,10 +33,9 @@ export default function InContentAd({ slotId, format = "auto" }: InContentAdProp
     } catch (error) {
       console.error("[AdSense] Error al inicializar unidad en contenido:", error);
     }
-  }, [adClientId, effectiveSlotId, isValidSlot]);
+  }, [adClientId, effectiveSlotId]);
 
-  // If explicit Slot ID is provided, render manual AdSense unit with data-ad-slot
-  if (adClientId && isValidSlot) {
+  if (process.env.NODE_ENV === "production" || adClientId) {
     return (
       <div className="w-full my-[50px] text-center overflow-hidden">
         <ins
@@ -45,17 +43,12 @@ export default function InContentAd({ slotId, format = "auto" }: InContentAdProp
           className="adsbygoogle"
           style={{ display: "block" }}
           data-ad-client={adClientId}
-          data-ad-slot={effectiveSlotId}
+          {...(effectiveSlotId ? { "data-ad-slot": effectiveSlotId } : {})}
           data-ad-format={format}
           data-full-width-responsive="true"
         />
       </div>
     );
-  }
-
-  // In Auto-Ads mode (no slot ID): return null to allow Google Auto-Ads to scan content & place ads naturally
-  if (process.env.NODE_ENV === "production" || adClientId) {
-    return null;
   }
 
   // Visual Mock Placeholder en Desarrollo
