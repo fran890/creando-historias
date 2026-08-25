@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ArticleSchema } from "@/lib/validations/article";
-import { validateArticleOwnership, sanitizeArticleInputForUser } from "@/lib/security/ownership";
+import { validateArticleOwnership, sanitizeArticleInputForUserAsync } from "@/lib/security/ownership";
 import { calculateReadingTime } from "@/lib/security/sanitizer";
 import { recordAuditLog } from "@/services/audit.service";
 import { z } from "zod";
@@ -21,15 +21,26 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
 
     const body = await req.json();
-    const { status, rejectionReason } = body;
+    let { status, rejectionReason } = body;
 
-    // Security check: non-admins cannot publish or reject directly
-    if (user.role !== "ADMIN" && !["DRAFT", "PENDING_REVIEW"].includes(status)) {
+    // Check DB for user's autoApprove privilege or Admin role
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.userId },
+      select: { role: true, autoApprove: true },
+    });
+    const canAutoPublish = dbUser?.role === "ADMIN" || dbUser?.autoApprove === true;
+
+    if (canAutoPublish && (status === "PENDING_REVIEW" || status === "PUBLISHED")) {
+      status = "PUBLISHED";
+    }
+
+    // Security check: non-auto-approved authors cannot manually bypass review
+    if (!canAutoPublish && !["DRAFT", "PENDING_REVIEW"].includes(status)) {
       return NextResponse.json({ error: "No tienes permisos para cambiar el estado a " + status }, { status: 403 });
     }
 
-    // Business rule: Cannot publish an article that is currently in DRAFT status
-    if (status === "PUBLISHED" && ownership.article.status === "DRAFT") {
+    // Business rule: Standard authors cannot publish directly from DRAFT without approval
+    if (status === "PUBLISHED" && ownership.article.status === "DRAFT" && !canAutoPublish) {
       return NextResponse.json(
         { error: "No se puede publicar una historia en estado Borrador. El autor debe enviarla primero a revisión." },
         { status: 400 }
@@ -80,7 +91,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     const validated = ArticleSchema.parse(body);
     const readingTime = calculateReadingTime(validated.content);
 
-    const sanitizedInput = sanitizeArticleInputForUser(user!, {
+    const sanitizedInput = await sanitizeArticleInputForUserAsync(user!, {
       ...validated,
       readingTime,
     }, ownership.article.authorId);

@@ -8,17 +8,19 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  username     String   @unique
-  name         String
-  passwordHash String
-  role         String   @default("AUTHOR") // ADMIN | AUTHOR
-  isBlocked    Boolean  @default(false)
-  avatarUrl    String?
-  bio          String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                String   @id @default(cuid())
+  email             String   @unique
+  username          String   @unique
+  name              String
+  passwordHash      String
+  role              String   @default("AUTHOR") // ADMIN | AUTHOR
+  isBlocked         Boolean  @default(false)
+  autoApprove       Boolean  @default(false)    // If true, stories by this author bypass review and publish immediately
+  customAuthorShare Int?                        // Custom % revenue share for author (e.g. 80), overrides platform default
+  avatarUrl         String?
+  bio               String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   articles       Article[]
   views          ArticleView[]

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ArticleSchema } from "@/lib/validations/article";
-import { sanitizeArticleInputForUser } from "@/lib/security/ownership";
+import { sanitizeArticleInputForUserAsync } from "@/lib/security/ownership";
 import { generateSlug, calculateReadingTime } from "@/lib/security/sanitizer";
 import { recordAuditLog } from "@/services/audit.service";
 import { z } from "zod";
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
     const readingTime = calculateReadingTime(validated.content);
 
-    const sanitizedInput = sanitizeArticleInputForUser(user, {
+    const sanitizedInput = await sanitizeArticleInputForUserAsync(user, {
       ...validated,
       slug,
       readingTime,

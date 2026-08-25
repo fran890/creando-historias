@@ -11,11 +11,22 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
 
     const body = await req.json();
-    const { role, isBlocked } = body;
+    const { role, isBlocked, autoApprove, customAuthorShare } = body;
 
     const updateData: any = {};
     if (role) updateData.role = role;
     if (typeof isBlocked === "boolean") updateData.isBlocked = isBlocked;
+    if (typeof autoApprove === "boolean") updateData.autoApprove = autoApprove;
+    if (customAuthorShare !== undefined) {
+      if (customAuthorShare === null || customAuthorShare === "") {
+        updateData.customAuthorShare = null;
+      } else {
+        const parsedShare = parseInt(customAuthorShare, 10);
+        if (!isNaN(parsedShare) && parsedShare >= 0 && parsedShare <= 100) {
+          updateData.customAuthorShare = parsedShare;
+        }
+      }
+    }
 
     const updated = await prisma.user.update({
       where: { id: params.id },
@@ -32,6 +43,6 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     return NextResponse.json(updated);
   } catch (error: any) {
-    return NextResponse.json({ error: "Error al actualizar usuario" }, { status: 400 });
+    return NextResponse.json({ error: error?.message || "Error al actualizar usuario" }, { status: 400 });
   }
 }

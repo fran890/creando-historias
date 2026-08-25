@@ -44,9 +44,51 @@ export async function validateArticleOwnership(
 
 /**
   * Server sanitization helper to prevent clients from tampering with critical fields like `authorId` or `status`.
-  * If the requester is an AUTHOR, `authorId` is strictly locked to their `user.userId`,
-  * and `status` changes are constrained to DRAFT or PENDING_REVIEW.
+  * Admins and Auto-Approved authors can publish directly without review approval.
   */
+export async function sanitizeArticleInputForUserAsync(
+  user: AuthSession,
+  inputData: Record<string, any>,
+  existingArticleAuthorId?: string
+) {
+  const sanitized = { ...inputData };
+
+  // Fetch user DB settings to check autoApprove flag
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.userId },
+    select: { role: true, autoApprove: true },
+  });
+
+  const canAutoPublish = dbUser?.role === "ADMIN" || dbUser?.autoApprove === true;
+
+  if (user.role !== "ADMIN") {
+    // Lock authorId to current user's ID
+    sanitized.authorId = user.userId;
+
+    if (canAutoPublish) {
+      // Auto-approved author: PENDING_REVIEW or PUBLISHED converts immediately to PUBLISHED
+      if (sanitized.status && ["PENDING_REVIEW", "PUBLISHED"].includes(sanitized.status)) {
+        sanitized.status = "PUBLISHED";
+      }
+    } else {
+      // Standard author: Constrained to DRAFT or PENDING_REVIEW
+      if (sanitized.status && !["DRAFT", "PENDING_REVIEW"].includes(sanitized.status)) {
+        sanitized.status = "PENDING_REVIEW";
+      }
+    }
+  } else {
+    // Admin user: Default to authorId or Admin's userId, and auto-publish when submitted for review
+    if (!sanitized.authorId) {
+      sanitized.authorId = existingArticleAuthorId || user.userId;
+    }
+    if (sanitized.status === "PENDING_REVIEW") {
+      sanitized.status = "PUBLISHED";
+    }
+  }
+
+  return sanitized;
+}
+
 export function sanitizeArticleInputForUser(
   user: AuthSession,
   inputData: Record<string, any>,
@@ -55,17 +97,16 @@ export function sanitizeArticleInputForUser(
   const sanitized = { ...inputData };
 
   if (user.role !== "ADMIN") {
-    // Lock authorId to current user's ID
     sanitized.authorId = user.userId;
-
-    // Non-admins cannot publish directly or reject/archive
     if (sanitized.status && !["DRAFT", "PENDING_REVIEW"].includes(sanitized.status)) {
       sanitized.status = "PENDING_REVIEW";
     }
   } else {
-    // If Admin is creating/editing, authorId can be specified, but defaults to Admin's userId if omitted
     if (!sanitized.authorId) {
       sanitized.authorId = existingArticleAuthorId || user.userId;
+    }
+    if (sanitized.status === "PENDING_REVIEW") {
+      sanitized.status = "PUBLISHED";
     }
   }
 

@@ -35,11 +35,19 @@ export async function updateMonetizationSettings(settings: MonetizationSettings)
 }
 
 /**
- * Calculates estimated revenue attributed to an author based on view counts and RPM (Revenue Per Mille).
- * Distinguishes clearly between estimated and actual revenue records.
+ * Calculates estimated revenue attributed to an author based on view counts and RPM.
+ * Respects custom per-user revenue share percentages (customAuthorShare) if configured.
  */
 export async function calculateAuthorEstimatedRevenue(authorId: string, rpmEstimate: number = 4.50) {
-  const settings = await getMonetizationSettings();
+  const defaultSettings = await getMonetizationSettings();
+
+  const authorUser = await prisma.user.findUnique({
+    where: { id: authorId },
+    select: { customAuthorShare: true },
+  });
+
+  const authorSharePercentage = authorUser?.customAuthorShare ?? defaultSettings.authorSharePercentage;
+  const platformSharePercentage = 100 - authorSharePercentage;
 
   // Get total views for author
   const totalViews = await prisma.articleView.count({
@@ -49,8 +57,8 @@ export async function calculateAuthorEstimatedRevenue(authorId: string, rpmEstim
   // Calculate gross estimated revenue (e.g. 1000 views * $4.50 RPM = $4.50 gross)
   const grossEstimatedRevenue = (totalViews / 1000) * rpmEstimate;
 
-  const authorShare = (grossEstimatedRevenue * settings.authorSharePercentage) / 100;
-  const platformShare = (grossEstimatedRevenue * settings.platformSharePercentage) / 100;
+  const authorShare = (grossEstimatedRevenue * authorSharePercentage) / 100;
+  const platformShare = (grossEstimatedRevenue * platformSharePercentage) / 100;
 
   return {
     authorId,
@@ -59,22 +67,22 @@ export async function calculateAuthorEstimatedRevenue(authorId: string, rpmEstim
     grossEstimatedRevenue: Math.round(grossEstimatedRevenue * 100) / 100,
     authorShareAmount: Math.round(authorShare * 100) / 100,
     platformShareAmount: Math.round(platformShare * 100) / 100,
-    platformSharePercentage: settings.platformSharePercentage,
-    authorSharePercentage: settings.authorSharePercentage,
+    platformSharePercentage,
+    authorSharePercentage,
+    isCustomShare: authorUser?.customAuthorShare !== null && authorUser?.customAuthorShare !== undefined,
     isEstimate: true,
   };
 }
 
 export async function getGlobalRevenueSummary(rpmEstimate: number = 4.50) {
-  const settings = await getMonetizationSettings();
+  const defaultSettings = await getMonetizationSettings();
 
   const totalViews = await prisma.articleView.count();
   const grossEstimatedRevenue = (totalViews / 1000) * rpmEstimate;
 
-  const totalAuthorShare = (grossEstimatedRevenue * settings.authorSharePercentage) / 100;
-  const totalPlatformShare = (grossEstimatedRevenue * settings.platformSharePercentage) / 100;
+  const totalAuthorShare = (grossEstimatedRevenue * defaultSettings.authorSharePercentage) / 100;
+  const totalPlatformShare = (grossEstimatedRevenue * defaultSettings.platformSharePercentage) / 100;
 
-  // Real/Imported revenue records count
   const importedRevenueRecords = await prisma.revenueRecord.findMany({
     where: { source: "MANUAL_IMPORT" },
   });
@@ -88,6 +96,6 @@ export async function getGlobalRevenueSummary(rpmEstimate: number = 4.50) {
     totalAuthorShare: Math.round(totalAuthorShare * 100) / 100,
     totalPlatformShare: Math.round(totalPlatformShare * 100) / 100,
     totalImportedRevenue: Math.round(totalImportedRevenue * 100) / 100,
-    settings,
+    settings: defaultSettings,
   };
 }
