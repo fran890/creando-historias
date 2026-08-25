@@ -8,6 +8,7 @@ import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
 import InContentAd from "@/components/ads/InContentAd";
 import SidebarAd from "@/components/ads/SidebarAd";
 import CopyLinkButton from "@/components/common/CopyLinkButton";
+import Base64SafeImage from "@/components/common/LazyImage";
 import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
 import { Clock, Eye, Calendar, ArrowLeft, BookOpen, Sparkles } from "lucide-react";
 import { format } from "date-fns";
@@ -22,6 +23,14 @@ export const revalidate = 60; // ISR 1 minute
 /** Only use HTTP(S) URLs for meta tags — never embed multi-MB base64 data URIs */
 function isValidImageUrl(url: string | null | undefined): url is string {
   return !!url && (url.startsWith("http://") || url.startsWith("https://"));
+}
+
+/** Strip base64 data URIs from img tags in HTML to keep SSR payload small */
+function stripBase64FromHtml(html: string): string {
+  return html.replace(
+    /src=["'](data:image\/[^"']+)["']/gi,
+    'src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"'
+  );
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -276,7 +285,7 @@ export default async function StoryPage({ params }: Props) {
             </header>
 
             {/* Featured Image */}
-            {article.featuredImage && (
+            {article.featuredImage && isValidImageUrl(article.featuredImage) && (
               <div className="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-800">
                 <img
                   itemProp="image"
@@ -289,7 +298,7 @@ export default async function StoryPage({ params }: Props) {
 
             {/* Article Body Content */}
             <div itemProp="articleBody" className="font-sans text-gray-800 dark:text-gray-200 leading-relaxed">
-              <ArticleReader content={article.content} />
+              <ArticleReader content={stripBase64FromHtml(article.content)} />
             </div>
 
             {/* In-Article Ad Placement */}
@@ -336,7 +345,7 @@ export default async function StoryPage({ params }: Props) {
                       key={rel.id}
                       className="flex flex-col bg-gray-50/70 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/60 rounded-2xl overflow-hidden hover:border-brand-300 dark:hover:border-brand-700 transition group p-4 space-y-3"
                     >
-                      {rel.featuredImage && (
+                      {rel.featuredImage && isValidImageUrl(rel.featuredImage) && (
                         <div className="h-36 rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-800">
                           <img
                             src={rel.featuredImage}
