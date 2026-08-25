@@ -8,32 +8,46 @@ import { es } from "date-fns/locale";
 export const revalidate = 60; // ISR 1 minute
 
 export default async function HomePage() {
-  const currentUser = await getCurrentUser();
-
-  const featuredArticles = await prisma.article.findMany({
-    where: { status: "PUBLISHED" },
-    orderBy: { viewCount: "desc" },
-    take: 3,
-    include: {
-      author: { select: { name: true, username: true, avatarUrl: true } },
-      category: { select: { name: true, slug: true } },
-    },
-  });
-
-  const recentArticles = await prisma.article.findMany({
-    where: { status: "PUBLISHED" },
-    orderBy: { publishedAt: "desc" },
-    take: 10,
-    include: {
-      author: { select: { name: true, username: true, avatarUrl: true } },
-      category: { select: { name: true, slug: true } },
-    },
-  });
-
-  const categories = await prisma.category.findMany({
-    take: 8,
-    include: { _count: { select: { articles: { where: { status: "PUBLISHED" } } } } },
-  });
+  // Parallelized database roundtrips for maximum execution speed
+  const [currentUser, featuredArticles, recentArticles, categories] = await Promise.all([
+    getCurrentUser(),
+    prisma.article.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: { viewCount: "desc" },
+      take: 3,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        featuredImage: true,
+        readingTime: true,
+        viewCount: true,
+        author: { select: { name: true, username: true } },
+        category: { select: { name: true, slug: true } },
+      },
+    }),
+    prisma.article.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: { publishedAt: "desc" },
+      take: 10,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        readingTime: true,
+        viewCount: true,
+        publishedAt: true,
+        author: { select: { name: true, username: true } },
+        category: { select: { name: true, slug: true } },
+      },
+    }),
+    prisma.category.findMany({
+      take: 8,
+      select: { id: true, name: true, slug: true },
+    }),
+  ]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
@@ -75,7 +89,7 @@ export default async function HomePage() {
             {featuredArticles.map((art) => (
               <article
                 key={art.id}
-                className="flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition group"
+                className="flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl overflow-hidden shadow-xs hover:shadow-md transition group"
               >
                 {art.featuredImage && (
                   <div className="h-48 overflow-hidden bg-gray-100 dark:bg-gray-800">

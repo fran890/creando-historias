@@ -6,7 +6,13 @@ import { PlusCircle, ShieldAlert, CheckCircle2, Clock, FileText } from "lucide-r
 export default async function AdminStoriesPage() {
   const articles = await prisma.article.findMany({
     orderBy: { updatedAt: "desc" },
-    include: {
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      excerpt: true,
+      status: true,
+      updatedAt: true,
       author: { select: { name: true, username: true, role: true } },
       category: { select: { name: true } },
     },
@@ -29,7 +35,7 @@ export default async function AdminStoriesPage() {
         </div>
         <Link
           href="/dashboard/stories/new"
-          className="inline-flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-brand-500 to-brand-800 hover:opacity-90 text-white text-xs font-bold rounded-2xl transition shadow flex-shrink-0"
+          className="inline-flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-brand-500 to-brand-800 hover:opacity-90 text-white text-xs font-bold rounded-2xl transition shadow-xs flex-shrink-0"
         >
           <PlusCircle className="w-4 h-4" />
           <span>Crear Historia como Admin</span>
@@ -83,7 +89,7 @@ export default async function AdminStoriesPage() {
             No hay historias pendientes de revisión en este momento.
           </div>
         ) : (
-          <div className="divide-y divide-gray-800 bg-gray-900 rounded-3xl border border-gray-800 overflow-hidden shadow-sm">
+          <div className="divide-y divide-gray-800 bg-gray-900 rounded-3xl border border-gray-800 overflow-hidden shadow-xs">
             {pendingArticles.map((art) => (
               <div key={art.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1.5 max-w-2xl">
@@ -114,7 +120,7 @@ export default async function AdminStoriesPage() {
           <h2 className="font-serif text-xl font-bold text-white">Todas las Historias en la Plataforma</h2>
         </div>
 
-        <div className="divide-y divide-gray-800 bg-gray-900 rounded-3xl border border-gray-800 overflow-hidden shadow-sm">
+        <div className="divide-y divide-gray-800 bg-gray-900 rounded-3xl border border-gray-800 overflow-hidden shadow-xs">
           {articles.map((art) => (
             <div key={art.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="space-y-1 max-w-2xl">

@@ -20,7 +20,18 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = await prisma.article.findUnique({
     where: { slug: params.slug },
-    include: { author: true },
+    select: {
+      title: true,
+      excerpt: true,
+      seoTitle: true,
+      seoDescription: true,
+      canonicalUrl: true,
+      slug: true,
+      featuredImage: true,
+      publishedAt: true,
+      status: true,
+      author: { select: { name: true } },
+    },
   });
 
   if (!article || article.status !== "PUBLISHED") {
@@ -54,26 +65,45 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function StoryPage({ params }: Props) {
-  const currentUser = await getCurrentUser();
-
-  const article = await prisma.article.findUnique({
-    where: { slug: params.slug },
-    include: {
-      author: { select: { id: true, name: true, username: true, avatarUrl: true, bio: true } },
-      category: true,
-      tags: { include: { tag: true } },
-    },
-  });
+  // Parallelized database fetch for user session and target article
+  const [currentUser, article] = await Promise.all([
+    getCurrentUser(),
+    prisma.article.findUnique({
+      where: { slug: params.slug },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        content: true,
+        featuredImage: true,
+        readingTime: true,
+        viewCount: true,
+        publishedAt: true,
+        updatedAt: true,
+        status: true,
+        author: { select: { id: true, name: true, username: true, avatarUrl: true, bio: true } },
+        category: { select: { id: true, name: true, slug: true } },
+        tags: { select: { tag: { select: { id: true, name: true, slug: true } } } },
+      },
+    }),
+  ]);
 
   if (!article || article.status !== "PUBLISHED") {
     notFound();
   }
 
-  // Recommended stories
+  // Recommended stories with lean select payload
   const recommendedArticles = await prisma.article.findMany({
     where: { status: "PUBLISHED", id: { not: article.id } },
     take: 3,
-    include: { author: { select: { name: true, username: true } } },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      excerpt: true,
+      author: { select: { name: true, username: true } },
+    },
   });
 
   // Schema.org JSON-LD Structured Data
@@ -121,7 +151,7 @@ export default async function StoryPage({ params }: Props) {
         {/* Main 2-Column Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Article Column (8 cols) */}
-          <main className="lg:col-span-8 bg-white dark:bg-gray-900 p-6 sm:p-10 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-8">
+          <main className="lg:col-span-8 bg-white dark:bg-gray-900 p-6 sm:p-10 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xs space-y-8">
             <header className="space-y-6">
               {article.category && (
                 <Link
@@ -143,9 +173,9 @@ export default async function StoryPage({ params }: Props) {
               )}
 
               {/* Author Metadata Row */}
-              <div className="flex items-center justify-between py-4 border-y border-gray-200 dark:border-gray-800 text-sm text-gray-600 dark:text-gray-400">
+              <div className="flex items-center justify-between py-4 border-y border-gray-200 dark:border-gray-800 text-sm text-gray-600 dark:text-gray-400 flex-wrap gap-4">
                 <Link href={`/author/${article.author.username}`} className="flex items-center space-x-3 group">
-                  <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-brand-500 to-brand-800 text-white flex items-center justify-center font-bold font-serif text-lg overflow-hidden shadow-sm">
+                  <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-brand-500 to-brand-800 text-white flex items-center justify-center font-bold font-serif text-lg overflow-hidden shadow-xs">
                     {article.author.avatarUrl ? (
                       <img src={article.author.avatarUrl} alt={article.author.name} className="w-full h-full object-cover" />
                     ) : (
@@ -183,7 +213,7 @@ export default async function StoryPage({ params }: Props) {
 
             {/* Featured Image */}
             {article.featuredImage && (
-              <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-800 max-h-[480px]">
+              <div className="rounded-2xl overflow-hidden shadow-xs border border-gray-200 dark:border-gray-800 max-h-[480px]">
                 <img src={article.featuredImage} alt={article.title} className="w-full h-full object-cover" />
               </div>
             )}

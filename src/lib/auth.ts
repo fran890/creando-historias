@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { prisma } from "./prisma";
+import { cache } from "react";
 
 const JWT_SECRET_KEY = new TextEncoder().encode(
   process.env.JWT_SECRET || "super-secret-jwt-key-change-this-in-production-min-32-chars"
@@ -40,7 +41,10 @@ export async function verifySessionToken(token: string): Promise<AuthSession | n
   }
 }
 
-export async function getCurrentUser(): Promise<AuthSession | null> {
+/**
+ * Deduplicated and cached within the request lifecycle using React cache()
+ */
+export const getCurrentUser = cache(async (): Promise<AuthSession | null> => {
   const cookieStore = cookies();
   const token = cookieStore.get("auth_token")?.value;
   if (!token) return null;
@@ -48,7 +52,6 @@ export async function getCurrentUser(): Promise<AuthSession | null> {
   const session = await verifySessionToken(token);
   if (!session) return null;
 
-  // Check if user is blocked or deleted in DB
   const user = await prisma.user.findUnique({
     where: { id: session.userId },
     select: { isBlocked: true, role: true },
@@ -60,7 +63,7 @@ export async function getCurrentUser(): Promise<AuthSession | null> {
     ...session,
     role: user.role as "ADMIN" | "AUTHOR",
   };
-}
+});
 
 export async function setSessionCookie(session: AuthSession) {
   const token = await createSessionToken(session);
