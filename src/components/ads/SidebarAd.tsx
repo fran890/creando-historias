@@ -10,16 +10,16 @@ interface SidebarAdProps {
 export default function SidebarAd({ slotId }: SidebarAdProps) {
   const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-6105500451798195";
   const effectiveSlotId = slotId || process.env.NEXT_PUBLIC_ADSENSE_SIDEBAR_SLOT_ID;
+  const isValidSlot = effectiveSlotId && /^\d{10,}$/.test(effectiveSlotId);
   const adRef = useRef<HTMLModElement>(null);
 
   useEffect(() => {
     const adElement = adRef.current;
 
-    if (!adElement || !adClientId) {
+    if (!adElement || !adClientId || !isValidSlot) {
       return;
     }
 
-    // Evitar procesar dos veces el mismo elemento ins
     if (
       adElement.getAttribute("data-adsbygoogle-status") ||
       adElement.getAttribute("data-ad-status")
@@ -33,9 +33,10 @@ export default function SidebarAd({ slotId }: SidebarAdProps) {
     } catch (error) {
       console.error("[AdSense] Error al inicializar unidad lateral:", error);
     }
-  }, [adClientId, effectiveSlotId]);
+  }, [adClientId, effectiveSlotId, isValidSlot]);
 
-  if (process.env.NODE_ENV === "production" || adClientId) {
+  // If explicit Slot ID is provided, render manual AdSense unit with data-ad-slot
+  if (adClientId && isValidSlot) {
     return (
       <div className="sticky top-24 w-full my-[50px] text-center overflow-hidden">
         <ins
@@ -43,12 +44,17 @@ export default function SidebarAd({ slotId }: SidebarAdProps) {
           className="adsbygoogle"
           style={{ display: "block" }}
           data-ad-client={adClientId}
-          {...(effectiveSlotId ? { "data-ad-slot": effectiveSlotId } : {})}
+          data-ad-slot={effectiveSlotId}
           data-ad-format="rectangle"
           data-full-width-responsive="true"
         />
       </div>
     );
+  }
+
+  // In Auto-Ads mode (no slot ID): return null to allow Google Auto-Ads to scan content & place ads naturally
+  if (process.env.NODE_ENV === "production" || adClientId) {
+    return null;
   }
 
   // Visual Mock Placeholder en Desarrollo
