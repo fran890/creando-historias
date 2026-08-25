@@ -9,11 +9,12 @@ interface SidebarAdProps {
 
 export default function SidebarAd({ slotId }: SidebarAdProps) {
   const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+  const effectiveSlotId = slotId || process.env.NEXT_PUBLIC_ADSENSE_SIDEBAR_SLOT_ID;
+  const isValidSlot = effectiveSlotId && /^\d{10,}$/.test(effectiveSlotId);
   const adRef = useRef<HTMLModElement>(null);
-  const isValidSlot = slotId && /^\d{10,}$/.test(slotId);
 
   useEffect(() => {
-    if (adClientId && typeof window !== "undefined") {
+    if (adClientId && isValidSlot && typeof window !== "undefined") {
       const timer = setTimeout(() => {
         try {
           if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
@@ -27,8 +28,8 @@ export default function SidebarAd({ slotId }: SidebarAdProps) {
     }
   }, [adClientId, isValidSlot]);
 
-  // Production Mode: Render real Google AdSense tag when NEXT_PUBLIC_ADSENSE_CLIENT_ID is present
-  if (adClientId) {
+  // Production Mode with explicit Slot ID (Shows Blue Tag in AdSense Simulator)
+  if (adClientId && isValidSlot) {
     return (
       <div className="sticky top-24 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 text-center overflow-hidden min-h-[300px] flex items-center justify-center">
         <ins
@@ -36,7 +37,7 @@ export default function SidebarAd({ slotId }: SidebarAdProps) {
           className="adsbygoogle"
           style={{ display: "block", minWidth: "250px", minHeight: "250px" }}
           data-ad-client={adClientId}
-          {...(isValidSlot ? { "data-ad-slot": slotId } : {})}
+          data-ad-slot={effectiveSlotId}
           data-ad-format="rectangle"
           data-full-width-responsive="true"
         />
@@ -44,7 +45,12 @@ export default function SidebarAd({ slotId }: SidebarAdProps) {
     );
   }
 
-  // Development Fallback: Visual Mock only rendered when NEXT_PUBLIC_ADSENSE_CLIENT_ID is not configured
+  // Production Mode without explicit Slot ID: Don't leave a blank box, allow Auto-Ads to inject cleanly
+  if (adClientId) {
+    return null;
+  }
+
+  // Development Fallback: Visual Mock rendered only when NEXT_PUBLIC_ADSENSE_CLIENT_ID is not configured
   return (
     <div className="sticky top-24 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-xs space-y-4">
       <div className="flex items-center justify-between text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
