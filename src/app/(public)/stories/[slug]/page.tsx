@@ -164,8 +164,12 @@ export default async function StoryPage({ params }: Props) {
 
         {/* Main 2-Column Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Article Column (8 cols) */}
-          <main className="lg:col-span-8 bg-white dark:bg-gray-900 p-6 sm:p-10 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xs space-y-8">
+          {/* Article Column (8 cols) - Semantic HTML5 <article> tag for AdSense Auto-Ads Parser */}
+          <article
+            itemScope
+            itemType="https://schema.org/BlogPosting"
+            className="lg:col-span-8 bg-white dark:bg-gray-900 p-6 sm:p-10 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xs space-y-8"
+          >
             <header className="space-y-6">
               {article.category && (
                 <Link
@@ -176,12 +180,12 @@ export default async function StoryPage({ params }: Props) {
                 </Link>
               )}
 
-              <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">
+              <h1 itemProp="headline" className="font-serif text-3xl sm:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">
                 {article.title}
               </h1>
 
               {article.excerpt && (
-                <p className="text-xl text-gray-600 dark:text-gray-300 font-sans leading-relaxed">
+                <p itemProp="description" className="text-xl text-gray-600 dark:text-gray-300 font-sans leading-relaxed">
                   {article.excerpt}
                 </p>
               )}
@@ -197,7 +201,7 @@ export default async function StoryPage({ params }: Props) {
                     )}
                   </div>
                   <div>
-                    <p className="font-bold text-gray-900 dark:text-white group-hover:text-brand-500 transition">
+                    <p itemProp="author" className="font-bold text-gray-900 dark:text-white group-hover:text-brand-500 transition">
                       {article.author.name}
                     </p>
                     <p className="text-xs text-gray-500">@{article.author.username}</p>
@@ -208,7 +212,9 @@ export default async function StoryPage({ params }: Props) {
                   {article.publishedAt && (
                     <span className="flex items-center space-x-1">
                       <Calendar className="w-4 h-4 text-gray-400" />
-                      <span>{format(new Date(article.publishedAt), "dd MMMM, yyyy", { locale: es })}</span>
+                      <time itemProp="datePublished" dateTime={article.publishedAt.toISOString()}>
+                        {format(new Date(article.publishedAt), "dd MMMM, yyyy", { locale: es })}
+                      </time>
                     </span>
                   )}
                   <span className="flex items-center space-x-1">
@@ -229,6 +235,7 @@ export default async function StoryPage({ params }: Props) {
             {article.featuredImage && (
               <div className="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-800">
                 <img
+                  itemProp="image"
                   src={article.featuredImage}
                   alt={article.title}
                   className="w-full max-h-[500px] object-cover"
@@ -237,7 +244,7 @@ export default async function StoryPage({ params }: Props) {
             )}
 
             {/* Article Body Content */}
-            <div className="prose dark:prose-invert max-w-none font-sans text-gray-800 dark:text-gray-200 leading-relaxed">
+            <div itemProp="articleBody" className="font-sans text-gray-800 dark:text-gray-200 leading-relaxed">
               <ArticleReader content={article.content} />
             </div>
 
@@ -259,7 +266,7 @@ export default async function StoryPage({ params }: Props) {
                 ))}
               </div>
             )}
-          </main>
+          </article>
 
           {/* Sidebar Column (4 cols) */}
           <aside className="lg:col-span-4 space-y-8">

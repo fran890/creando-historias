@@ -14,6 +14,7 @@ interface ArticleReaderProps {
 const MAX_ADS_PER_PAGE = 16;
 
 export default function ArticleReader({ content, className = "", enableInArticleAds = true }: ArticleReaderProps) {
+  const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-6105500451798195";
   const cleanHtml = sanitizeHtmlContent(content);
 
   // Flexible paragraph detection supporting <p>, </p>, <P>, </P>, or double line breaks
@@ -36,30 +37,30 @@ export default function ArticleReader({ content, className = "", enableInArticle
     ];
 
     paragraphs.forEach((p, index) => {
-      let fullParagraphHtml = p.toLowerCase().includes("<p") ? p + "</p>" : `<p>${p}</p>`;
+      let innerText = p.replace(/^<p[^>]*>/i, "").trim();
+      if (!innerText) return;
 
-      // Attach an interactive AdIntentPill to paragraphs (hidden when AdSense active)
-      const attachPill = (index + 1) % 2 === 0;
       const topicLabel = intentTopics[index % intentTopics.length];
+      const attachPill = (index + 1) % 2 === 0;
 
+      // Clean paragraph element directly without extra nested wrapper divs so AdSense DOM parser finds sibling <p> tags
       elements.push(
-        <div key={`p-wrapper-${index}`}>
-          <div dangerouslySetInnerHTML={{ __html: fullParagraphHtml }} />
-          {attachPill && (
-            <div className="my-1.5 flex items-center">
+        <p key={`p-${index}`} className="my-4 font-sans text-base sm:text-lg text-gray-800 dark:text-gray-200 leading-relaxed">
+          <span dangerouslySetInnerHTML={{ __html: innerText }} />
+          {attachPill && !adClientId && (
+            <span className="inline-block ml-2">
               <AdIntentPill label={topicLabel} />
-            </div>
+            </span>
           )}
-        </div>
+        </p>
       );
 
-      // Insert "Ver más" topics box between paragraphs 2 and 3 (hidden when AdSense active)
-      if (index === 1) {
+      // Insert "Ver más" topics box between paragraphs 2 and 3 (hidden in production when AdSense is active)
+      if (index === 1 && !adClientId) {
         elements.push(<RelatedTopicsBox key={`related-box-${index}`} />);
       }
 
       // Intersperse horizontal in-content ad after paragraph 1, 3, 5... (strictly capped at 16 max ads)
-      // Wrapped in 'not-prose' to prevent Tailwind typography from overriding AdSense styles
       const shouldInsertAd = (index === 0 || (index + 1) % 2 === 0) && insertedAdsCount < MAX_ADS_PER_PAGE;
       if (shouldInsertAd) {
         elements.push(
@@ -71,25 +72,16 @@ export default function ArticleReader({ content, className = "", enableInArticle
       }
     });
 
-    // Guaranteed fallback ad at the end of the article if 0 ads were inserted during paragraph loop
-    if (insertedAdsCount === 0 && insertedAdsCount < MAX_ADS_PER_PAGE) {
-      elements.push(
-        <div key="ad-wrapper-end" className="not-prose my-[50px] w-full text-center">
-          <InContentAd key="ad-end" />
-        </div>
-      );
-    }
-
     return (
-      <div className={`prose prose-lg md:prose-xl dark:prose-invert max-w-none font-serif leading-relaxed text-gray-800 dark:text-gray-200 ${className}`}>
+      <div className={`space-y-4 font-serif leading-relaxed text-gray-800 dark:text-gray-200 ${className}`}>
         {elements}
       </div>
     );
   }
 
-  // Fallback for single block content without <p> tags: Always render 1 in-content ad at the bottom
+  // Fallback for single block content without <p> tags: Always render clean paragraphs & 1 in-content ad at bottom
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div
         className={`prose prose-lg md:prose-xl dark:prose-invert max-w-none font-serif leading-relaxed text-gray-800 dark:text-gray-200 ${className}`}
         dangerouslySetInnerHTML={{ __html: cleanHtml }}
