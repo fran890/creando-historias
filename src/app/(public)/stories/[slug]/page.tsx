@@ -19,6 +19,11 @@ interface Props {
 
 export const revalidate = 60; // ISR 1 minute
 
+/** Only use HTTP(S) URLs for meta tags — never embed multi-MB base64 data URIs */
+function isValidImageUrl(url: string | null | undefined): url is string {
+  return !!url && (url.startsWith("http://") || url.startsWith("https://"));
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = await prisma.article.findUnique({
     where: { slug: params.slug },
@@ -32,8 +37,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!article) return {};
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://creandohistorias.com";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://creando-historias-beta.vercel.app";
   const canonicalUrl = `${baseUrl}/stories/${params.slug}`;
+  const hasValidImage = isValidImageUrl(article.featuredImage);
 
   return {
     title: `${article.title} | Creando Historias`,
@@ -46,13 +52,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: article.excerpt || undefined,
       url: canonicalUrl,
       type: "article",
-      images: article.featuredImage ? [{ url: article.featuredImage }] : [],
+      images: hasValidImage ? [{ url: article.featuredImage as string }] : [],
     },
     twitter: {
       card: "summary_large_image",
       title: article.title,
       description: article.excerpt || undefined,
-      images: article.featuredImage ? [article.featuredImage] : [],
+      images: hasValidImage ? [article.featuredImage as string] : [],
     },
   };
 }
@@ -155,17 +161,20 @@ export default async function StoryPage({ params }: Props) {
     console.error("Failed to fetch related articles:", e);
   }
 
+  const validFeaturedImage = isValidImageUrl(article.featuredImage) ? article.featuredImage : undefined;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://creando-historias-beta.vercel.app";
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: article.title,
     description: article.excerpt,
-    image: article.featuredImage ? [article.featuredImage] : undefined,
+    image: validFeaturedImage ? [validFeaturedImage] : undefined,
     datePublished: article.publishedAt,
     author: {
       "@type": "Person",
       name: article.author.name,
-      url: `${process.env.NEXT_PUBLIC_APP_URL}/author/${article.author.username}`,
+      url: `${baseUrl}/author/${article.author.username}`,
     },
   };
 
