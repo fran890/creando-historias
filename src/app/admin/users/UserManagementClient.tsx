@@ -121,7 +121,7 @@ export default function UserManagementClient({ users }: { users: any[] }) {
         <button
           type="button"
           onClick={() => setShowForm(!showForm)}
-          className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition"
+          className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition shadow-xs"
         >
           <UserPlus className="w-4 h-4" />
           <span>{showForm ? "Cancelar" : "Nuevo Usuario / Autor"}</span>
@@ -129,7 +129,7 @@ export default function UserManagementClient({ users }: { users: any[] }) {
       </div>
 
       {showForm && (
-        <form onSubmit={handleCreateUser} className="p-6 bg-gray-900 border border-gray-800 rounded-2xl space-y-4 max-w-2xl">
+        <form onSubmit={handleCreateUser} className="p-4 sm:p-6 bg-gray-900 border border-gray-800 rounded-2xl space-y-4 max-w-2xl shadow-md">
           <h2 className="font-serif text-lg font-bold text-white">Crear Cuenta de Usuario / Autor</h2>
           {error && <p className="text-xs text-red-400 bg-red-950/40 p-3 rounded-lg border border-red-800">{error}</p>}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -183,13 +183,13 @@ export default function UserManagementClient({ users }: { users: any[] }) {
             </label>
           </div>
 
-          <button type="submit" disabled={loading} className="px-5 py-2.5 bg-blue-600 text-white text-xs font-semibold rounded-xl hover:bg-blue-700 transition">
+          <button type="submit" disabled={loading} className="px-5 py-2.5 bg-blue-600 text-white text-xs font-semibold rounded-xl hover:bg-blue-700 transition shadow-xs">
             {loading ? "Creando..." : "Guardar Usuario"}
           </button>
         </form>
       )}
 
-      <div className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
+      <div className="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden shadow-xs">
         <div className="divide-y divide-gray-800">
           {users.map((u) => {
             const authorPct = u.customAuthorShare !== null && u.customAuthorShare !== undefined ? u.customAuthorShare : 70;
@@ -197,11 +197,11 @@ export default function UserManagementClient({ users }: { users: any[] }) {
             const isEditingShare = editingShareUserId === u.id;
 
             return (
-              <div key={u.id} className="p-6 space-y-4">
+              <div key={u.id} className="p-4 sm:p-6 space-y-4">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5 min-w-0">
                     <div className="flex items-center space-x-2 flex-wrap gap-y-1">
-                      <span className="font-bold text-white text-base">{u.name}</span>
+                      <span className="font-bold text-white text-base truncate">{u.name}</span>
                       <span className="text-xs text-gray-400">(@{u.username})</span>
                       
                       <span className={`px-2 py-0.5 text-xs rounded font-bold ${u.role === "ADMIN" ? "bg-amber-950 text-amber-300 border border-amber-800" : "bg-blue-950 text-blue-300 border border-blue-800"}`}>
@@ -217,7 +217,7 @@ export default function UserManagementClient({ users }: { users: any[] }) {
 
                       {u.isBlocked && <span className="px-2 py-0.5 text-xs bg-red-950 text-red-300 border border-red-800 rounded font-semibold">BLOQUEADO</span>}
                     </div>
-                    <p className="text-xs text-gray-400">{u.email} &bull; {u._count.articles} artículos creados</p>
+                    <p className="text-xs text-gray-400 truncate">{u.email} &bull; {u._count.articles} artículos creados</p>
                   </div>
 
                   {/* Top Action Buttons */}
@@ -242,10 +242,10 @@ export default function UserManagementClient({ users }: { users: any[] }) {
                 </div>
 
                 {/* Bottom Row: Auto-Approve Toggle & Revenue Share Control */}
-                <div className="pt-3 border-t border-gray-800/60 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div className="pt-3 border-t border-gray-800/60 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                   
                   {/* Auto-Approve Toggle */}
-                  <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-xl border border-gray-800">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-gray-800/50 rounded-xl border border-gray-800 gap-3">
                     <div>
                       <span className="font-bold text-gray-200 block">Aprobación Directa de Historias</span>
                       <span className="text-[11px] text-gray-400">
@@ -256,7 +256,7 @@ export default function UserManagementClient({ users }: { users: any[] }) {
                       <button
                         type="button"
                         onClick={() => toggleAutoApprove(u.id, u.autoApprove)}
-                        className={`px-3 py-1.5 rounded-lg font-bold text-xs transition ${
+                        className={`px-3 py-1.5 rounded-lg font-bold text-xs transition flex-shrink-0 ${
                           u.autoApprove
                             ? "bg-green-900/60 text-green-300 border border-green-700 hover:bg-green-800"
                             : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -268,37 +268,37 @@ export default function UserManagementClient({ users }: { users: any[] }) {
                   </div>
 
                   {/* Revenue Share Customizer */}
-                  <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-xl border border-gray-800">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-gray-800/50 rounded-xl border border-gray-800 gap-3">
                     <div className="space-y-0.5">
                       <div className="flex items-center space-x-1.5 font-bold text-gray-200">
                         <Percent className="w-3.5 h-3.5 text-brand-400" />
                         <span>Reparto de Ganancias</span>
                       </div>
-                      <div className="text-[11px] text-gray-400 flex items-center space-x-2">
+                      <div className="text-[11px] text-gray-400 flex items-center space-x-2 flex-wrap gap-y-1">
                         <span>Autor: <strong className="text-white">{authorPct}%</strong></span>
                         <span>&bull;</span>
-                        <span>Plataforma/Admin: <strong className="text-white">{platformPct}%</strong></span>
+                        <span>Admin: <strong className="text-white">{platformPct}%</strong></span>
                         {u.customAuthorShare !== null && u.customAuthorShare !== undefined && (
                           <span className="text-[10px] bg-brand-950 text-brand-300 px-1.5 py-0.2 rounded border border-brand-800 font-bold">Personalizado</span>
                         )}
                       </div>
                     </div>
 
-                    <div>
+                    <div className="flex-shrink-0">
                       {isEditingShare ? (
-                        <div className="flex items-center space-x-1">
+                        <div className="flex items-center space-x-1.5">
                           <input
                             type="number"
                             min="0"
                             max="100"
                             value={shareInputValues[u.id] ?? authorPct}
                             onChange={(e) => setShareInputValues({ ...shareInputValues, [u.id]: e.target.value })}
-                            className="w-16 p-1 bg-gray-900 border border-gray-700 rounded text-xs text-white text-center"
+                            className="w-16 p-1.5 bg-gray-900 border border-gray-700 rounded-lg text-xs text-white text-center font-bold"
                           />
                           <button
                             type="button"
                             onClick={() => handleSaveCustomShare(u.id)}
-                            className="p-1 bg-blue-600 hover:bg-blue-700 text-white rounded"
+                            className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
                             title="Guardar porcentaje"
                           >
                             <Save className="w-3.5 h-3.5" />
