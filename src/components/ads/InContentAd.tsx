@@ -11,10 +11,10 @@ interface InContentAdProps {
 export default function InContentAd({ slotId, format = "auto" }: InContentAdProps) {
   const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
   const adRef = useRef<HTMLModElement>(null);
-  const isRealSlot = slotId && /^\d{10,}$/.test(slotId);
+  const isValidSlot = slotId && /^\d{10,}$/.test(slotId);
 
   useEffect(() => {
-    if (adClientId && isRealSlot && typeof window !== "undefined") {
+    if (adClientId && typeof window !== "undefined") {
       const timer = setTimeout(() => {
         try {
           if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
@@ -26,17 +26,18 @@ export default function InContentAd({ slotId, format = "auto" }: InContentAdProp
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [adClientId, isRealSlot]);
+  }, [adClientId, isValidSlot]);
 
-  if (adClientId && isRealSlot) {
+  // Production Mode: Render real Google AdSense tag when NEXT_PUBLIC_ADSENSE_CLIENT_ID is present
+  if (adClientId) {
     return (
-      <div className="my-8 text-center overflow-hidden">
+      <div className="my-8 text-center overflow-hidden min-h-[250px] flex items-center justify-center">
         <ins
           ref={adRef}
           className="adsbygoogle"
           style={{ display: "block" }}
           data-ad-client={adClientId}
-          data-ad-slot={slotId}
+          {...(isValidSlot ? { "data-ad-slot": slotId } : {})}
           data-ad-format={format}
           data-full-width-responsive="true"
         />
@@ -44,11 +45,11 @@ export default function InContentAd({ slotId, format = "auto" }: InContentAdProp
     );
   }
 
-  // Visual Mock Placement matching reference site (creando mil historias)
+  // Development Fallback: Visual Mock only rendered when NEXT_PUBLIC_ADSENSE_CLIENT_ID is not configured
   return (
-    <div className="my-8 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-sm overflow-hidden relative font-sans">
+    <div className="my-8 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-xs overflow-hidden relative font-sans">
       <div className="flex items-center justify-between text-[10px] font-semibold text-gray-400 mb-3 uppercase tracking-wider">
-        <span className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded text-gray-500">Anuncio de Google</span>
+        <span className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded text-gray-500">Anuncio de Google (Modo Desarrollo)</span>
         <div className="flex items-center space-x-1 cursor-pointer">
           <Info className="w-3.5 h-3.5 text-brand-500" />
         </div>
@@ -56,7 +57,7 @@ export default function InContentAd({ slotId, format = "auto" }: InContentAdProp
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center space-x-4">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-brand-500 via-purple-600 to-indigo-600 text-white flex flex-col items-center justify-center text-center p-2 shadow-md flex-shrink-0">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-brand-500 via-purple-600 to-indigo-600 text-white flex flex-col items-center justify-center text-center p-2 shadow-xs flex-shrink-0">
             <span className="text-[10px] font-bold uppercase">Oportunidad</span>
             <span className="text-xs font-extrabold">$36 / hr</span>
           </div>
@@ -73,7 +74,7 @@ export default function InContentAd({ slotId, format = "auto" }: InContentAdProp
         <a
           href="#"
           onClick={(e) => e.preventDefault()}
-          className="inline-flex items-center space-x-1.5 px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs rounded-xl shadow-md transition flex-shrink-0"
+          className="inline-flex items-center space-x-1.5 px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs rounded-xl shadow-xs transition flex-shrink-0"
         >
           <span>Abrir</span>
           <ExternalLink className="w-3.5 h-3.5" />

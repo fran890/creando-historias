@@ -10,10 +10,10 @@ interface SidebarAdProps {
 export default function SidebarAd({ slotId }: SidebarAdProps) {
   const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
   const adRef = useRef<HTMLModElement>(null);
-  const isRealSlot = slotId && /^\d{10,}$/.test(slotId);
+  const isValidSlot = slotId && /^\d{10,}$/.test(slotId);
 
   useEffect(() => {
-    if (adClientId && isRealSlot && typeof window !== "undefined") {
+    if (adClientId && typeof window !== "undefined") {
       const timer = setTimeout(() => {
         try {
           if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
@@ -25,17 +25,18 @@ export default function SidebarAd({ slotId }: SidebarAdProps) {
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [adClientId, isRealSlot]);
+  }, [adClientId, isValidSlot]);
 
-  if (adClientId && isRealSlot) {
+  // Production Mode: Render real Google AdSense tag when NEXT_PUBLIC_ADSENSE_CLIENT_ID is present
+  if (adClientId) {
     return (
-      <div className="sticky top-24 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 text-center overflow-hidden">
+      <div className="sticky top-24 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 text-center overflow-hidden min-h-[300px] flex items-center justify-center">
         <ins
           ref={adRef}
           className="adsbygoogle"
-          style={{ display: "block" }}
+          style={{ display: "block", minWidth: "250px", minHeight: "250px" }}
           data-ad-client={adClientId}
-          data-ad-slot={slotId}
+          {...(isValidSlot ? { "data-ad-slot": slotId } : {})}
           data-ad-format="rectangle"
           data-full-width-responsive="true"
         />
@@ -43,11 +44,11 @@ export default function SidebarAd({ slotId }: SidebarAdProps) {
     );
   }
 
-  // Visual Mock Placeholder matching user reference image (lateral column)
+  // Development Fallback: Visual Mock only rendered when NEXT_PUBLIC_ADSENSE_CLIENT_ID is not configured
   return (
-    <div className="sticky top-24 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-sm space-y-4">
+    <div className="sticky top-24 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl p-6 shadow-xs space-y-4">
       <div className="flex items-center justify-between text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
-        <span>Anuncio Lateral</span>
+        <span>Anuncio Lateral (Modo Desarrollo)</span>
         <Info className="w-3 h-3" />
       </div>
 
@@ -64,7 +65,7 @@ export default function SidebarAd({ slotId }: SidebarAdProps) {
       <a
         href="#"
         onClick={(e) => e.preventDefault()}
-        className="block w-full text-center py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl transition shadow-sm"
+        className="block w-full text-center py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl transition shadow-xs"
       >
         Aplicar Ahora
       </a>
