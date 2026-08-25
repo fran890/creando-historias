@@ -17,34 +17,42 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No se proporcionó ningún archivo" }, { status: 400 });
     }
 
-    // Validate image type
     if (!file.type.startsWith("image/")) {
       return NextResponse.json({ error: "El archivo debe ser una imagen válida (JPG, PNG, WEBP, GIF)" }, { status: 400 });
     }
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const base64Data = `data:${file.type};base64,${buffer.toString("base64")}`;
 
-    // Ensure public/uploads directory exists
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadsDir, { recursive: true });
+    // Try saving to local disk (/public/uploads)
+    try {
+      const uploadsDir = path.join(process.cwd(), "public", "uploads");
+      await mkdir(uploadsDir, { recursive: true });
 
-    // Generate unique filename
-    const fileExtension = path.extname(file.name) || ".jpg";
-    const filename = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}${fileExtension}`;
-    const filePath = path.join(uploadsDir, filename);
+      const fileExtension = path.extname(file.name) || ".jpg";
+      const filename = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}${fileExtension}`;
+      const filePath = path.join(uploadsDir, filename);
 
-    await writeFile(filePath, buffer);
+      await writeFile(filePath, buffer);
+      const publicUrl = `/uploads/${filename}`;
 
-    const publicUrl = `/uploads/${filename}`;
-
-    return NextResponse.json({
-      success: true,
-      url: publicUrl,
-      filename: file.name,
-    });
-  } catch (error) {
+      return NextResponse.json({
+        success: true,
+        url: publicUrl,
+        filename: file.name,
+      });
+    } catch (fsError) {
+      // In serverless environments (Vercel) where filesystem is read-only, fallback to Base64 Data URL
+      console.warn("Entorno Serverless (sistema de archivos de solo lectura), usando Data URL Base64");
+      return NextResponse.json({
+        success: true,
+        url: base64Data,
+        filename: file.name,
+      });
+    }
+  } catch (error: any) {
     console.error("Error en upload route:", error);
-    return NextResponse.json({ error: "Error al guardar el archivo" }, { status: 500 });
+    return NextResponse.json({ error: error?.message || "Error al procesar la imagen" }, { status: 500 });
   }
 }

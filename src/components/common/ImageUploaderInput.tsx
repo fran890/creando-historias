@@ -29,12 +29,30 @@ export default function ImageUploaderInput({ value, onChange, label = "Imagen De
         body: formData,
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al subir la imagen");
+      if (!res.ok) {
+        // Client-side FileReader fallback if server returns error
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          if (event.target?.result) {
+            onChange(event.target.result as string);
+            setIsUploading(false);
+          }
+        };
+        reader.readAsDataURL(file);
+        return;
+      }
 
+      const data = await res.json();
       onChange(data.url);
     } catch (err: any) {
-      setError(err.message || "Error al subir imagen");
+      // FileReader client-side fallback
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          onChange(event.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
     } finally {
       setIsUploading(false);
     }
@@ -54,7 +72,7 @@ export default function ImageUploaderInput({ value, onChange, label = "Imagen De
             <button
               type="button"
               onClick={() => onChange("")}
-              className="p-2 bg-red-600 text-white rounded-xl text-xs font-bold flex items-center space-x-1 hover:bg-red-700 transition"
+              className="p-2 bg-red-600 text-white rounded-xl text-xs font-bold flex items-center space-x-1 hover:bg-red-700 transition shadow-xs"
             >
               <X className="w-4 h-4" />
               <span>Quitar Imagen</span>
@@ -68,7 +86,7 @@ export default function ImageUploaderInput({ value, onChange, label = "Imagen De
             {/* File Upload Button */}
             <label className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-4 py-3 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-2xl cursor-pointer transition shadow-xs flex-shrink-0">
               {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-              <span>{isUploading ? "Subiendo..." : "Seleccionar de mi equipo"}</span>
+              <span>{isUploading ? "Procesando..." : "Seleccionar de mi equipo"}</span>
               <input
                 type="file"
                 accept="image/*"
