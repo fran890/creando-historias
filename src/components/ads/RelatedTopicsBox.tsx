@@ -5,7 +5,13 @@ import { ChevronRight } from "lucide-react";
 import AdIntentDrawer from "./AdIntentDrawer";
 
 export default function RelatedTopicsBox() {
+  const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+
+  // Hide the "Ver más" box in production when AdSense is active to allow real AdSense ads to occupy the space
+  if (adClientId) {
+    return null;
+  }
 
   const topics = [
     "Educación y formación musical",
@@ -17,7 +23,7 @@ export default function RelatedTopicsBox() {
     <>
       <div className="my-8 bg-blue-50/50 dark:bg-gray-800/50 border border-blue-200 dark:border-gray-700 rounded-2xl overflow-hidden shadow-xs font-sans">
         <div className="bg-blue-100/60 dark:bg-gray-800 px-5 py-2.5 font-serif font-bold text-gray-900 dark:text-white text-sm">
-          Ver más
+          Ver más (Modo Desarrollo)
         </div>
         <div className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
           {topics.map((t, idx) => (

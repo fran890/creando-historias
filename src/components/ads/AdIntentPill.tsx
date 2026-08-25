@@ -8,7 +8,13 @@ interface AdIntentPillProps {
 }
 
 export default function AdIntentPill({ label }: AdIntentPillProps) {
+  const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Hide mock pills when real AdSense is active in production
+  if (adClientId) {
+    return null;
+  }
 
   return (
     <>
