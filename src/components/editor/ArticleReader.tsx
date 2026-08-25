@@ -12,14 +12,12 @@ interface ArticleReaderProps {
 const MAX_ADS_PER_PAGE = 16;
 
 /**
- * Client component that renders article HTML content with
- * in-content ads interspersed between paragraphs.
- * 
- * Note: Base64 images should already be stripped from the `content` prop
- * on the server side before passing to this component.
+ * Client component that renders article HTML content with:
+ * - Clean paragraph structure (<p> elements) for AdSense Auto-Ads.
+ * - In-content ads interspersed between paragraphs.
+ * - Drop-cap styling for the first paragraph to enhance editorial aesthetics.
  */
 export default function ArticleReader({ content, className = "", enableInArticleAds = true }: ArticleReaderProps) {
-  // If HTML contains paragraph tags, split and intersperse in-content ads cleanly
   if (enableInArticleAds && content.includes("</p>")) {
     const rawParagraphs = content.split("</p>");
     const paragraphs = rawParagraphs.filter((p) => p.trim().length > 0);
@@ -28,11 +26,14 @@ export default function ArticleReader({ content, className = "", enableInArticle
 
     paragraphs.forEach((p, index) => {
       const fullHtml = p + "</p>";
+      const isFirstParagraph = index === 0;
 
       elements.push(
         <p
           key={`p-${index}`}
-          className="my-4 font-sans text-base sm:text-lg text-gray-800 dark:text-gray-200 leading-relaxed"
+          className={`my-5 font-sans text-base sm:text-lg text-gray-800 dark:text-gray-200 leading-relaxed sm:leading-relaxed ${
+            isFirstParagraph ? "first-letter:text-4xl first-letter:font-serif first-letter:font-extrabold first-letter:text-brand-500 first-letter:mr-2 first-letter:float-left first-letter:leading-none" : ""
+          }`}
           dangerouslySetInnerHTML={{ __html: fullHtml }}
         />
       );
@@ -41,7 +42,7 @@ export default function ArticleReader({ content, className = "", enableInArticle
       const shouldInsertAd = (index === 0 || (index + 1) % 2 === 0) && insertedAdsCount < MAX_ADS_PER_PAGE;
       if (shouldInsertAd) {
         elements.push(
-          <div key={`ad-${index}`} className="not-prose my-[50px] w-full text-center">
+          <div key={`ad-${index}`} className="not-prose my-10 w-full text-center">
             <InContentAd />
           </div>
         );
@@ -50,7 +51,7 @@ export default function ArticleReader({ content, className = "", enableInArticle
     });
 
     return (
-      <div className={`space-y-4 font-serif leading-relaxed text-gray-800 dark:text-gray-200 ${className}`}>
+      <div className={`space-y-2 font-serif leading-relaxed text-gray-800 dark:text-gray-200 ${className}`}>
         {elements}
       </div>
     );
@@ -64,7 +65,7 @@ export default function ArticleReader({ content, className = "", enableInArticle
         dangerouslySetInnerHTML={{ __html: content }}
       />
       {enableInArticleAds && (
-        <div className="not-prose my-[50px] w-full text-center">
+        <div className="not-prose my-10 w-full text-center">
           <InContentAd />
         </div>
       )}

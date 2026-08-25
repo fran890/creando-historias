@@ -9,7 +9,7 @@ import InContentAd from "@/components/ads/InContentAd";
 import SidebarAd from "@/components/ads/SidebarAd";
 import CopyLinkButton from "@/components/common/CopyLinkButton";
 import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
-import { Clock, Eye, Calendar, ArrowLeft, BookOpen, Sparkles } from "lucide-react";
+import { Clock, Eye, Calendar, ArrowLeft, BookOpen, Sparkles, User, Share2 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -180,7 +180,7 @@ export default async function StoryPage({ params }: Props) {
   };
 
   return (
-    <div className="relative bg-gray-50 dark:bg-gray-950 min-h-screen">
+    <div className="relative bg-gray-50 dark:bg-[#090d16] min-h-screen">
       <AnalyticsTracker articleId={article.id} authorId={article.author.id} />
 
       <script
@@ -188,17 +188,19 @@ export default async function StoryPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Navigation */}
-        <div className="mb-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        {/* Navigation Breadcrumb */}
+        <div className="flex items-center justify-between">
           <Link
             href="/"
-            className="inline-flex items-center space-x-1.5 text-xs font-semibold text-gray-500 hover:text-brand-500 transition"
+            className="inline-flex items-center space-x-1.5 text-xs font-bold text-gray-500 hover:text-brand-500 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Volver al inicio</span>
           </Link>
-          <CopyLinkButton slug={article.slug} variant="pill" />
+          <div className="flex items-center space-x-2">
+            <CopyLinkButton slug={article.slug} variant="pill" />
+          </div>
         </div>
 
         {/* Full-width Header Ad */}
@@ -211,45 +213,46 @@ export default async function StoryPage({ params }: Props) {
             <article
               itemScope
               itemType="https://schema.org/BlogPosting"
-              className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-xs overflow-hidden"
+              className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-200/80 dark:border-gray-800/80 shadow-xs overflow-hidden"
             >
-              {/* Featured Image — full bleed at top */}
+              {/* Featured Image Header */}
               {validFeaturedImage && (
-                <div className="w-full h-56 sm:h-72 bg-gray-100 dark:bg-gray-800">
+                <div className="w-full h-64 sm:h-96 bg-gray-100 dark:bg-gray-800 relative">
                   <img
                     itemProp="image"
                     src={validFeaturedImage}
                     alt={article.title}
                     className="w-full h-full object-cover"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
                 </div>
               )}
 
-              <div className="p-6 sm:p-8 space-y-6">
+              <div className="p-6 sm:p-10 space-y-6">
                 <header className="space-y-4">
                   {article.category && (
                     <Link
                       href={`/category/${article.category.slug}`}
-                      className="inline-block text-xs font-bold uppercase tracking-wider text-brand-500 bg-brand-50 dark:bg-brand-950/40 px-3 py-1 rounded-full border border-brand-200 dark:border-brand-800"
+                      className="inline-block text-xs font-extrabold uppercase tracking-wider text-brand-500 bg-brand-50 dark:bg-brand-950/50 px-3.5 py-1 rounded-full border border-brand-200 dark:border-brand-800/60"
                     >
                       {article.category.name}
                     </Link>
                   )}
 
-                  <h1 itemProp="headline" className="font-serif text-2xl sm:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight">
+                  <h1 itemProp="headline" className="font-serif text-3xl sm:text-5xl font-black text-gray-900 dark:text-white leading-tight">
                     {article.title}
                   </h1>
 
                   {article.excerpt && (
-                    <p itemProp="description" className="text-lg text-gray-600 dark:text-gray-300 font-sans leading-relaxed">
+                    <p itemProp="description" className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 font-sans leading-relaxed">
                       {article.excerpt}
                     </p>
                   )}
 
-                  {/* Author & Meta */}
-                  <div className="flex items-center justify-between py-3 border-y border-gray-200 dark:border-gray-800 text-sm text-gray-600 dark:text-gray-400 flex-wrap gap-3">
+                  {/* Author & Meta Row */}
+                  <div className="flex items-center justify-between py-4 border-y border-gray-100 dark:border-gray-800/80 text-sm text-gray-600 dark:text-gray-400 flex-wrap gap-4">
                     <Link href={`/author/${article.author.username}`} className="flex items-center space-x-3 group">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-500 to-brand-800 text-white flex items-center justify-center font-bold font-serif text-base overflow-hidden shadow-xs">
+                      <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-500 to-brand-800 text-white flex items-center justify-center font-bold font-serif text-lg overflow-hidden shadow-glow group-hover:scale-105 transition-transform duration-300">
                         {article.author.avatarUrl ? (
                           <img src={article.author.avatarUrl} alt={article.author.name} className="w-full h-full object-cover" />
                         ) : (
@@ -257,29 +260,30 @@ export default async function StoryPage({ params }: Props) {
                         )}
                       </div>
                       <div>
-                        <p itemProp="author" className="font-bold text-gray-900 dark:text-white group-hover:text-brand-500 transition text-sm">
+                        <p itemProp="author" className="font-bold text-gray-900 dark:text-white group-hover:text-brand-500 transition text-sm sm:text-base">
                           {article.author.name}
                         </p>
-                        <p className="text-xs text-gray-500">@{article.author.username}</p>
+                        <p className="text-xs text-gray-500 font-medium">@{article.author.username}</p>
                       </div>
                     </Link>
-                    <div className="flex items-center space-x-3 text-xs font-medium flex-wrap gap-y-1">
+
+                    <div className="flex items-center space-x-4 text-xs font-semibold flex-wrap gap-y-2">
                       {article.publishedAt && (
-                        <span className="flex items-center space-x-1">
-                          <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                        <span className="flex items-center space-x-1.5">
+                          <Calendar className="w-4 h-4 text-gray-400" />
                           <time itemProp="datePublished" dateTime={new Date(article.publishedAt).toISOString()}>
-                            {format(new Date(article.publishedAt), "dd MMM yyyy", { locale: es })}
+                            {format(new Date(article.publishedAt), "dd MMMM, yyyy", { locale: es })}
                           </time>
                         </span>
                       )}
-                      <span className="flex items-center space-x-1">
-                        <Clock className="w-3.5 h-3.5 text-gray-400" />
-                        <span>{article.readingTime} min</span>
+                      <span className="flex items-center space-x-1.5">
+                        <Clock className="w-4 h-4 text-gray-400" />
+                        <span>{article.readingTime} min lectura</span>
                       </span>
                       {currentUser && (
-                        <span className="flex items-center space-x-1">
-                          <Eye className="w-3.5 h-3.5 text-gray-400" />
-                          <span>{article.viewCount}</span>
+                        <span className="flex items-center space-x-1.5">
+                          <Eye className="w-4 h-4 text-gray-400" />
+                          <span>{article.viewCount} vistas</span>
                         </span>
                       )}
                     </div>
@@ -287,22 +291,22 @@ export default async function StoryPage({ params }: Props) {
                 </header>
 
                 {/* Article Body */}
-                <div itemProp="articleBody" className="font-sans text-gray-800 dark:text-gray-200 leading-relaxed">
+                <div itemProp="articleBody" className="font-sans text-gray-800 dark:text-gray-200 leading-relaxed text-base sm:text-lg">
                   <ArticleReader content={stripBase64FromHtml(article.content)} />
                 </div>
 
-                {/* Post-article ad */}
+                {/* Post-article Ad */}
                 <InContentAd />
 
-                {/* Tags */}
+                {/* Tags Footer */}
                 {article.tags.length > 0 && (
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-800 flex items-center flex-wrap gap-2">
+                  <div className="pt-6 border-t border-gray-100 dark:border-gray-800/80 flex items-center flex-wrap gap-2">
                     <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Etiquetas:</span>
                     {article.tags.map(({ tag }) => (
                       <Link
                         key={tag.id}
                         href={`/tag/${tag.slug}`}
-                        className="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-brand-500 hover:text-white text-xs font-medium text-gray-600 dark:text-gray-300 transition"
+                        className="px-3.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800/60 hover:bg-brand-500 hover:text-white text-xs font-bold text-gray-600 dark:text-gray-300 transition-colors duration-200"
                       >
                         #{tag.name}
                       </Link>
@@ -317,28 +321,30 @@ export default async function StoryPage({ params }: Props) {
 
             {/* Recommendations Grid */}
             {relatedArticles.length > 0 && (
-              <section className="space-y-5">
+              <section className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <BookOpen className="w-5 h-5 text-brand-500" />
-                    <h3 className="font-serif text-xl font-bold text-gray-900 dark:text-white">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center font-bold">
+                      <BookOpen className="w-4 h-4" />
+                    </div>
+                    <h3 className="font-display text-2xl font-black text-gray-900 dark:text-white">
                       Historias recomendadas
                     </h3>
                   </div>
-                  <span className="text-xs text-gray-400 font-semibold flex items-center space-x-1">
+                  <span className="text-xs font-bold text-gray-400 flex items-center space-x-1">
                     <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                     <span>Te puede interesar</span>
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {relatedArticles.slice(0, 3).map((rel) => (
                     <article
                       key={rel.id}
-                      className="flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700/60 rounded-2xl overflow-hidden hover:border-brand-300 dark:hover:border-brand-700 transition group"
+                      className="flex flex-col bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-800/80 rounded-3xl overflow-hidden shadow-xs card-hover-glow group"
                     >
                       {rel.featuredImage && isValidImageUrl(rel.featuredImage) && (
-                        <div className="h-32 overflow-hidden bg-gray-200 dark:bg-gray-800">
+                        <div className="h-36 overflow-hidden bg-gray-200 dark:bg-gray-800">
                           <img
                             src={rel.featuredImage}
                             alt={rel.title}
@@ -346,10 +352,10 @@ export default async function StoryPage({ params }: Props) {
                           />
                         </div>
                       )}
-                      <div className="p-4 space-y-1.5 flex-grow flex flex-col justify-between">
+                      <div className="p-5 space-y-2 flex-grow flex flex-col justify-between">
                         <div>
                           {rel.category && (
-                            <span className="text-[10px] font-bold text-brand-500 uppercase tracking-wider">
+                            <span className="text-[10px] font-extrabold text-brand-500 uppercase tracking-wider">
                               {rel.category.name}
                             </span>
                           )}
@@ -357,8 +363,8 @@ export default async function StoryPage({ params }: Props) {
                             <Link href={`/stories/${rel.slug}`}>{rel.title}</Link>
                           </h4>
                         </div>
-                        <div className="flex items-center justify-between pt-2 border-t border-gray-200/60 dark:border-gray-700/60 text-[11px] text-gray-500 mt-2">
-                          <span className="font-semibold">{rel.author.name}</span>
+                        <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-800 text-[11px] text-gray-500 font-medium">
+                          <span className="font-bold">{rel.author.name}</span>
                           <span>{rel.readingTime} min</span>
                         </div>
                       </div>
@@ -366,19 +372,17 @@ export default async function StoryPage({ params }: Props) {
                   ))}
                 </div>
 
-                {/* Ad within recommendations */}
                 {relatedArticles.length > 3 && <InContentAd />}
 
-                {/* Second row of recommendations */}
                 {relatedArticles.length > 3 && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {relatedArticles.slice(3, 6).map((rel) => (
                       <article
                         key={rel.id}
-                        className="flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700/60 rounded-2xl overflow-hidden hover:border-brand-300 dark:hover:border-brand-700 transition group"
+                        className="flex flex-col bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-800/80 rounded-3xl overflow-hidden shadow-xs card-hover-glow group"
                       >
                         {rel.featuredImage && isValidImageUrl(rel.featuredImage) && (
-                          <div className="h-32 overflow-hidden bg-gray-200 dark:bg-gray-800">
+                          <div className="h-36 overflow-hidden bg-gray-200 dark:bg-gray-800">
                             <img
                               src={rel.featuredImage}
                               alt={rel.title}
@@ -386,10 +390,10 @@ export default async function StoryPage({ params }: Props) {
                             />
                           </div>
                         )}
-                        <div className="p-4 space-y-1.5 flex-grow flex flex-col justify-between">
+                        <div className="p-5 space-y-2 flex-grow flex flex-col justify-between">
                           <div>
                             {rel.category && (
-                              <span className="text-[10px] font-bold text-brand-500 uppercase tracking-wider">
+                              <span className="text-[10px] font-extrabold text-brand-500 uppercase tracking-wider">
                                 {rel.category.name}
                               </span>
                             )}
@@ -397,8 +401,8 @@ export default async function StoryPage({ params }: Props) {
                               <Link href={`/stories/${rel.slug}`}>{rel.title}</Link>
                             </h4>
                           </div>
-                          <div className="flex items-center justify-between pt-2 border-t border-gray-200/60 dark:border-gray-700/60 text-[11px] text-gray-500 mt-2">
-                            <span className="font-semibold">{rel.author.name}</span>
+                          <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-800 text-[11px] text-gray-500 font-medium">
+                            <span className="font-bold">{rel.author.name}</span>
                             <span>{rel.readingTime} min</span>
                           </div>
                         </div>
@@ -409,19 +413,23 @@ export default async function StoryPage({ params }: Props) {
               </section>
             )}
 
-            {/* Bottom page ad */}
+            {/* Bottom Ad */}
             <InContentAd />
           </div>
 
-          {/* Sidebar — sticky with multiple ad slots */}
+          {/* Sidebar Column (4 cols) */}
           <aside className="lg:col-span-4">
             <div className="lg:sticky lg:top-20 space-y-6">
               <SidebarAd />
 
               {/* Author Card */}
-              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 space-y-3">
+              <div className="bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-800/80 rounded-3xl p-6 space-y-4 shadow-xs">
+                <div className="flex items-center space-x-2 text-xs font-bold text-brand-500 uppercase tracking-wider border-b border-gray-100 dark:border-gray-800 pb-3">
+                  <User className="w-4 h-4" />
+                  <span>Sobre el autor</span>
+                </div>
                 <Link href={`/author/${article.author.username}`} className="flex items-center space-x-3 group">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-brand-500 to-brand-800 text-white flex items-center justify-center font-bold font-serif text-lg overflow-hidden shadow-xs">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-500 to-brand-800 text-white flex items-center justify-center font-bold font-serif text-lg overflow-hidden shadow-glow">
                     {article.author.avatarUrl ? (
                       <img src={article.author.avatarUrl} alt={article.author.name} className="w-full h-full object-cover" />
                     ) : (
@@ -429,25 +437,25 @@ export default async function StoryPage({ params }: Props) {
                     )}
                   </div>
                   <div>
-                    <p className="font-bold text-gray-900 dark:text-white group-hover:text-brand-500 transition">
+                    <p className="font-bold text-gray-900 dark:text-white group-hover:text-brand-500 transition text-base">
                       {article.author.name}
                     </p>
-                    <p className="text-xs text-gray-500">@{article.author.username}</p>
+                    <p className="text-xs text-gray-500 font-medium">@{article.author.username}</p>
                   </div>
                 </Link>
                 {article.author.bio && (
-                  <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">{article.author.bio}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed font-sans">{article.author.bio}</p>
                 )}
+                <Link
+                  href={`/author/${article.author.username}`}
+                  className="block w-full text-center py-2.5 bg-gray-100 dark:bg-gray-800/60 hover:bg-brand-500 hover:text-white text-xs font-bold rounded-2xl transition"
+                >
+                  Ver todas sus historias
+                </Link>
               </div>
 
-              {/* Second sidebar ad */}
               <div className="hidden lg:block">
                 <InContentAd format="rectangle" />
-              </div>
-
-              {/* Third sidebar ad for long scrolls */}
-              <div className="hidden lg:block">
-                <SidebarAd />
               </div>
             </div>
           </aside>
