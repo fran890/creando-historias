@@ -11,12 +11,14 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-6105500451798195";
+
   return (
     <html lang="es" className="h-full">
       <head>
         <script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6105500451798195"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClientId}`}
           crossOrigin="anonymous"
         />
       </head>

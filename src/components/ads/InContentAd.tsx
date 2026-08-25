@@ -9,36 +9,42 @@ interface InContentAdProps {
 }
 
 export default function InContentAd({ slotId, format = "auto" }: InContentAdProps) {
-  const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+  const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-6105500451798195";
   const effectiveSlotId = slotId || process.env.NEXT_PUBLIC_ADSENSE_INCONTENT_SLOT_ID;
-  const isValidSlot = effectiveSlotId && /^\d{10,}$/.test(effectiveSlotId);
   const adRef = useRef<HTMLModElement>(null);
 
   useEffect(() => {
-    if (adClientId && isValidSlot && typeof window !== "undefined") {
-      const timer = setTimeout(() => {
-        try {
-          if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
-            ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-          }
-        } catch (err) {
-          // Suppress AdSense TagError
-        }
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [adClientId, isValidSlot]);
+    const adElement = adRef.current;
 
-  // Production Mode with explicit Slot ID (Strict 50px minimum margin)
-  if (adClientId && isValidSlot) {
+    if (!adElement || !adClientId) {
+      return;
+    }
+
+    // Evitar procesar dos veces el mismo elemento ins
+    if (
+      adElement.getAttribute("data-adsbygoogle-status") ||
+      adElement.getAttribute("data-ad-status")
+    ) {
+      return;
+    }
+
+    try {
+      window.adsbygoogle = window.adsbygoogle || [];
+      window.adsbygoogle.push({});
+    } catch (error) {
+      console.error("[AdSense] Error al inicializar unidad en contenido:", error);
+    }
+  }, [adClientId, effectiveSlotId]);
+
+  if (process.env.NODE_ENV === "production" || adClientId) {
     return (
-      <div className="my-[50px] text-center overflow-hidden min-h-[250px] flex items-center justify-center">
+      <div className="w-full my-[50px] text-center overflow-hidden">
         <ins
           ref={adRef}
           className="adsbygoogle"
           style={{ display: "block" }}
           data-ad-client={adClientId}
-          data-ad-slot={effectiveSlotId}
+          {...(effectiveSlotId ? { "data-ad-slot": effectiveSlotId } : {})}
           data-ad-format={format}
           data-full-width-responsive="true"
         />
@@ -46,12 +52,7 @@ export default function InContentAd({ slotId, format = "auto" }: InContentAdProp
     );
   }
 
-  // Production Mode without explicit Slot ID: Don't leave a blank box, allow Auto-Ads to inject cleanly
-  if (adClientId) {
-    return null;
-  }
-
-  // Development Fallback: Visual Mock rendered with strict 50px margin
+  // Visual Mock Placeholder en Desarrollo
   return (
     <div className="my-[50px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-xs overflow-hidden relative font-sans">
       <div className="flex items-center justify-between text-[10px] font-semibold text-gray-400 mb-3 uppercase tracking-wider">
