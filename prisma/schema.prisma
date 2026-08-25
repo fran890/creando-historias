@@ -86,6 +86,9 @@ model Article {
   @@index([publishedAt])
   @@index([categoryId])
   @@index([createdAt])
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([status, categoryId, publishedAt(sort: Desc)])
+  @@index([status, authorId, publishedAt(sort: Desc)])
 }
 
 model ArticleTag {

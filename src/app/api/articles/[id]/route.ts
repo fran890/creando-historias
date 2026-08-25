@@ -68,6 +68,14 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       metadata: { status },
     });
 
+    try {
+      const { revalidatePath } = await import("next/cache");
+      revalidatePath("/");
+      revalidatePath(`/stories/${updatedArticle.slug}`);
+    } catch (err) {
+      console.warn("Revalidation failed:", err);
+    }
+
     return NextResponse.json(updatedArticle);
   } catch (error: any) {
     if (error instanceof z.ZodError) {
@@ -126,6 +134,14 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       metadata: { status: updatedArticle.status },
     });
 
+    try {
+      const { revalidatePath } = await import("next/cache");
+      revalidatePath("/");
+      revalidatePath(`/stories/${updatedArticle.slug}`);
+    } catch (err) {
+      console.warn("Revalidation failed:", err);
+    }
+
     return NextResponse.json(updatedArticle);
   } catch (error: any) {
     if (error instanceof z.ZodError) {
@@ -153,6 +169,14 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       entityType: "Article",
       entityId: params.id,
     });
+
+    try {
+      const { revalidatePath } = await import("next/cache");
+      revalidatePath("/");
+      revalidatePath(`/stories/${ownership.article.slug}`);
+    } catch (err) {
+      console.warn("Revalidation failed:", err);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

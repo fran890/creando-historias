@@ -58,6 +58,16 @@ export async function POST(req: Request) {
       metadata: { title: article.title, status: article.status },
     });
 
+    if (article.status === "PUBLISHED") {
+      try {
+        const { revalidatePath } = await import("next/cache");
+        revalidatePath("/");
+        revalidatePath(`/stories/${article.slug}`);
+      } catch (err) {
+        console.warn("Revalidation failed:", err);
+      }
+    }
+
     return NextResponse.json(article);
   } catch (error: any) {
     if (error instanceof z.ZodError) {
