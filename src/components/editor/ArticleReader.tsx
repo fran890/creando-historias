@@ -10,14 +10,18 @@ interface ArticleReaderProps {
   enableInArticleAds?: boolean;
 }
 
+// Strict Directive: Maximum 16 ads per page
+const MAX_ADS_PER_PAGE = 16;
+
 export default function ArticleReader({ content, className = "", enableInArticleAds = true }: ArticleReaderProps) {
   const cleanHtml = sanitizeHtmlContent(content);
 
   if (enableInArticleAds && cleanHtml.includes("</p>")) {
     const paragraphs = cleanHtml.split("</p>");
     const elements: React.ReactNode[] = [];
+    let insertedAdsCount = 0;
 
-    // Predefined topics for Intent Pills (matching user screenshot 3)
+    // Predefined topics for Intent Pills
     const intentTopics = [
       "Historia",
       "Redes sociales",
@@ -30,7 +34,7 @@ export default function ArticleReader({ content, className = "", enableInArticle
       if (!p.trim()) return;
       let fullParagraphHtml = p + "</p>";
 
-      // Periodically attach an interactive AdIntentPill to paragraphs
+      // Attach an interactive AdIntentPill to paragraphs (hidden when AdSense active)
       const attachPill = (index + 1) % 2 === 0;
       const topicLabel = intentTopics[index % intentTopics.length];
 
@@ -45,18 +49,19 @@ export default function ArticleReader({ content, className = "", enableInArticle
         </div>
       );
 
-      // Insert "Ver más" topics box between paragraphs 2 and 3 (matching 3rd screenshot)
+      // Insert "Ver más" topics box between paragraphs 2 and 3 (hidden when AdSense active)
       if (index === 2) {
         elements.push(<RelatedTopicsBox key={`related-box-${index}`} />);
       }
 
-      // Intersperse horizontal banner ad after every 2 paragraphs
-      if ((index + 1) % 2 === 0 && index < paragraphs.length - 1) {
+      // Intersperse horizontal banner ad after every 2 paragraphs, strictly capped at 16 max ads
+      if ((index + 1) % 2 === 0 && index < paragraphs.length - 1 && insertedAdsCount < MAX_ADS_PER_PAGE) {
         elements.push(
           <InContentAd
             key={`ad-${index}`}
           />
         );
+        insertedAdsCount++;
       }
     });
 

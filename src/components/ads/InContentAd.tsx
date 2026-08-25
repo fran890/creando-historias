@@ -29,10 +29,10 @@ export default function InContentAd({ slotId, format = "auto" }: InContentAdProp
     }
   }, [adClientId, isValidSlot]);
 
-  // Production Mode with explicit Slot ID (Shows Blue Tag in AdSense Simulator)
+  // Production Mode with explicit Slot ID (Strict 50px minimum margin)
   if (adClientId && isValidSlot) {
     return (
-      <div className="my-8 text-center overflow-hidden min-h-[250px] flex items-center justify-center">
+      <div className="my-[50px] text-center overflow-hidden min-h-[250px] flex items-center justify-center">
         <ins
           ref={adRef}
           className="adsbygoogle"
@@ -51,9 +51,9 @@ export default function InContentAd({ slotId, format = "auto" }: InContentAdProp
     return null;
   }
 
-  // Development Fallback: Visual Mock rendered only when NEXT_PUBLIC_ADSENSE_CLIENT_ID is not configured
+  // Development Fallback: Visual Mock rendered with strict 50px margin
   return (
-    <div className="my-8 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-xs overflow-hidden relative font-sans">
+    <div className="my-[50px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-xs overflow-hidden relative font-sans">
       <div className="flex items-center justify-between text-[10px] font-semibold text-gray-400 mb-3 uppercase tracking-wider">
         <span className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded text-gray-500">Anuncio de Google (Modo Desarrollo)</span>
         <div className="flex items-center space-x-1 cursor-pointer">
