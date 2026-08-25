@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
+import InContentAd from "@/components/ads/InContentAd";
 import { Clock, Eye, User, Sparkles, Folder } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -64,6 +66,9 @@ export default async function HomePage() {
           Descubre artículos de calidad redactados por autores expertos en diversas materias.
         </p>
       </section>
+
+      {/* Header Banner Ad Placement for Home Page */}
+      <HeaderBannerAd />
 
       {/* Categories Bar */}
       {categories.length > 0 && (
@@ -138,6 +143,9 @@ export default async function HomePage() {
         </section>
       )}
 
+      {/* Mid-Page In-Content Ad Placement */}
+      <InContentAd />
+
       {/* Recent Feed */}
       <section className="space-y-6">
         <h2 className="font-serif text-2xl font-bold text-gray-900 dark:text-white">Últimas publicaciones</h2>
@@ -147,40 +155,48 @@ export default async function HomePage() {
           </div>
         ) : (
           <div className="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-            {recentArticles.map((art) => (
-              <article key={art.id} className="p-6 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="space-y-2 max-w-3xl">
-                  <div className="flex items-center space-x-2 text-xs text-gray-500">
-                    <Link href={`/author/${art.author.username}`} className="font-semibold text-gray-900 dark:text-gray-200 hover:text-brand-500">
-                      {art.author.name}
-                    </Link>
-                    <span>&bull;</span>
-                    <span>{art.publishedAt ? formatDistanceToNow(new Date(art.publishedAt), { addSuffix: true, locale: es }) : ""}</span>
-                    {art.category && (
-                      <>
-                        <span>&bull;</span>
-                        <span className="text-brand-500 font-semibold">{art.category.name}</span>
-                      </>
+            {recentArticles.map((art, idx) => (
+              <div key={art.id}>
+                <article className="p-6 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="space-y-2 max-w-3xl">
+                    <div className="flex items-center space-x-2 text-xs text-gray-500">
+                      <Link href={`/author/${art.author.username}`} className="font-semibold text-gray-900 dark:text-gray-200 hover:text-brand-500">
+                        {art.author.name}
+                      </Link>
+                      <span>&bull;</span>
+                      <span>{art.publishedAt ? formatDistanceToNow(new Date(art.publishedAt), { addSuffix: true, locale: es }) : ""}</span>
+                      {art.category && (
+                        <>
+                          <span>&bull;</span>
+                          <span className="text-brand-500 font-semibold">{art.category.name}</span>
+                        </>
+                      )}
+                    </div>
+                    <h3 className="font-serif text-lg font-bold text-gray-900 dark:text-white hover:text-brand-500 transition">
+                      <Link href={`/stories/${art.slug}`}>{art.title}</Link>
+                    </h3>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">{art.excerpt}</p>
+                  </div>
+                  <div className="flex items-center space-x-4 text-xs text-gray-500 flex-shrink-0">
+                    <span className="flex items-center space-x-1">
+                      <Clock className="w-3.5 h-3.5 text-gray-400" />
+                      <span>{art.readingTime} min</span>
+                    </span>
+                    {currentUser && (
+                      <span className="flex items-center space-x-1">
+                        <Eye className="w-3.5 h-3.5 text-gray-400" />
+                        <span>{art.viewCount} vistas</span>
+                      </span>
                     )}
                   </div>
-                  <h3 className="font-serif text-lg font-bold text-gray-900 dark:text-white hover:text-brand-500 transition">
-                    <Link href={`/stories/${art.slug}`}>{art.title}</Link>
-                  </h3>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">{art.excerpt}</p>
-                </div>
-                <div className="flex items-center space-x-4 text-xs text-gray-500 flex-shrink-0">
-                  <span className="flex items-center space-x-1">
-                    <Clock className="w-3.5 h-3.5 text-gray-400" />
-                    <span>{art.readingTime} min</span>
-                  </span>
-                  {currentUser && (
-                    <span className="flex items-center space-x-1">
-                      <Eye className="w-3.5 h-3.5 text-gray-400" />
-                      <span>{art.viewCount} vistas</span>
-                    </span>
-                  )}
-                </div>
-              </article>
+                </article>
+                {/* Intersperse in-feed ad placement after 5th item */}
+                {idx === 4 && (
+                  <div className="p-4 bg-gray-50/50 dark:bg-gray-950/50 border-y border-gray-200 dark:border-gray-800">
+                    <InContentAd />
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         )}

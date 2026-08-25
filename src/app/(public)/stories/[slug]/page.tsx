@@ -9,7 +9,7 @@ import InContentAd from "@/components/ads/InContentAd";
 import SidebarAd from "@/components/ads/SidebarAd";
 import CopyLinkButton from "@/components/common/CopyLinkButton";
 import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
-import { Clock, Eye, Calendar, ArrowLeft } from "lucide-react";
+import { Clock, Eye, Calendar, ArrowLeft, BookOpen, Sparkles } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -74,6 +74,7 @@ export default async function StoryPage({ params }: Props) {
         viewCount: true,
         readingTime: true,
         publishedAt: true,
+        categoryId: true,
         author: {
           select: {
             id: true,
@@ -120,6 +121,28 @@ export default async function StoryPage({ params }: Props) {
     }
   }
 
+  // Fetch 4 related articles for recommendation section at the end of the post
+  const relatedArticles = await prisma.article.findMany({
+    where: {
+      status: "PUBLISHED",
+      NOT: { id: article.id },
+      ...(article.categoryId ? { categoryId: article.categoryId } : {}),
+    },
+    take: 4,
+    orderBy: { publishedAt: "desc" },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      excerpt: true,
+      featuredImage: true,
+      readingTime: true,
+      publishedAt: true,
+      author: { select: { name: true, username: true } },
+      category: { select: { name: true, slug: true } },
+    },
+  });
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -164,7 +187,7 @@ export default async function StoryPage({ params }: Props) {
 
         {/* Main 2-Column Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Article Column (8 cols) - Semantic HTML5 <article> tag for AdSense Auto-Ads Parser */}
+          {/* Article Column (8 cols) */}
           <article
             itemScope
             itemType="https://schema.org/BlogPosting"
@@ -265,6 +288,60 @@ export default async function StoryPage({ params }: Props) {
                   </Link>
                 ))}
               </div>
+            )}
+
+            {/* Recommendations Section: Recommended Articles Grid at the End of Every Post */}
+            {relatedArticles.length > 0 && (
+              <section className="pt-10 border-t border-gray-200 dark:border-gray-800 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <BookOpen className="w-5 h-5 text-brand-500" />
+                    <h3 className="font-serif text-2xl font-bold text-gray-900 dark:text-white">
+                      Historias recomendadas
+                    </h3>
+                  </div>
+                  <span className="text-xs text-gray-400 font-semibold flex items-center space-x-1">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                    <span>Te puede interesar</span>
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {relatedArticles.map((rel) => (
+                    <article
+                      key={rel.id}
+                      className="flex flex-col bg-gray-50/70 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/60 rounded-2xl overflow-hidden hover:border-brand-300 dark:hover:border-brand-700 transition group p-4 space-y-3"
+                    >
+                      {rel.featuredImage && (
+                        <div className="h-36 rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-800">
+                          <img
+                            src={rel.featuredImage}
+                            alt={rel.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                          />
+                        </div>
+                      )}
+                      <div className="space-y-1.5 flex-grow flex flex-col justify-between">
+                        <div>
+                          {rel.category && (
+                            <span className="text-[10px] font-bold text-brand-500 uppercase tracking-wider">
+                              {rel.category.name}
+                            </span>
+                          )}
+                          <h4 className="font-serif font-bold text-base text-gray-900 dark:text-white group-hover:text-brand-500 transition line-clamp-2 leading-snug">
+                            <Link href={`/stories/${rel.slug}`}>{rel.title}</Link>
+                          </h4>
+                          <p className="text-xs text-gray-500 line-clamp-2 mt-1">{rel.excerpt}</p>
+                        </div>
+                        <div className="flex items-center justify-between pt-2 border-t border-gray-200/60 dark:border-gray-700/60 text-[11px] text-gray-500">
+                          <span className="font-semibold">{rel.author.name}</span>
+                          <span>{rel.readingTime} min</span>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
             )}
           </article>
 
