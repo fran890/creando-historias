@@ -4,13 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle, XCircle, Edit3, Trash2, Clock } from "lucide-react";
 import Link from "next/link";
+import CopyLinkButton from "@/components/common/CopyLinkButton";
 
 interface Props {
   articleId: string;
   currentStatus: string;
+  slug?: string;
 }
 
-export default function AdminStoryActions({ articleId, currentStatus }: Props) {
+export default function AdminStoryActions({ articleId, currentStatus, slug }: Props) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -48,6 +50,11 @@ export default function AdminStoryActions({ articleId, currentStatus }: Props) {
 
   return (
     <div className="flex items-center space-x-2 flex-wrap gap-y-2">
+      {/* Copy link button for Published stories */}
+      {currentStatus === "PUBLISHED" && slug && (
+        <CopyLinkButton slug={slug} variant="pill" />
+      )}
+
       {/* Show Approve button ONLY if the story is in PENDING_REVIEW */}
       {currentStatus === "PENDING_REVIEW" && (
         <button

@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { PlusCircle, Edit3, Eye, Clock, AlertCircle } from "lucide-react";
+import { PlusCircle, Edit3, Eye } from "lucide-react";
 import { format } from "date-fns";
+import CopyLinkButton from "@/components/common/CopyLinkButton";
 
 export default async function AuthorStoriesPage() {
   const user = (await getCurrentUser())!;
@@ -35,14 +36,14 @@ export default async function AuthorStoriesPage() {
         </div>
         <Link
           href="/dashboard/stories/new"
-          className="inline-flex items-center space-x-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition"
+          className="inline-flex items-center space-x-2 px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium rounded-xl transition shadow-xs"
         >
           <PlusCircle className="w-4 h-4" />
           <span>Nueva Historia</span>
         </Link>
       </div>
 
-      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-xs">
         {articles.length === 0 ? (
           <div className="p-12 text-center text-gray-500">
             Aún no has creado ninguna historia. ¡Comienza a escribir ahora!
@@ -56,20 +57,33 @@ export default async function AuthorStoriesPage() {
                     {getStatusBadge(art.status)}
                     {art.category && <span className="text-xs font-medium text-gray-400">{art.category.name}</span>}
                   </div>
-                  <h2 className="font-serif text-lg font-bold text-gray-900 dark:text-white">{art.title}</h2>
+                  <h2 className="font-serif text-lg font-bold text-gray-900 dark:text-white">
+                    {art.status === "PUBLISHED" ? (
+                      <Link href={`/stories/${art.slug}`} className="hover:text-brand-500 transition">
+                        {art.title}
+                      </Link>
+                    ) : (
+                      art.title
+                    )}
+                  </h2>
                   <p className="text-xs text-gray-400">
                     Última modificación: {format(new Date(art.updatedAt), "dd/MM/yyyy HH:mm")}
                   </p>
                 </div>
 
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-3 flex-wrap gap-y-2">
                   <div className="flex items-center space-x-1 text-xs text-gray-500">
                     <Eye className="w-3.5 h-3.5" />
                     <span>{art.viewCount} vistas</span>
                   </div>
+
+                  {art.status === "PUBLISHED" && (
+                    <CopyLinkButton slug={art.slug} variant="pill" />
+                  )}
+
                   <Link
                     href={`/dashboard/stories/${art.id}/edit`}
-                    className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-blue-600 hover:text-white text-xs font-medium rounded-lg transition"
+                    className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-brand-500 hover:text-white text-xs font-medium rounded-xl transition"
                   >
                     <Edit3 className="w-3.5 h-3.5" />
                     <span>Editar</span>

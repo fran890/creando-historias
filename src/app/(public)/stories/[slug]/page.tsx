@@ -1,21 +1,23 @@
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import ArticleReader from "@/components/editor/ArticleReader";
-import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
 import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
+import InContentAd from "@/components/ads/InContentAd";
 import SidebarAd from "@/components/ads/SidebarAd";
-import NativeMatchedAd from "@/components/ads/NativeMatchedAd";
-import StickyFloatingAd from "@/components/ads/StickyFloatingAd";
-import { Clock, Eye, Calendar, Tag as TagIcon, ArrowLeft, Sparkles } from "lucide-react";
+import CopyLinkButton from "@/components/common/CopyLinkButton";
+import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
+import { Clock, Eye, Calendar, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import type { Metadata } from "next";
 
 interface Props {
   params: { slug: string };
 }
+
+export const revalidate = 60; // ISR 1 minute
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = await prisma.article.findUnique({
@@ -23,49 +25,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     select: {
       title: true,
       excerpt: true,
-      seoTitle: true,
-      seoDescription: true,
-      canonicalUrl: true,
-      slug: true,
       featuredImage: true,
-      publishedAt: true,
-      status: true,
       author: { select: { name: true } },
     },
   });
 
-  if (!article || article.status !== "PUBLISHED") {
-    return { title: "Historia no encontrada" };
-  }
+  if (!article) return {};
 
-  const title = article.seoTitle || `${article.title} - CreandoHistorias`;
-  const description = article.seoDescription || article.excerpt || "";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://creandohistorias.com";
+  const canonicalUrl = `${baseUrl}/stories/${params.slug}`;
 
   return {
-    title,
-    description,
+    title: `${article.title} | Creando Historias`,
+    description: article.excerpt || `Lee ${article.title} por ${article.author.name} en Creando Historias.`,
     alternates: {
-      canonical: article.canonicalUrl || `${process.env.NEXT_PUBLIC_APP_URL}/stories/${article.slug}`,
+      canonical: canonicalUrl,
     },
     openGraph: {
-      title,
-      description,
+      title: article.title,
+      description: article.excerpt || undefined,
+      url: canonicalUrl,
       type: "article",
-      publishedTime: article.publishedAt?.toISOString(),
-      authors: [article.author.name],
       images: article.featuredImage ? [{ url: article.featuredImage }] : [],
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
+      title: article.title,
+      description: article.excerpt || undefined,
       images: article.featuredImage ? [article.featuredImage] : [],
     },
   };
 }
 
 export default async function StoryPage({ params }: Props) {
-  // Parallelized database fetch for user session and target article
+  // Parallelized database queries for maximum performance
   const [currentUser, article] = await Promise.all([
     getCurrentUser(),
     prisma.article.findUnique({
@@ -74,47 +67,66 @@ export default async function StoryPage({ params }: Props) {
         id: true,
         title: true,
         slug: true,
-        excerpt: true,
         content: true,
+        excerpt: true,
         featuredImage: true,
-        readingTime: true,
-        viewCount: true,
-        publishedAt: true,
-        updatedAt: true,
         status: true,
-        author: { select: { id: true, name: true, username: true, avatarUrl: true, bio: true } },
-        category: { select: { id: true, name: true, slug: true } },
-        tags: { select: { tag: { select: { id: true, name: true, slug: true } } } },
+        viewCount: true,
+        readingTime: true,
+        publishedAt: true,
+        author: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            bio: true,
+            avatarUrl: true,
+            customAuthorShare: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        tags: {
+          select: {
+            tag: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+              },
+            },
+          },
+        },
       },
     }),
   ]);
 
-  if (!article || article.status !== "PUBLISHED") {
+  if (!article) {
     notFound();
   }
 
-  // Recommended stories with lean select payload
-  const recommendedArticles = await prisma.article.findMany({
-    where: { status: "PUBLISHED", id: { not: article.id } },
-    take: 3,
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      excerpt: true,
-      author: { select: { name: true, username: true } },
-    },
-  });
+  // RBAC check for unpublished articles
+  if (article.status !== "PUBLISHED") {
+    const isOwner = currentUser?.userId === article.author.id;
+    const isAdmin = currentUser?.role === "ADMIN";
 
-  // Schema.org JSON-LD Structured Data
+    if (!isOwner && !isAdmin) {
+      notFound();
+    }
+  }
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: article.title,
     description: article.excerpt,
-    image: article.featuredImage || undefined,
-    datePublished: article.publishedAt?.toISOString(),
-    dateModified: article.updatedAt.toISOString(),
+    image: article.featuredImage ? [article.featuredImage] : undefined,
+    datePublished: article.publishedAt,
     author: {
       "@type": "Person",
       name: article.author.name,
@@ -135,7 +147,7 @@ export default async function StoryPage({ params }: Props) {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Navigation Breadcrumb */}
-        <div className="mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <Link
             href="/"
             className="inline-flex items-center space-x-1.5 text-xs font-semibold text-gray-500 hover:text-brand-500 transition"
@@ -143,6 +155,8 @@ export default async function StoryPage({ params }: Props) {
             <ArrowLeft className="w-4 h-4" />
             <span>Volver al inicio</span>
           </Link>
+
+          <CopyLinkButton slug={article.slug} variant="pill" />
         </div>
 
         {/* Header Ad Placement */}
@@ -190,7 +204,7 @@ export default async function StoryPage({ params }: Props) {
                   </div>
                 </Link>
 
-                <div className="flex items-center space-x-4 text-xs font-medium">
+                <div className="flex items-center space-x-4 text-xs font-medium flex-wrap gap-y-2">
                   {article.publishedAt && (
                     <span className="flex items-center space-x-1">
                       <Calendar className="w-4 h-4 text-gray-400" />
@@ -213,79 +227,46 @@ export default async function StoryPage({ params }: Props) {
 
             {/* Featured Image */}
             {article.featuredImage && (
-              <div className="rounded-2xl overflow-hidden shadow-xs border border-gray-200 dark:border-gray-800 max-h-[480px]">
-                <img src={article.featuredImage} alt={article.title} className="w-full h-full object-cover" />
+              <div className="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-800">
+                <img
+                  src={article.featuredImage}
+                  alt={article.title}
+                  className="w-full max-h-[500px] object-cover"
+                />
               </div>
             )}
 
-            {/* Main Article Body with Dynamic In-Article Ads */}
-            <ArticleReader content={article.content} enableInArticleAds={true} />
+            {/* Article Body Content */}
+            <div className="prose dark:prose-invert max-w-none font-sans text-gray-800 dark:text-gray-200 leading-relaxed">
+              <ArticleReader content={article.content} />
+            </div>
 
-            {/* Tags List */}
+            {/* In-Article Ad Placement */}
+            <InContentAd />
+
+            {/* Tags Footer */}
             {article.tags.length > 0 && (
-              <div className="pt-6 border-t border-gray-200 dark:border-gray-800 flex flex-wrap items-center gap-2">
-                <TagIcon className="w-4 h-4 text-gray-400 mr-2" />
+              <div className="pt-6 border-t border-gray-200 dark:border-gray-800 flex items-center space-x-2 flex-wrap gap-y-2">
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Etiquetas:</span>
                 {article.tags.map(({ tag }) => (
                   <Link
                     key={tag.id}
                     href={`/tag/${tag.slug}`}
-                    className="text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-lg hover:bg-brand-500 hover:text-white transition"
+                    className="px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-brand-500 hover:text-white text-xs font-medium text-gray-600 dark:text-gray-300 transition"
                   >
                     #{tag.name}
                   </Link>
                 ))}
               </div>
             )}
-
-            {/* Author Bio Box */}
-            <div className="p-6 bg-brand-50/50 dark:bg-gray-800/50 border border-brand-100 dark:border-gray-800 rounded-2xl flex items-start space-x-4">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-brand-500 to-brand-800 text-white flex items-center justify-center font-bold text-xl flex-shrink-0">
-                {article.author.name.charAt(0)}
-              </div>
-              <div className="space-y-1">
-                <h3 className="font-serif font-bold text-gray-900 dark:text-white text-lg">Escrito por {article.author.name}</h3>
-                {article.author.bio && <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{article.author.bio}</p>}
-                <Link
-                  href={`/author/${article.author.username}`}
-                  className="inline-block text-xs font-bold text-brand-500 hover:underline pt-2"
-                >
-                  Ver más historias de este autor &rarr;
-                </Link>
-              </div>
-            </div>
-
-            {/* Recommended Stories Grid */}
-            <div className="pt-8 border-t border-gray-200 dark:border-gray-800 space-y-6">
-              <div className="flex items-center space-x-2">
-                <Sparkles className="w-5 h-5 text-brand-500" />
-                <h3 className="font-serif text-2xl font-bold text-gray-900 dark:text-white">Te podría interesar</h3>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {recommendedArticles.map((rec) => (
-                  <article key={rec.id} className="p-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-2 hover:border-brand-300 transition">
-                    <span className="text-[10px] font-bold text-brand-500 uppercase tracking-wider">Recomendado</span>
-                    <h4 className="font-serif text-lg font-bold text-gray-900 dark:text-white hover:text-brand-500">
-                      <Link href={`/stories/${rec.slug}`}>{rec.title}</Link>
-                    </h4>
-                    <p className="text-xs text-gray-500 line-clamp-2">{rec.excerpt}</p>
-                  </article>
-                ))}
-
-                <NativeMatchedAd />
-              </div>
-            </div>
           </main>
 
-          {/* Right Sidebar Column (4 cols) */}
+          {/* Sidebar Column (4 cols) */}
           <aside className="lg:col-span-4 space-y-8">
             <SidebarAd />
           </aside>
         </div>
       </div>
-
-      {/* Floating Bottom Sticky Ad */}
-      <StickyFloatingAd />
     </div>
   );
 }

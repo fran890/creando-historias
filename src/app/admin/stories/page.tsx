@@ -107,7 +107,7 @@ export default async function AdminStoriesPage() {
                   {art.excerpt && <p className="text-xs text-gray-400 line-clamp-2">{art.excerpt}</p>}
                 </div>
 
-                <AdminStoryActions articleId={art.id} currentStatus={art.status} />
+                <AdminStoryActions articleId={art.id} currentStatus={art.status} slug={art.slug} />
               </div>
             ))}
           </div>
@@ -147,7 +147,7 @@ export default async function AdminStoriesPage() {
                 </h3>
               </div>
 
-              <AdminStoryActions articleId={art.id} currentStatus={art.status} />
+              <AdminStoryActions articleId={art.id} currentStatus={art.status} slug={art.slug} />
             </div>
           ))}
         </div>
