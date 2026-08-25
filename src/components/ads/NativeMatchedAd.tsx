@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { pushAdSenseUnit } from "@/lib/adsense";
 import { Info, ExternalLink } from "lucide-react";
 
 interface NativeMatchedAdProps {
@@ -13,27 +14,19 @@ export default function NativeMatchedAd({ slotId }: NativeMatchedAdProps) {
   const isRealSlot = slotId && /^\d{10,}$/.test(slotId);
 
   useEffect(() => {
-    if (adClientId && isRealSlot && typeof window !== "undefined") {
-      const timer = setTimeout(() => {
-        try {
-          if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
-            ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-          }
-        } catch (err) {
-          // Suppress AdSense TagError
-        }
-      }, 300);
-      return () => clearTimeout(timer);
+    if (adClientId && isRealSlot) {
+      const cleanup = pushAdSenseUnit(adRef.current);
+      return cleanup;
     }
   }, [adClientId, isRealSlot]);
 
   if (adClientId && isRealSlot) {
     return (
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 text-center overflow-hidden">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 text-center overflow-hidden min-h-[120px] flex items-center justify-center">
         <ins
           ref={adRef}
           className="adsbygoogle"
-          style={{ display: "block" }}
+          style={{ display: "block", width: "100%", minHeight: "120px" }}
           data-ad-format="autorelaxed"
           data-ad-client={adClientId}
           data-ad-slot={slotId}

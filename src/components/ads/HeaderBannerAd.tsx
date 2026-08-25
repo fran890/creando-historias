@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { pushAdSenseUnit } from "@/lib/adsense";
 import { Info, ExternalLink } from "lucide-react";
 
 interface HeaderBannerAdProps {
@@ -13,34 +14,17 @@ export default function HeaderBannerAd({ slotId }: HeaderBannerAdProps) {
   const adRef = useRef<HTMLModElement>(null);
 
   useEffect(() => {
-    const adElement = adRef.current;
-
-    if (!adElement || !adClientId) {
-      return;
-    }
-
-    if (
-      adElement.getAttribute("data-adsbygoogle-status") ||
-      adElement.getAttribute("data-ad-status")
-    ) {
-      return;
-    }
-
-    try {
-      window.adsbygoogle = window.adsbygoogle || [];
-      window.adsbygoogle.push({});
-    } catch (error) {
-      console.error("[AdSense] Error al inicializar unidad de encabezado:", error);
-    }
+    const cleanup = pushAdSenseUnit(adRef.current);
+    return cleanup;
   }, [adClientId, effectiveSlotId]);
 
   if (process.env.NODE_ENV === "production" || adClientId) {
     return (
-      <div className="w-full my-[50px] text-center overflow-hidden">
+      <div className="w-full my-6 text-center overflow-hidden min-h-[90px] flex items-center justify-center">
         <ins
           ref={adRef}
           className="adsbygoogle"
-          style={{ display: "block" }}
+          style={{ display: "block", width: "100%", minHeight: "90px" }}
           data-ad-client={adClientId}
           {...(effectiveSlotId ? { "data-ad-slot": effectiveSlotId } : {})}
           data-ad-format="auto"
@@ -52,7 +36,7 @@ export default function HeaderBannerAd({ slotId }: HeaderBannerAdProps) {
 
   // Visual Mock Placeholder en Desarrollo
   return (
-    <div className="w-full my-[50px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xs overflow-hidden relative">
+    <div className="w-full my-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xs overflow-hidden relative">
       <div className="flex items-center justify-between text-[10px] font-semibold text-gray-400 mb-2 uppercase tracking-wider">
         <span>Anuncio Encabezado (Modo Desarrollo)</span>
         <div className="flex items-center space-x-1">

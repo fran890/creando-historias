@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { pushAdSenseUnit } from "@/lib/adsense";
 import { Info } from "lucide-react";
 
 interface SidebarAdProps {
@@ -13,34 +14,17 @@ export default function SidebarAd({ slotId }: SidebarAdProps) {
   const adRef = useRef<HTMLModElement>(null);
 
   useEffect(() => {
-    const adElement = adRef.current;
-
-    if (!adElement || !adClientId) {
-      return;
-    }
-
-    if (
-      adElement.getAttribute("data-adsbygoogle-status") ||
-      adElement.getAttribute("data-ad-status")
-    ) {
-      return;
-    }
-
-    try {
-      window.adsbygoogle = window.adsbygoogle || [];
-      window.adsbygoogle.push({});
-    } catch (error) {
-      console.error("[AdSense] Error al inicializar unidad lateral:", error);
-    }
+    const cleanup = pushAdSenseUnit(adRef.current);
+    return cleanup;
   }, [adClientId, effectiveSlotId]);
 
   if (process.env.NODE_ENV === "production" || adClientId) {
     return (
-      <div className="sticky top-24 w-full my-[50px] text-center overflow-hidden">
+      <div className="sticky top-24 w-full my-4 text-center overflow-hidden min-h-[250px] flex items-center justify-center">
         <ins
           ref={adRef}
           className="adsbygoogle"
-          style={{ display: "block" }}
+          style={{ display: "block", width: "100%", minHeight: "250px" }}
           data-ad-client={adClientId}
           {...(effectiveSlotId ? { "data-ad-slot": effectiveSlotId } : {})}
           data-ad-format="rectangle"

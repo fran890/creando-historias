@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { pushAdSenseUnit } from "@/lib/adsense";
 import { Info, ExternalLink } from "lucide-react";
 
 interface InContentAdProps {
@@ -14,34 +15,17 @@ export default function InContentAd({ slotId, format = "auto" }: InContentAdProp
   const adRef = useRef<HTMLModElement>(null);
 
   useEffect(() => {
-    const adElement = adRef.current;
-
-    if (!adElement || !adClientId) {
-      return;
-    }
-
-    if (
-      adElement.getAttribute("data-adsbygoogle-status") ||
-      adElement.getAttribute("data-ad-status")
-    ) {
-      return;
-    }
-
-    try {
-      window.adsbygoogle = window.adsbygoogle || [];
-      window.adsbygoogle.push({});
-    } catch (error) {
-      console.error("[AdSense] Error al inicializar unidad en contenido:", error);
-    }
+    const cleanup = pushAdSenseUnit(adRef.current);
+    return cleanup;
   }, [adClientId, effectiveSlotId]);
 
   if (process.env.NODE_ENV === "production" || adClientId) {
     return (
-      <div className="w-full my-[50px] text-center overflow-hidden">
+      <div className="w-full my-6 text-center overflow-hidden min-h-[90px] flex items-center justify-center">
         <ins
           ref={adRef}
           className="adsbygoogle"
-          style={{ display: "block" }}
+          style={{ display: "block", width: "100%", minHeight: "90px" }}
           data-ad-client={adClientId}
           {...(effectiveSlotId ? { "data-ad-slot": effectiveSlotId } : {})}
           data-ad-format={format}
@@ -53,7 +37,7 @@ export default function InContentAd({ slotId, format = "auto" }: InContentAdProp
 
   // Visual Mock Placeholder en Desarrollo
   return (
-    <div className="my-[50px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-xs overflow-hidden relative font-sans">
+    <div className="my-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-xs overflow-hidden relative font-sans">
       <div className="flex items-center justify-between text-[10px] font-semibold text-gray-400 mb-3 uppercase tracking-wider">
         <span className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded text-gray-500">Anuncio de Google (Modo Desarrollo)</span>
         <div className="flex items-center space-x-1 cursor-pointer">
