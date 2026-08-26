@@ -64,15 +64,14 @@ export async function POST(req: Request) {
         storage: "local-disk",
       });
     } catch (fsError) {
-      // In serverless environments where filesystem is read-only and R2 is not configured
-      const base64Data = `data:${file.type};base64,${buffer.toString("base64")}`;
-      console.warn("[Upload] R2 no configurado y filesystem de solo lectura. Usando Base64 temporal.");
-      return NextResponse.json({
-        success: true,
-        url: base64Data,
-        filename: file.name,
-        storage: "base64-fallback",
-      });
+      console.error("[Upload] R2 no configurado y filesystem no disponible:", fsError);
+      return NextResponse.json(
+        {
+          error:
+            "No se pudo guardar la imagen. Configura Cloudflare R2 para producción antes de subir archivos.",
+        },
+        { status: 503 }
+      );
     }
   } catch (error: any) {
     console.error("Error en upload route:", error);

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { ArticleSchema } from "@/lib/validations/article";
 import { sanitizeArticleInputForUserAsync } from "@/lib/security/ownership";
 import { generateSlug, calculateReadingTime } from "@/lib/security/sanitizer";
+import { stripBase64DataUris } from "@/lib/images";
 import { recordAuditLog } from "@/services/audit.service";
 import { z } from "zod";
 
@@ -24,10 +25,16 @@ export async function POST(req: Request) {
       slug = `${baseSlug}-${count++}`;
     }
 
-    const readingTime = calculateReadingTime(validated.content);
+    const cleanedContent = stripBase64DataUris(validated.content);
+    const cleanedFeaturedImage = validated.featuredImage?.startsWith("data:")
+      ? stripBase64DataUris(validated.featuredImage)
+      : validated.featuredImage;
+    const readingTime = calculateReadingTime(cleanedContent);
 
     const sanitizedInput = await sanitizeArticleInputForUserAsync(user, {
       ...validated,
+      content: cleanedContent,
+      featuredImage: cleanedFeaturedImage,
       slug,
       readingTime,
     });
