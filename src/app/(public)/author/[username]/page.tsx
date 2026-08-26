@@ -5,6 +5,7 @@ import SidebarAd from "@/components/ads/SidebarAd";
 import NativeMatchedAd from "@/components/ads/NativeMatchedAd";
 import StickyFloatingAd from "@/components/ads/StickyFloatingAd";
 import AdSenseScript from "@/components/ads/AdSenseScript";
+import { getSafePublicImageUrl } from "@/lib/images";
 import { BookOpen, Eye, Clock, Calendar, ArrowLeft, Folder, ChevronLeft, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -39,6 +40,7 @@ export default async function AuthorProfilePage({ params, searchParams }: Props)
   });
 
   if (!author) notFound();
+  const authorAvatarUrl = getSafePublicImageUrl(author.avatarUrl);
 
   // Parallelized count & paginated query using compound index [status, authorId, publishedAt]
   const [totalPublishedCount, articles, categories] = await Promise.all([
@@ -86,8 +88,8 @@ export default async function AuthorProfilePage({ params, searchParams }: Props)
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-600 via-purple-700 to-brand-900 text-white p-8 sm:p-12 shadow-lg">
           <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
             <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-white/90 shadow-xl overflow-hidden flex-shrink-0 bg-white text-brand-600 font-serif font-black text-4xl flex items-center justify-center">
-              {author.avatarUrl ? (
-                <img src={author.avatarUrl} alt={author.name} className="w-full h-full object-cover" />
+              {authorAvatarUrl ? (
+                <img src={authorAvatarUrl} alt={author.name} className="w-full h-full object-cover" />
               ) : (
                 author.name.charAt(0)
               )}

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getSafePublicImageUrl } from "@/lib/images";
 import { z } from "zod";
 
 const updateProfileSchema = z.object({
@@ -18,13 +19,14 @@ export async function PATCH(req: Request) {
 
     const body = await req.json();
     const validatedData = updateProfileSchema.parse(body);
+    const avatarUrl = getSafePublicImageUrl(validatedData.avatarUrl);
 
     const updatedUser = await prisma.user.update({
       where: { id: user.userId },
       data: {
         name: validatedData.name,
         bio: validatedData.bio,
-        avatarUrl: validatedData.avatarUrl,
+        avatarUrl,
       },
       select: { id: true, name: true, username: true, email: true, role: true, avatarUrl: true, bio: true },
     });

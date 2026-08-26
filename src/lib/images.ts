@@ -10,6 +10,11 @@ export function stripBase64DataUris(text: string | null | undefined): string {
   );
 }
 
+export function getSafePublicImageUrl(url: string | null | undefined): string | null {
+  if (!url || url.startsWith("data:")) return null;
+  return url;
+}
+
 /**
  * Converts any image URL to Next.js Image Optimizer URL.
  * Automatically resizes high-res images and converts them to compressed WebP/AVIF format.

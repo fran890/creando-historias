@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { stripBase64DataUris } from "@/lib/images";
+import { getSafePublicImageUrl, stripBase64DataUris } from "@/lib/images";
 
 /**
  * High-performance cached article retriever by slug.
@@ -63,6 +63,10 @@ export async function getCachedArticleBySlug(slug: string) {
         featuredImage: article.featuredImage?.startsWith("data:")
           ? stripBase64DataUris(article.featuredImage)
           : article.featuredImage,
+        author: {
+          ...article.author,
+          avatarUrl: getSafePublicImageUrl(article.author.avatarUrl),
+        },
       };
     },
     [`article-by-slug-${slug}`],
