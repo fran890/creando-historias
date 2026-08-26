@@ -20,11 +20,11 @@ export default function SidebarAd({ slotId }: SidebarAdProps) {
 
   if (process.env.NODE_ENV === "production" || adClientId) {
     return (
-      <div className="sticky top-24 w-full my-4 text-center overflow-hidden min-h-[250px] flex items-center justify-center">
+      <div className="ad-container sticky top-24 w-full my-4 text-center overflow-hidden flex items-center justify-center">
         <ins
           ref={adRef}
           className="adsbygoogle"
-          style={{ display: "block", width: "100%", minHeight: "250px" }}
+          style={{ display: "block", width: "100%" }}
           data-ad-client={adClientId}
           {...(effectiveSlotId ? { "data-ad-slot": effectiveSlotId } : {})}
           data-ad-format="rectangle"

@@ -22,11 +22,11 @@ export default function NativeMatchedAd({ slotId }: NativeMatchedAdProps) {
 
   if (adClientId && isRealSlot) {
     return (
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 text-center overflow-hidden min-h-[120px] flex items-center justify-center">
+      <div className="ad-container bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl text-center overflow-hidden flex items-center justify-center">
         <ins
           ref={adRef}
           className="adsbygoogle"
-          style={{ display: "block", width: "100%", minHeight: "120px" }}
+          style={{ display: "block", width: "100%" }}
           data-ad-format="autorelaxed"
           data-ad-client={adClientId}
           data-ad-slot={slotId}

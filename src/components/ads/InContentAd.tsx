@@ -21,11 +21,11 @@ export default function InContentAd({ slotId, format = "auto" }: InContentAdProp
 
   if (process.env.NODE_ENV === "production" || adClientId) {
     return (
-      <div className="w-full my-6 text-center overflow-hidden min-h-[90px] flex items-center justify-center">
+      <div className="ad-container w-full my-6 text-center overflow-hidden flex items-center justify-center">
         <ins
           ref={adRef}
           className="adsbygoogle"
-          style={{ display: "block", width: "100%", minHeight: "90px" }}
+          style={{ display: "block", width: "100%" }}
           data-ad-client={adClientId}
           {...(effectiveSlotId ? { "data-ad-slot": effectiveSlotId } : {})}
           data-ad-format={format}
