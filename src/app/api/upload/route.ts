@@ -4,6 +4,8 @@ import { uploadToCloudflareR2 } from "@/lib/storage/r2";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 
+const MAX_UPLOAD_SIZE_BYTES = 4 * 1024 * 1024;
+
 export async function POST(req: Request) {
   try {
     const user = await getCurrentUser();
@@ -22,8 +24,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "El archivo debe ser una imagen válida (JPG, PNG, WEBP, GIF, SVG)" }, { status: 400 });
     }
 
+    if (file.type !== "image/webp") {
+      return NextResponse.json({ error: "Las imagenes deben convertirse a WebP antes de subir." }, { status: 400 });
+    }
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+
+    if (buffer.length > MAX_UPLOAD_SIZE_BYTES) {
+      return NextResponse.json(
+        { error: "La imagen excede el tamano maximo permitido de 4 MB." },
+        { status: 413 }
+      );
+    }
 
     // 1. Prioritize Cloudflare R2 Object Storage (Decoupled Cloud Storage + CDN)
     try {

@@ -20,6 +20,7 @@ export default function NewStoryPage() {
   const [isPreview, setIsPreview] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [imageUploadState, setImageUploadState] = useState({ isUploading: false, error: "" });
   const router = useRouter();
 
   useEffect(() => {
@@ -34,6 +35,10 @@ export default function NewStoryPage() {
   const handleSave = async (status: "DRAFT" | "PENDING_REVIEW") => {
     if (!title || !content) {
       setError("El título y el contenido son obligatorios");
+      return;
+    }
+    if (imageUploadState.isUploading || imageUploadState.error) {
+      setError(imageUploadState.error || "Espera a que termine la subida de la imagen.");
       return;
     }
 
@@ -94,7 +99,7 @@ export default function NewStoryPage() {
           </button>
           <button
             type="button"
-            disabled={saving}
+            disabled={saving || imageUploadState.isUploading || Boolean(imageUploadState.error)}
             onClick={() => handleSave("DRAFT")}
             className="inline-flex items-center space-x-1.5 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs font-semibold rounded-xl hover:bg-gray-300"
           >
@@ -103,7 +108,7 @@ export default function NewStoryPage() {
           </button>
           <button
             type="button"
-            disabled={saving}
+            disabled={saving || imageUploadState.isUploading || Boolean(imageUploadState.error)}
             onClick={() => handleSave("PENDING_REVIEW")}
             className="inline-flex items-center space-x-1.5 px-4 py-2 bg-gradient-to-r from-brand-500 to-brand-800 text-white text-xs font-bold rounded-xl hover:opacity-90 transition shadow-sm"
           >
@@ -168,6 +173,7 @@ export default function NewStoryPage() {
               value={featuredImage}
               onChange={setFeaturedImage}
               label="Imagen Portada / Destacada"
+              onUploadStateChange={setImageUploadState}
             />
           </div>
 

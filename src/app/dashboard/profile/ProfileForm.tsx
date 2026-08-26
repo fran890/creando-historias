@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 import { Upload, User as UserIcon, Check, Loader2 } from "lucide-react";
+import {
+  formatFileSize,
+  MAX_ORIGINAL_IMAGE_SIZE_BYTES,
+  MAX_WEBP_UPLOAD_SIZE_BYTES,
+  prepareImageForUpload,
+  uploadImageWithProgress,
+} from "@/lib/client/image-upload";
 
 interface UserProfileProps {
   user: {
@@ -20,6 +27,9 @@ export default function ProfileForm({ user }: UserProfileProps) {
   const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl || "");
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadLabel, setUploadLabel] = useState("");
+  const [fileSummary, setFileSummary] = useState("");
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,26 +37,32 @@ export default function ProfileForm({ user }: UserProfileProps) {
     if (!file) return;
 
     setIsUploading(true);
+    setUploadProgress(0);
+    setUploadLabel("");
+    setFileSummary(`Original: ${formatFileSize(file.size)}`);
     setMessage(null);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
+      const webpFile = await prepareImageForUpload(file, (progress, label) => {
+        setUploadProgress(progress);
+        setUploadLabel(label);
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al subir la imagen");
+      setFileSummary(`Original: ${formatFileSize(file.size)} | WebP: ${formatFileSize(webpFile.size)}`);
+      const data = await uploadImageWithProgress(webpFile, (progress, label) => {
+        setUploadProgress(progress);
+        setUploadLabel(label);
+      });
 
       setAvatarUrl(data.url);
-      setMessage({ type: "success", text: "Imagen local subida con éxito" });
+      setMessage({ type: "success", text: "Imagen WebP subida con exito" });
     } catch (err: any) {
+      setUploadProgress(0);
+      setUploadLabel("");
       setMessage({ type: "error", text: err.message || "Error al subir la imagen" });
     } finally {
       setIsUploading(false);
+      e.target.value = "";
     }
   };
 
@@ -87,14 +103,12 @@ export default function ProfileForm({ user }: UserProfileProps) {
         </div>
       )}
 
-      {/* Avatar Section */}
       <div className="space-y-4">
         <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
           Foto de Perfil / Avatar
         </label>
 
         <div className="flex flex-col sm:flex-row items-center gap-6">
-          {/* Avatar Preview */}
           <div className="w-24 h-24 rounded-full border-4 border-brand-100 dark:border-gray-800 overflow-hidden bg-gray-100 dark:bg-gray-800 text-gray-400 flex items-center justify-center font-bold text-2xl flex-shrink-0 shadow">
             {avatarUrl ? (
               <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
@@ -105,13 +119,12 @@ export default function ProfileForm({ user }: UserProfileProps) {
 
           <div className="space-y-3 flex-grow text-center sm:text-left">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-              {/* Local File Input */}
-              <label className="inline-flex items-center space-x-1.5 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-xl cursor-pointer transition shadow-xs">
+              <label className={`inline-flex items-center space-x-1.5 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-xl transition shadow-xs ${isUploading ? "cursor-wait opacity-80" : "cursor-pointer"}`}>
                 {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                <span>{isUploading ? "Subiendo..." : "Seleccionar de mi equipo"}</span>
+                <span>{isUploading ? "Procesando WebP..." : "Seleccionar de mi equipo"}</span>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
                   onChange={handleFileUpload}
                   className="hidden"
                   disabled={isUploading}
@@ -121,7 +134,10 @@ export default function ProfileForm({ user }: UserProfileProps) {
               {avatarUrl && (
                 <button
                   type="button"
-                  onClick={() => setAvatarUrl("")}
+                  onClick={() => {
+                    setAvatarUrl("");
+                    setFileSummary("");
+                  }}
                   className="text-xs font-semibold text-red-600 hover:underline"
                 >
                   Quitar avatar
@@ -129,16 +145,29 @@ export default function ProfileForm({ user }: UserProfileProps) {
               )}
             </div>
             <p className="text-[11px] text-gray-400">
-              Formatos soportados: JPG, PNG, WEBP, GIF. Tamaño máximo recomendado: 2MB.
+              Maximo por imagen: {formatFileSize(MAX_ORIGINAL_IMAGE_SIZE_BYTES)} antes de convertir; {formatFileSize(MAX_WEBP_UPLOAD_SIZE_BYTES)} ya en WebP.
             </p>
+            {isUploading && (
+              <div className="space-y-1">
+                <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
+                  <div
+                    className="h-full bg-brand-500 transition-all duration-200"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+                <p className="text-[11px] text-gray-500 dark:text-gray-400 font-semibold">
+                  {uploadLabel || "Preparando imagen"} {uploadProgress}%
+                </p>
+              </div>
+            )}
+            {fileSummary && <p className="text-[11px] text-gray-500 dark:text-gray-400">{fileSummary}</p>}
           </div>
         </div>
       </div>
 
-      {/* Name Input */}
       <div className="space-y-2">
         <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
-          Nombre Público
+          Nombre Publico
         </label>
         <input
           type="text"
@@ -149,16 +178,15 @@ export default function ProfileForm({ user }: UserProfileProps) {
         />
       </div>
 
-      {/* Bio Input */}
       <div className="space-y-2">
         <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
-          Biografía del Autor
+          Biografia del Autor
         </label>
         <textarea
           value={bio}
           onChange={(e) => setBio(e.target.value)}
           rows={4}
-          placeholder="Escribe una breve descripción sobre ti o tus materias de especialidad..."
+          placeholder="Escribe una breve descripcion sobre ti o tus materias de especialidad..."
           className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
         />
       </div>
