@@ -29,6 +29,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
         <div className="hidden md:flex items-center space-x-3">
           <Link
             href="/search"
+            prefetch={false}
             className="p-2.5 text-gray-600 dark:text-gray-300 hover:text-brand-500 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800/60 transition"
             title="Buscar historias"
           >
@@ -40,6 +41,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
               {user.role === "ADMIN" && (
                 <Link
                   href="/admin"
+                  prefetch={false}
                   className="inline-flex items-center space-x-1.5 text-xs font-bold px-3.5 py-2 rounded-2xl bg-amber-50 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 hover:bg-amber-100 transition shadow-xs"
                 >
                   <Shield className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
@@ -49,6 +51,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
 
               <Link
                 href="/dashboard"
+                prefetch={false}
                 className="inline-flex items-center space-x-1.5 text-xs font-bold px-4 py-2 rounded-2xl bg-gradient-to-r from-brand-500 via-brand-600 to-brand-800 text-white hover:opacity-95 transition shadow-glow active:scale-95"
               >
                 <PenTool className="w-3.5 h-3.5" />
@@ -68,6 +71,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
           ) : (
             <Link
               href="/login"
+              prefetch={false}
               className="inline-flex items-center space-x-2 text-xs font-bold px-4 py-2 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-800 text-white hover:opacity-95 transition shadow-glow active:scale-95"
             >
               <Sparkles className="w-3.5 h-3.5" />

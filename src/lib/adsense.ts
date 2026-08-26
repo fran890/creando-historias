@@ -1,32 +1,57 @@
 "use client";
 
 /**
- * Lazy AdSense Loader
+ * Ultra-Optimized Lazy AdSense Loader
  * 
- * Loads the AdSense script ONLY ONCE and ONLY when the first ad unit
- * becomes visible in the viewport via IntersectionObserver.
- * 
- * This prevents downloading ~1MB of AdSense scripts on page load,
- * reducing DOMContentLoaded from ~12s to <0.5s.
+ * Prevents loading ~1.4MB of Google AdSense scripts (show_ads_impl, sodar2, zrt_lookup)
+ * until:
+ * 1. `NEXT_PUBLIC_ENABLE_ADSENSE` is NOT "false".
+ * 2. The user actually interacts with the page (scrolls down 100px or touches/moves mouse).
+ * 3. An ad container is visible in the viewport.
  */
 
 let adsenseLoadState: "idle" | "loading" | "loaded" | "error" = "idle";
 let adsenseLoadPromise: Promise<void> | null = null;
+let userHasInteracted = false;
 const pendingUnits: HTMLElement[] = [];
 
 const AD_CLIENT_ID = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-6105500451798195";
+
+// Enable flag: can be explicitly set to "false" in env while account is under review
+const IS_ADSENSE_ENABLED = process.env.NEXT_PUBLIC_ENABLE_ADSENSE !== "false";
+
+/**
+ * Listen for initial user scroll/touch/move interaction before loading AdSense scripts.
+ */
+if (typeof window !== "undefined" && IS_ADSENSE_ENABLED) {
+  const onUserInteraction = () => {
+    userHasInteracted = true;
+    window.removeEventListener("scroll", onUserInteraction);
+    window.removeEventListener("touchstart", onUserInteraction);
+    window.removeEventListener("mousemove", onUserInteraction);
+    
+    // Flush any pending units once user interacts
+    if (pendingUnits.length > 0) {
+      loadAdSenseScript().catch(() => {});
+    }
+  };
+
+  window.addEventListener("scroll", onUserInteraction, { passive: true, once: true });
+  window.addEventListener("touchstart", onUserInteraction, { passive: true, once: true });
+  window.addEventListener("mousemove", onUserInteraction, { passive: true, once: true });
+}
 
 /**
  * Loads the AdSense script tag into the document head exactly once.
  */
 function loadAdSenseScript(): Promise<void> {
+  if (!IS_ADSENSE_ENABLED) return Promise.resolve();
   if (adsenseLoadState === "loaded") return Promise.resolve();
   if (adsenseLoadPromise) return adsenseLoadPromise;
 
   adsenseLoadState = "loading";
 
   adsenseLoadPromise = new Promise<void>((resolve, reject) => {
-    // Check if script already exists (e.g. from a previous navigation)
     const existing = document.querySelector(
       `script[src*="adsbygoogle.js?client=${AD_CLIENT_ID}"]`
     );
@@ -43,7 +68,6 @@ function loadAdSenseScript(): Promise<void> {
 
     script.onload = () => {
       adsenseLoadState = "loaded";
-      // Push all pending ad units
       pendingUnits.forEach((el) => pushUnit(el));
       pendingUnits.length = 0;
       resolve();
@@ -69,29 +93,28 @@ function pushUnit(element: HTMLElement): void {
     element.getAttribute("data-adsbygoogle-status") ||
     element.getAttribute("data-ad-status")
   ) {
-    return; // Already initialized
+    return;
   }
 
   const width = element.clientWidth || element.offsetWidth;
-  if (width <= 0) return; // Not visible yet
+  if (width <= 0) return;
 
   try {
     (window as any).adsbygoogle = (window as any).adsbygoogle || [];
     (window as any).adsbygoogle.push({});
   } catch {
-    // Silently handle AdBlocker or CSP errors
+    // Silently ignore errors
   }
 }
 
 /**
  * Register an ad unit element.
- * Uses IntersectionObserver to only load AdSense when the ad is scrolled into view.
+ * Defers loading until element is in viewport AND user has scrolled/interacted.
  */
 export function registerAdUnit(element: HTMLElement | null): () => void {
-  if (!element) return () => {};
+  if (!element || !IS_ADSENSE_ENABLED) return () => {};
   if (typeof window === "undefined") return () => {};
 
-  // Skip if already initialized
   if (
     element.getAttribute("data-adsbygoogle-status") ||
     element.getAttribute("data-ad-status")
@@ -101,7 +124,6 @@ export function registerAdUnit(element: HTMLElement | null): () => void {
 
   let observer: IntersectionObserver | null = null;
 
-  // Use IntersectionObserver to detect when ad enters viewport
   if (typeof IntersectionObserver !== "undefined") {
     observer = new IntersectionObserver(
       (entries) => {
@@ -110,30 +132,24 @@ export function registerAdUnit(element: HTMLElement | null): () => void {
             observer?.disconnect();
             observer = null;
 
-            if (adsenseLoadState === "loaded") {
-              pushUnit(element);
-            } else if (adsenseLoadState === "loading") {
-              pendingUnits.push(element);
-            } else {
-              pendingUnits.push(element);
-              loadAdSenseScript().catch(() => {});
+            pendingUnits.push(element);
+
+            // Only trigger download if user has actually scrolled/interacted with the page
+            if (userHasInteracted || window.scrollY > 50) {
+              if (adsenseLoadState === "loaded") {
+                pushUnit(element);
+              } else {
+                loadAdSenseScript().catch(() => {});
+              }
             }
             break;
           }
         }
       },
-      { rootMargin: "200px" } // Start loading 200px before element is visible
+      { rootMargin: "50px" }
     );
 
     observer.observe(element);
-  } else {
-    // Fallback: load immediately after a short delay
-    const timer = setTimeout(() => {
-      pendingUnits.push(element);
-      loadAdSenseScript().catch(() => {});
-    }, 1000);
-
-    return () => clearTimeout(timer);
   }
 
   return () => {
