@@ -11,11 +11,12 @@ import Link from "next/link";
 interface Props {
   article: any;
   categories: any[];
+  tags: any[];
   userRole: string;
   canPublishDirectly: boolean;
 }
 
-export default function EditStoryClient({ article, categories, userRole, canPublishDirectly }: Props) {
+export default function EditStoryClient({ article, categories, tags, userRole, canPublishDirectly }: Props) {
   const [title, setTitle] = useState(article.title);
   const [excerpt, setExcerpt] = useState(article.excerpt || "");
   const [content, setContent] = useState(article.content);
@@ -23,6 +24,7 @@ export default function EditStoryClient({ article, categories, userRole, canPubl
   const [categoryId, setCategoryId] = useState(article.categoryId || "");
   const [seoTitle, setSeoTitle] = useState(article.seoTitle || "");
   const [seoDescription, setSeoDescription] = useState(article.seoDescription || "");
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(article.tags?.map((item: any) => item.tagId) || []);
   const [status, setStatus] = useState(article.status);
   const [isPreview, setIsPreview] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -57,6 +59,7 @@ export default function EditStoryClient({ article, categories, userRole, canPubl
           categoryId: categoryId || null,
           seoTitle,
           seoDescription,
+          tags: selectedTagIds,
           status: targetStatus || status,
         }),
       });
@@ -216,6 +219,35 @@ export default function EditStoryClient({ article, categories, userRole, canPubl
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">Contenido de la Historia</label>
             <TiptapEditor content={content} onChange={setContent} />
           </div>
+
+          {tags.length > 0 && (
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">Etiquetas</label>
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag) => {
+                  const selected = selectedTagIds.includes(tag.id);
+                  return (
+                    <button
+                      key={tag.id}
+                      type="button"
+                      onClick={() =>
+                        setSelectedTagIds((current) =>
+                          selected ? current.filter((id) => id !== tag.id) : [...current, tag.id]
+                        )
+                      }
+                      className={`px-3 py-1.5 rounded-full border text-xs font-bold transition ${
+                        selected
+                          ? "bg-brand-500 text-white border-brand-500"
+                          : "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700"
+                      }`}
+                    >
+                      #{tag.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

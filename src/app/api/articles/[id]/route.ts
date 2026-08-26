@@ -133,7 +133,19 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     const updatedArticle = await prisma.article.update({
       where: { id: params.id },
-      data: updateData,
+      data: {
+        ...updateData,
+        tags: {
+          deleteMany: {},
+          ...(validated.tags?.length
+            ? {
+                create: validated.tags.map((tagId: string) => ({
+                  tag: { connect: { id: tagId } },
+                })),
+              }
+            : {}),
+        },
+      },
     });
 
     await recordAuditLog({

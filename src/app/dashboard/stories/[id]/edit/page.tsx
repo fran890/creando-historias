@@ -13,6 +13,13 @@ export default async function EditStoryPage({ params }: Props) {
 
   const article = await prisma.article.findUnique({
     where: { id: params.id },
+    include: {
+      tags: {
+        select: {
+          tagId: true,
+        },
+      },
+    },
   });
 
   if (!article) notFound();
@@ -22,8 +29,12 @@ export default async function EditStoryPage({ params }: Props) {
     redirect("/dashboard/stories");
   }
 
-  const [categories, dbUser] = await Promise.all([
+  const [categories, tags, dbUser] = await Promise.all([
     prisma.category.findMany({ orderBy: { name: "asc" } }),
+    prisma.tag.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true, slug: true },
+    }),
     prisma.user.findUnique({
       where: { id: user.userId },
       select: { autoApprove: true },
@@ -34,6 +45,7 @@ export default async function EditStoryPage({ params }: Props) {
     <EditStoryClient
       article={article}
       categories={categories}
+      tags={tags}
       userRole={user.role}
       canPublishDirectly={user.role === "ADMIN" || dbUser?.autoApprove === true}
     />

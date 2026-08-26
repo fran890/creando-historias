@@ -54,6 +54,13 @@ export async function POST(req: Request) {
         canonicalUrl: sanitizedInput.canonicalUrl || null,
         authorId: sanitizedInput.authorId,
         publishedAt: sanitizedInput.status === "PUBLISHED" ? new Date() : null,
+        tags: validated.tags?.length
+          ? {
+              create: validated.tags.map((tagId) => ({
+                tag: { connect: { id: tagId } },
+              })),
+            }
+          : undefined,
       },
     });
 
