@@ -19,6 +19,7 @@ interface Props {
 }
 
 export const revalidate = 86400; // 24 hours (revalidated instantly on demand via revalidateTag)
+export const dynamic = "force-static";
 export const dynamicParams = true;
 
 function isValidImageUrl(url: string | null | undefined): url is string {
