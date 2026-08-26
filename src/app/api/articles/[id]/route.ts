@@ -69,7 +69,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     });
 
     try {
-      const { revalidatePath } = await import("next/cache");
+      const { revalidatePath, revalidateTag } = await import("next/cache");
+      revalidateTag(`article-${updatedArticle.slug}`);
+      revalidateTag("articles-homepage");
+      revalidateTag("articles-all");
       revalidatePath("/");
       revalidatePath(`/stories/${updatedArticle.slug}`);
     } catch (err) {
@@ -135,7 +138,10 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     });
 
     try {
-      const { revalidatePath } = await import("next/cache");
+      const { revalidatePath, revalidateTag } = await import("next/cache");
+      revalidateTag(`article-${updatedArticle.slug}`);
+      revalidateTag("articles-homepage");
+      revalidateTag("articles-all");
       revalidatePath("/");
       revalidatePath(`/stories/${updatedArticle.slug}`);
     } catch (err) {
@@ -171,7 +177,10 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     });
 
     try {
-      const { revalidatePath } = await import("next/cache");
+      const { revalidatePath, revalidateTag } = await import("next/cache");
+      revalidateTag(`article-${ownership.article.slug}`);
+      revalidateTag("articles-homepage");
+      revalidateTag("articles-all");
       revalidatePath("/");
       revalidatePath(`/stories/${ownership.article.slug}`);
     } catch (err) {

@@ -60,7 +60,10 @@ export async function POST(req: Request) {
 
     if (article.status === "PUBLISHED") {
       try {
-        const { revalidatePath } = await import("next/cache");
+        const { revalidatePath, revalidateTag } = await import("next/cache");
+        revalidateTag(`article-${article.slug}`);
+        revalidateTag("articles-homepage");
+        revalidateTag("articles-all");
         revalidatePath("/");
         revalidatePath(`/stories/${article.slug}`);
       } catch (err) {

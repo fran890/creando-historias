@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { getCachedHomePageArticles } from "@/lib/cache/articles";
 import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
 import InContentAd from "@/components/ads/InContentAd";
 import SidebarAd from "@/components/ads/SidebarAd";
@@ -8,54 +8,19 @@ import { Clock, Eye, User, Sparkles, Folder, TrendingUp, BookOpen, ArrowRight, Z
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
-export const revalidate = 60; // ISR 1 minute
+export const revalidate = 3600; // 1 hour ISR fallback (revalidated instantly on demand via revalidateTag)
 
 function isValidImageUrl(url: string | null | undefined): url is string {
   return !!url && (url.startsWith("http://") || url.startsWith("https://"));
 }
 
 export default async function HomePage() {
-  const [currentUser, featuredArticles, recentArticles, categories, totalPublishedCount] = await Promise.all([
+  const [currentUser, homeData] = await Promise.all([
     getCurrentUser(),
-    prisma.article.findMany({
-      where: { status: "PUBLISHED" },
-      orderBy: { viewCount: "desc" },
-      take: 4,
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        excerpt: true,
-        featuredImage: true,
-        readingTime: true,
-        viewCount: true,
-        author: { select: { name: true, username: true } },
-        category: { select: { name: true, slug: true } },
-      },
-    }),
-    prisma.article.findMany({
-      where: { status: "PUBLISHED" },
-      orderBy: { publishedAt: "desc" },
-      take: 12,
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        excerpt: true,
-        featuredImage: true,
-        readingTime: true,
-        viewCount: true,
-        publishedAt: true,
-        author: { select: { name: true, username: true } },
-        category: { select: { name: true, slug: true } },
-      },
-    }),
-    prisma.category.findMany({
-      take: 8,
-      select: { id: true, name: true, slug: true },
-    }),
-    prisma.article.count({ where: { status: "PUBLISHED" } }),
+    getCachedHomePageArticles(),
   ]);
+
+  const { featuredArticles, recentArticles, categories, totalPublishedCount } = homeData;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">

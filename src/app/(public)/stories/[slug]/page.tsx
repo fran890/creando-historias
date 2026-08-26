@@ -13,11 +13,14 @@ import { Clock, Eye, Calendar, ArrowLeft, BookOpen, Sparkles, User, Share2 } fro
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
+import { getCachedArticleBySlug, getCachedRelatedArticles } from "@/lib/cache/articles";
+
 interface Props {
   params: { slug: string };
 }
 
-export const revalidate = 60;
+export const revalidate = 86400; // 24 hours (revalidated instantly on demand via revalidateTag)
+export const dynamicParams = true;
 
 function isValidImageUrl(url: string | null | undefined): url is string {
   return !!url && (url.startsWith("http://") || url.startsWith("https://"));
@@ -31,15 +34,7 @@ function stripBase64FromHtml(html: string): string {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const article = await prisma.article.findUnique({
-    where: { slug: params.slug },
-    select: {
-      title: true,
-      excerpt: true,
-      featuredImage: true,
-      author: { select: { name: true } },
-    },
-  });
+  const article = await getCachedArticleBySlug(params.slug);
 
   if (!article) return {};
 
@@ -72,50 +67,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function StoryPage({ params }: Props) {
   const [currentUser, article] = await Promise.all([
     getCurrentUser(),
-    prisma.article.findUnique({
-      where: { slug: params.slug },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        content: true,
-        excerpt: true,
-        featuredImage: true,
-        status: true,
-        viewCount: true,
-        readingTime: true,
-        publishedAt: true,
-        categoryId: true,
-        author: {
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            bio: true,
-            avatarUrl: true,
-            customAuthorShare: true,
-          },
-        },
-        category: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        tags: {
-          select: {
-            tag: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
-              },
-            },
-          },
-        },
-      },
-    }),
+    getCachedArticleBySlug(params.slug),
   ]);
 
   if (!article) {
@@ -130,37 +82,7 @@ export default async function StoryPage({ params }: Props) {
     }
   }
 
-  let relatedArticles: Array<{
-    id: string; title: string; slug: string; excerpt: string | null;
-    featuredImage: string | null; readingTime: number;
-    publishedAt: Date | null;
-    author: { name: string; username: string };
-    category: { name: string; slug: string } | null;
-  }> = [];
-  try {
-    relatedArticles = await prisma.article.findMany({
-      where: {
-        status: "PUBLISHED",
-        NOT: { id: article.id },
-        ...(article.categoryId ? { categoryId: article.categoryId } : {}),
-      },
-      take: 6,
-      orderBy: { publishedAt: "desc" },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        excerpt: true,
-        featuredImage: true,
-        readingTime: true,
-        publishedAt: true,
-        author: { select: { name: true, username: true } },
-        category: { select: { name: true, slug: true } },
-      },
-    });
-  } catch (e) {
-    console.error("Failed to fetch related articles:", e);
-  }
+  const relatedArticles = await getCachedRelatedArticles(article.id, article.categoryId);
 
   const validFeaturedImage = isValidImageUrl(article.featuredImage) ? article.featuredImage : undefined;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://creando-historias-beta.vercel.app";
