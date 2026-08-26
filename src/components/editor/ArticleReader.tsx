@@ -9,12 +9,12 @@ interface ArticleReaderProps {
   enableInArticleAds?: boolean;
 }
 
-const MAX_ADS_PER_PAGE = 16;
+const MAX_ADS_PER_PAGE = 2;
 
 /**
  * Client component that renders article HTML content with:
  * - Clean paragraph structure (<p> elements) for AdSense Auto-Ads.
- * - In-content ads interspersed between paragraphs.
+ * - In-content ads interspersed between paragraphs (max 2 per article for peak performance).
  * - Drop-cap styling for the first paragraph to enhance editorial aesthetics.
  */
 export default function ArticleReader({ content, className = "", enableInArticleAds = true }: ArticleReaderProps) {
@@ -38,11 +38,11 @@ export default function ArticleReader({ content, className = "", enableInArticle
         />
       );
 
-      // Intersperse horizontal banner ad after paragraph 1, 3, 5... (capped at 16 max ads)
-      const shouldInsertAd = (index === 0 || (index + 1) % 2 === 0) && insertedAdsCount < MAX_ADS_PER_PAGE;
+      // Intersperse horizontal banner ad after paragraph 2 and 6 (capped at 2 max in-article ads for ultra fast page load)
+      const shouldInsertAd = (index === 2 || index === 6) && insertedAdsCount < MAX_ADS_PER_PAGE;
       if (shouldInsertAd) {
         elements.push(
-          <div key={`ad-${index}`} className="not-prose my-10 w-full text-center">
+          <div key={`ad-${index}`} className="not-prose my-8 w-full text-center">
             <InContentAd />
           </div>
         );

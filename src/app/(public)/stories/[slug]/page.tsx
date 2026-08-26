@@ -132,6 +132,10 @@ export default async function StoryPage({ params }: Props) {
                     itemProp="image"
                     src={validFeaturedImage}
                     alt={article.title}
+                    loading="eager"
+                    // @ts-ignore
+                    fetchpriority="high"
+                    decoding="async"
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />

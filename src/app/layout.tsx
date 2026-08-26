@@ -1,7 +1,27 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
+import Script from "next/script";
 import NavigationProgress from "@/components/common/NavigationProgress";
+import { Inter, Outfit, Roboto_Slab } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
+});
+
+const robotoSlab = Roboto_Slab({
+  subsets: ["latin"],
+  variable: "--font-roboto-slab",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "CreandoHistorias – Plataforma Editorial Multiusuario",
@@ -27,17 +47,11 @@ export default function RootLayout({
   const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-6105500451798195";
 
   return (
-    <html lang="es" className="h-full scroll-smooth">
+    <html lang="es" className={`h-full scroll-smooth ${inter.variable} ${outfit.variable} ${robotoSlab.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Roboto+Slab:wght@400;600;700;800;900&display=swap"
-          rel="stylesheet"
-        />
-        <script
-          async
+        <Script
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClientId}`}
+          strategy="afterInteractive"
           crossOrigin="anonymous"
         />
       </head>
