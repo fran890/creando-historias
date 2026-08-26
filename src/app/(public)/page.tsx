@@ -166,7 +166,7 @@ export default async function HomePage() {
                               {art.author.name}
                             </Link>
                             <span>&bull;</span>
-                            <span>{art.publishedAt ? formatDistanceToNow(new Date(art.publishedAt), { addSuffix: true, locale: es }) : ""}</span>
+                            <span suppressHydrationWarning>{art.publishedAt ? formatDistanceToNow(new Date(art.publishedAt), { addSuffix: true, locale: es }) : ""}</span>
                             {art.category && (
                               <>
                                 <span>&bull;</span>

@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { X, ChevronDown, ChevronUp, Info, ExternalLink } from "lucide-react";
 
+import { pushAdSenseUnit } from "@/lib/adsense";
+
 interface StickyFloatingAdProps {
   slotId?: string;
 }
@@ -15,17 +17,9 @@ export default function StickyFloatingAd({ slotId }: StickyFloatingAdProps) {
   const isRealSlot = slotId && /^\d{10,}$/.test(slotId);
 
   useEffect(() => {
-    if (adClientId && isRealSlot && typeof window !== "undefined") {
-      const timer = setTimeout(() => {
-        try {
-          if (adRef.current && !adRef.current.getAttribute("data-adsbygoogle-status")) {
-            ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-          }
-        } catch (err) {
-          // Suppress AdSense TagError
-        }
-      }, 300);
-      return () => clearTimeout(timer);
+    if (adClientId && isRealSlot) {
+      const cleanup = pushAdSenseUnit(adRef.current);
+      return cleanup;
     }
   }, [adClientId, isRealSlot]);
 

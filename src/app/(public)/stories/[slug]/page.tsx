@@ -179,9 +179,9 @@ export default async function StoryPage({ params }: Props) {
 
                     <div className="flex items-center space-x-4 text-xs font-semibold flex-wrap gap-y-2">
                       {article.publishedAt && (
-                        <span className="flex items-center space-x-1.5">
+                        <span className="flex items-center space-x-1.5" suppressHydrationWarning>
                           <Calendar className="w-4 h-4 text-gray-400" />
-                          <time itemProp="datePublished" dateTime={new Date(article.publishedAt).toISOString()}>
+                          <time itemProp="datePublished" dateTime={new Date(article.publishedAt).toISOString()} suppressHydrationWarning>
                             {format(new Date(article.publishedAt), "dd MMMM, yyyy", { locale: es })}
                           </time>
                         </span>
