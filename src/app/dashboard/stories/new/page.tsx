@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import TiptapEditor from "@/components/editor/TiptapEditor";
 import ArticleReader from "@/components/editor/ArticleReader";
 import ImageUploaderInput from "@/components/common/ImageUploaderInput";
-import { ArrowLeft, Save, Send, Eye } from "lucide-react";
+import { ArrowLeft, Save, Send, Eye, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function NewStoryPage() {
@@ -21,6 +21,7 @@ export default function NewStoryPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [imageUploadState, setImageUploadState] = useState({ isUploading: false, error: "" });
+  const [canPublishDirectly, setCanPublishDirectly] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -30,9 +31,17 @@ export default function NewStoryPage() {
         if (Array.isArray(data)) setCategories(data);
       })
       .catch(() => {});
+
+    fetch("/api/auth/session", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        const user = data?.user;
+        setCanPublishDirectly(user?.role === "ADMIN" || user?.autoApprove === true);
+      })
+      .catch(() => {});
   }, []);
 
-  const handleSave = async (status: "DRAFT" | "PENDING_REVIEW") => {
+  const handleSave = async (status: "DRAFT" | "PENDING_REVIEW" | "PUBLISHED") => {
     if (!title || !content) {
       setError("El título y el contenido son obligatorios");
       return;
@@ -81,6 +90,9 @@ export default function NewStoryPage() {
     }
   };
 
+  const publishTargetStatus = canPublishDirectly ? "PUBLISHED" : "PENDING_REVIEW";
+  const publishButtonLabel = canPublishDirectly ? "Publicar" : "Enviar a Revisión";
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
@@ -109,11 +121,11 @@ export default function NewStoryPage() {
           <button
             type="button"
             disabled={saving || imageUploadState.isUploading || Boolean(imageUploadState.error)}
-            onClick={() => handleSave("PENDING_REVIEW")}
+            onClick={() => handleSave(publishTargetStatus)}
             className="inline-flex items-center space-x-1.5 px-4 py-2 bg-gradient-to-r from-brand-500 to-brand-800 text-white text-xs font-bold rounded-xl hover:opacity-90 transition shadow-sm"
           >
-            <Send className="w-4 h-4" />
-            <span>Enviar a Revisión</span>
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            <span>{saving ? "Cargando ..." : publishButtonLabel}</span>
           </button>
         </div>
       </div>

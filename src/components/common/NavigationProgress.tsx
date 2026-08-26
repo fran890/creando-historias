@@ -96,7 +96,7 @@ export default function NavigationProgress() {
         <div className="fixed inset-0 z-[9998] bg-black/15 dark:bg-black/40 backdrop-blur-[1px] flex items-center justify-center cursor-wait animate-fade-in">
           <div className="bg-white/95 dark:bg-gray-900/95 border border-gray-200 dark:border-gray-800 px-5 py-3.5 rounded-2xl shadow-2xl flex items-center space-x-3 text-xs font-bold text-gray-900 dark:text-white">
             <Loader2 className="w-4 h-4 text-brand-500 animate-spin" />
-            <span>Cargando publicación...</span>
+            <span>Cargando ...</span>
           </div>
         </div>
       )}

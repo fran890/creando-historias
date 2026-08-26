@@ -5,16 +5,17 @@ import { useRouter } from "next/navigation";
 import TiptapEditor from "@/components/editor/TiptapEditor";
 import ArticleReader from "@/components/editor/ArticleReader";
 import ImageUploaderInput from "@/components/common/ImageUploaderInput";
-import { ArrowLeft, Save, Send, Eye, Trash2 } from "lucide-react";
+import { ArrowLeft, Save, Send, Eye, Trash2, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 interface Props {
   article: any;
   categories: any[];
   userRole: string;
+  canPublishDirectly: boolean;
 }
 
-export default function EditStoryClient({ article, categories, userRole }: Props) {
+export default function EditStoryClient({ article, categories, userRole, canPublishDirectly }: Props) {
   const [title, setTitle] = useState(article.title);
   const [excerpt, setExcerpt] = useState(article.excerpt || "");
   const [content, setContent] = useState(article.content);
@@ -28,6 +29,8 @@ export default function EditStoryClient({ article, categories, userRole }: Props
   const [error, setError] = useState("");
   const [imageUploadState, setImageUploadState] = useState({ isUploading: false, error: "" });
   const router = useRouter();
+  const publishTargetStatus = canPublishDirectly ? "PUBLISHED" : "PENDING_REVIEW";
+  const publishButtonLabel = canPublishDirectly ? "Publicar" : "Enviar a Revisión";
 
   const handleUpdate = async (targetStatus?: string) => {
     if (!title || !content) {
@@ -141,11 +144,11 @@ export default function EditStoryClient({ article, categories, userRole }: Props
           <button
             type="button"
             disabled={saving || imageUploadState.isUploading || Boolean(imageUploadState.error)}
-            onClick={() => handleUpdate("PENDING_REVIEW")}
+            onClick={() => handleUpdate(publishTargetStatus)}
             className="inline-flex items-center space-x-1.5 px-4 py-2 bg-gradient-to-r from-brand-500 to-brand-800 text-white text-xs font-bold rounded-xl hover:opacity-90 transition shadow-sm"
           >
-            <Send className="w-4 h-4" />
-            <span>Enviar a Revisión</span>
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            <span>{saving ? "Cargando ..." : publishButtonLabel}</span>
           </button>
         </div>
       </div>

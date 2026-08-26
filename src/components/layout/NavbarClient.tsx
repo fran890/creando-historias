@@ -1,16 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, Shield, PenTool, LogOut, Search, Menu, X, User, Sparkles } from "lucide-react";
 import { AuthSession } from "@/lib/auth";
 
 interface NavbarClientProps {
   user: AuthSession | null;
+  hydrateSession?: boolean;
 }
 
-export default function NavbarClient({ user }: NavbarClientProps) {
+export default function NavbarClient({ user, hydrateSession = false }: NavbarClientProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<AuthSession | null>(user);
+
+  useEffect(() => {
+    if (!hydrateSession || user) return;
+
+    fetch("/api/auth/session", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.user) setCurrentUser(data.user);
+      })
+      .catch(() => {});
+  }, [hydrateSession, user]);
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 dark:bg-[#090d16]/90 backdrop-blur-xl border-b border-gray-200/80 dark:border-gray-800/80 shadow-xs transition-colors duration-200">
@@ -36,9 +49,9 @@ export default function NavbarClient({ user }: NavbarClientProps) {
             <Search className="w-4 h-4" />
           </Link>
 
-          {user ? (
+          {currentUser ? (
             <div className="flex items-center space-x-3">
-              {user.role === "ADMIN" && (
+              {currentUser.role === "ADMIN" && (
                 <Link
                   href="/admin"
                   prefetch={false}
@@ -123,7 +136,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
               <span>Buscar historias</span>
             </Link>
 
-            {user ? (
+            {currentUser ? (
               <>
                 <Link
                   href="/dashboard"
@@ -143,7 +156,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
                   <span>Mi Perfil & Avatar</span>
                 </Link>
 
-                {user.role === "ADMIN" && (
+                {currentUser.role === "ADMIN" && (
                   <Link
                     href="/admin"
                     onClick={() => setMobileMenuOpen(false)}
@@ -161,7 +174,7 @@ export default function NavbarClient({ user }: NavbarClientProps) {
                       className="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-2xl text-sm font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40"
                     >
                       <LogOut className="w-4 h-4" />
-                      <span>Cerrar sesión ({user.name})</span>
+                      <span>Cerrar sesión ({currentUser.name})</span>
                     </button>
                   </form>
                 </div>

@@ -22,7 +22,20 @@ export default async function EditStoryPage({ params }: Props) {
     redirect("/dashboard/stories");
   }
 
-  const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
+  const [categories, dbUser] = await Promise.all([
+    prisma.category.findMany({ orderBy: { name: "asc" } }),
+    prisma.user.findUnique({
+      where: { id: user.userId },
+      select: { autoApprove: true },
+    }),
+  ]);
 
-  return <EditStoryClient article={article} categories={categories} userRole={user.role} />;
+  return (
+    <EditStoryClient
+      article={article}
+      categories={categories}
+      userRole={user.role}
+      canPublishDirectly={user.role === "ADMIN" || dbUser?.autoApprove === true}
+    />
+  );
 }
