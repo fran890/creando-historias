@@ -31,6 +31,27 @@ export async function PATCH(req: Request) {
       select: { id: true, name: true, username: true, email: true, role: true, avatarUrl: true, bio: true },
     });
 
+    const publishedArticles = await prisma.article.findMany({
+      where: { authorId: user.userId, status: "PUBLISHED" },
+      select: { slug: true },
+    });
+
+    try {
+      const { revalidatePath, revalidateTag } = await import("next/cache");
+
+      revalidatePath("/");
+      revalidatePath(`/author/${updatedUser.username}`);
+      revalidateTag("articles-homepage");
+      revalidateTag("articles-all");
+
+      for (const article of publishedArticles) {
+        revalidatePath(`/stories/${article.slug}`);
+        revalidateTag(`article-${article.slug}`);
+      }
+    } catch (err) {
+      console.warn("Profile revalidation failed:", err);
+    }
+
     return NextResponse.json({
       success: true,
       user: updatedUser,
