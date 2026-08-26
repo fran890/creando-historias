@@ -2,7 +2,6 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/auth";
 import ArticleReader from "@/components/editor/ArticleReader";
 import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
 import InContentAd from "@/components/ads/InContentAd";
@@ -65,21 +64,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function StoryPage({ params }: Props) {
-  const [currentUser, article] = await Promise.all([
-    getCurrentUser(),
-    getCachedArticleBySlug(params.slug),
-  ]);
+  const article = await getCachedArticleBySlug(params.slug);
 
-  if (!article) {
+  if (!article || article.status !== "PUBLISHED") {
     notFound();
-  }
-
-  if (article.status !== "PUBLISHED") {
-    const isOwner = currentUser?.userId === article.author.id;
-    const isAdmin = currentUser?.role === "ADMIN";
-    if (!isOwner && !isAdmin) {
-      notFound();
-    }
   }
 
   const relatedArticles = await getCachedRelatedArticles(article.id, article.categoryId);
@@ -202,12 +190,6 @@ export default async function StoryPage({ params }: Props) {
                         <Clock className="w-4 h-4 text-gray-400" />
                         <span>{article.readingTime} min lectura</span>
                       </span>
-                      {currentUser && (
-                        <span className="flex items-center space-x-1.5">
-                          <Eye className="w-4 h-4 text-gray-400" />
-                          <span>{article.viewCount} vistas</span>
-                        </span>
-                      )}
                     </div>
                   </div>
                 </header>

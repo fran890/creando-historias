@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/auth";
 import { Tag as TagIcon, Eye, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Props {
@@ -18,7 +17,6 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function TagPage({ params, searchParams }: Props) {
-  const currentUser = await getCurrentUser();
   const page = Math.max(1, parseInt(searchParams?.page || "1", 10));
   const skip = (page - 1) * ITEMS_PER_PAGE;
 
@@ -100,12 +98,7 @@ export default async function TagPage({ params, searchParams }: Props) {
                         <Clock className="w-3 h-3 text-gray-400" />
                         <span>{art.readingTime} min</span>
                       </span>
-                      {currentUser && (
-                        <span className="flex items-center space-x-1">
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>{art.viewCount}</span>
-                        </span>
-                      )}
+
                     </div>
                   </div>
                 </div>

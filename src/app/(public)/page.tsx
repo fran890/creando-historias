@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { getCurrentUser } from "@/lib/auth";
 import { getCachedHomePageArticles } from "@/lib/cache/articles";
 import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
 import InContentAd from "@/components/ads/InContentAd";
@@ -15,10 +14,7 @@ function isValidImageUrl(url: string | null | undefined): url is string {
 }
 
 export default async function HomePage() {
-  const [currentUser, homeData] = await Promise.all([
-    getCurrentUser(),
-    getCachedHomePageArticles(),
-  ]);
+  const homeData = await getCachedHomePageArticles();
 
   const { featuredArticles, recentArticles, categories, totalPublishedCount } = homeData;
 

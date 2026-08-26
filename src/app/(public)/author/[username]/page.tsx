@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/auth";
 import SidebarAd from "@/components/ads/SidebarAd";
 import NativeMatchedAd from "@/components/ads/NativeMatchedAd";
 import StickyFloatingAd from "@/components/ads/StickyFloatingAd";
@@ -24,7 +23,6 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function AuthorProfilePage({ params, searchParams }: Props) {
-  const currentUser = await getCurrentUser();
   const page = Math.max(1, parseInt(searchParams?.page || "1", 10));
   const skip = (page - 1) * ITEMS_PER_PAGE;
 
@@ -115,12 +113,10 @@ export default async function AuthorProfilePage({ params, searchParams }: Props)
                   <BookOpen className="w-4 h-4" />
                   <span>{totalPublishedCount} Historias Publicadas</span>
                 </span>
-                {currentUser && (
-                  <span className="inline-flex items-center space-x-1.5 bg-white/10 px-3.5 py-1.5 rounded-xl border border-white/20">
-                    <Eye className="w-4 h-4" />
-                    <span>{author._count.views} Vistas Acumuladas</span>
-                  </span>
-                )}
+                <span className="inline-flex items-center space-x-1.5 bg-white/10 px-3.5 py-1.5 rounded-xl border border-white/20">
+                  <Eye className="w-4 h-4" />
+                  <span>{author._count.views} Vistas Acumuladas</span>
+                </span>
               </div>
             </div>
           </div>
@@ -185,12 +181,7 @@ export default async function AuthorProfilePage({ params, searchParams }: Props)
                                   <Clock className="w-3.5 h-3.5 text-gray-400" />
                                   <span>{art.readingTime} min</span>
                                 </span>
-                                {currentUser && (
-                                  <span className="flex items-center space-x-1">
-                                    <Eye className="w-3.5 h-3.5 text-gray-400" />
-                                    <span>{art.viewCount}</span>
-                                  </span>
-                                )}
+
                               </div>
                             </div>
                           </div>
