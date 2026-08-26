@@ -86,7 +86,7 @@ export async function getCachedRelatedArticles(articleId: string, categoryId: st
   const getRelated = unstable_cache(
     async () => {
       try {
-        return await prisma.article.findMany({
+        const relatedArticles = await prisma.article.findMany({
           where: {
             status: "PUBLISHED",
             NOT: { id: articleId },
@@ -106,6 +106,13 @@ export async function getCachedRelatedArticles(articleId: string, categoryId: st
             category: { select: { name: true, slug: true } },
           },
         });
+
+        return relatedArticles.map((article) => ({
+          ...article,
+          featuredImage: article.featuredImage?.startsWith("data:")
+            ? stripBase64DataUris(article.featuredImage)
+            : article.featuredImage,
+        }));
       } catch (err) {
         console.error("Failed to fetch related articles:", err);
         return [];

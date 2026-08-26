@@ -23,7 +23,7 @@ export const dynamic = "force-static";
 export const dynamicParams = true;
 
 function isValidImageUrl(url: string | null | undefined): url is string {
-  return !!url && (url.startsWith("http://") || url.startsWith("https://"));
+  return !!url && (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("/"));
 }
 
 function stripBase64FromHtml(html: string): string {
@@ -287,8 +287,10 @@ export default async function StoryPage({ params }: Props) {
                         {rel.featuredImage && isValidImageUrl(rel.featuredImage) && (
                           <div className="h-36 overflow-hidden bg-gray-200 dark:bg-gray-800">
                             <img
-                              src={rel.featuredImage}
+                              src={getOptimizedImageUrl(rel.featuredImage, 400, 75)}
                               alt={rel.title}
+                              loading="lazy"
+                              decoding="async"
                               className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                             />
                           </div>
