@@ -13,6 +13,7 @@ interface NavbarClientProps {
 export default function NavbarClient({ user, hydrateSession = false }: NavbarClientProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<AuthSession | null>(user);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     if (!hydrateSession || user) return;
@@ -24,6 +25,19 @@ export default function NavbarClient({ user, hydrateSession = false }: NavbarCli
       })
       .catch(() => {});
   }, [hydrateSession, user]);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        redirect: "manual",
+      });
+    } finally {
+      setCurrentUser(null);
+      window.location.href = "/";
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 dark:bg-[#090d16]/90 backdrop-blur-xl border-b border-gray-200/80 dark:border-gray-800/80 shadow-xs transition-colors duration-200">
@@ -71,15 +85,15 @@ export default function NavbarClient({ user, hydrateSession = false }: NavbarCli
                 <span>Dashboard</span>
               </Link>
 
-              <form action="/api/auth/logout" method="POST">
-                <button
-                  type="submit"
-                  className="p-2.5 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800/60 transition"
-                  title="Cerrar sesión"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </form>
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="p-2.5 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800/60 transition disabled:opacity-60"
+                title="Cerrar sesión"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
             </div>
           ) : (
             <Link
@@ -168,15 +182,15 @@ export default function NavbarClient({ user, hydrateSession = false }: NavbarCli
                 )}
 
                 <div className="pt-2 border-t border-gray-200 dark:border-gray-800">
-                  <form action="/api/auth/logout" method="POST">
-                    <button
-                      type="submit"
-                      className="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-2xl text-sm font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      <span>Cerrar sesión ({currentUser.name})</span>
-                    </button>
-                  </form>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-2xl text-sm font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 disabled:opacity-60"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Cerrar sesión ({currentUser.name})</span>
+                  </button>
                 </div>
               </>
             ) : (

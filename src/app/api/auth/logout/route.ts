@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
-import { clearSessionCookie } from "@/lib/auth";
 
-export async function POST() {
-  await clearSessionCookie();
-  return NextResponse.redirect(new URL("/login", process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"));
+export async function POST(req: Request) {
+  const response = NextResponse.redirect(new URL("/", req.url));
+
+  response.cookies.set("auth_token", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
+
+  return response;
 }
