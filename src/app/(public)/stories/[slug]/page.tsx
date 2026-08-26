@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import ArticleReader from "@/components/editor/ArticleReader";
-import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
 import InContentAd from "@/components/ads/InContentAd";
 import SidebarAd from "@/components/ads/SidebarAd";
 import CopyLinkButton from "@/components/common/CopyLinkButton";
@@ -114,9 +113,6 @@ export default async function StoryPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Full-width Header Ad */}
-        <HeaderBannerAd />
-
         {/* Main 2-Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Article Column */}
@@ -204,10 +200,7 @@ export default async function StoryPage({ params }: Props) {
                   <ArticleReader content={stripBase64FromHtml(article.content)} />
                 </div>
 
-                {/* Post-article Ad */}
-                <InContentAd />
 
-                {/* Tags Footer */}
                 {article.tags.length > 0 && (
                   <div className="pt-6 border-t border-gray-100 dark:border-gray-800/80 flex items-center flex-wrap gap-2">
                     <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Etiquetas:</span>
@@ -225,8 +218,6 @@ export default async function StoryPage({ params }: Props) {
               </div>
             </article>
 
-            {/* Ad between article and recommendations */}
-            <InContentAd />
 
             {/* Recommendations Grid */}
             {relatedArticles.length > 0 && (
@@ -283,7 +274,7 @@ export default async function StoryPage({ params }: Props) {
                   ))}
                 </div>
 
-                {relatedArticles.length > 3 && <InContentAd />}
+
 
                 {relatedArticles.length > 3 && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -365,9 +356,7 @@ export default async function StoryPage({ params }: Props) {
                 </Link>
               </div>
 
-              <div className="hidden lg:block">
-                <InContentAd format="rectangle" />
-              </div>
+
             </div>
           </aside>
         </div>

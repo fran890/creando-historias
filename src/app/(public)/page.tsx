@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { getCachedHomePageArticles } from "@/lib/cache/articles";
-import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
-import InContentAd from "@/components/ads/InContentAd";
 import SidebarAd from "@/components/ads/SidebarAd";
 import { Clock, Eye, User, Sparkles, Folder, TrendingUp, BookOpen, ArrowRight, Zap } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -49,8 +47,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Header Banner Ad */}
-      <HeaderBannerAd />
+
 
       {/* Categories Bar */}
       {categories.length > 0 && (
@@ -131,8 +128,6 @@ export default async function HomePage() {
             </section>
           )}
 
-          {/* In-Content Ad Placement */}
-          <InContentAd />
 
           {/* Recent Articles Feed */}
           <section className="space-y-5">
@@ -192,29 +187,18 @@ export default async function HomePage() {
                       </div>
                     </article>
 
-                    {/* In-feed ad placements */}
-                    {(idx === 2 || idx === 6) && (
-                      <div className="mt-4">
-                        <InContentAd />
-                      </div>
-                    )}
+
                   </div>
                 ))}
               </div>
             )}
           </section>
-
-          {/* Bottom Ad */}
-          <InContentAd />
         </div>
 
         {/* Sidebar Column (4 cols) */}
         <aside className="lg:col-span-4">
           <div className="lg:sticky lg:top-20 space-y-6">
             <SidebarAd />
-            <div className="hidden lg:block">
-              <InContentAd format="rectangle" />
-            </div>
           </div>
         </aside>
       </div>
