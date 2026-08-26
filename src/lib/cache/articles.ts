@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { stripBase64DataUris } from "@/lib/images";
 
 /**
  * High-performance cached article retriever by slug.
@@ -8,7 +9,7 @@ import { prisma } from "@/lib/prisma";
 export async function getCachedArticleBySlug(slug: string) {
   const getArticle = unstable_cache(
     async () => {
-      return prisma.article.findUnique({
+      const article = await prisma.article.findUnique({
         where: { slug },
         select: {
           id: true,
@@ -52,6 +53,17 @@ export async function getCachedArticleBySlug(slug: string) {
           },
         },
       });
+
+      if (!article) return null;
+
+      // Clean massive embedded Base64 images (>200 chars) to prevent serving 3MB HTML pages
+      return {
+        ...article,
+        content: stripBase64DataUris(article.content),
+        featuredImage: article.featuredImage?.startsWith("data:")
+          ? stripBase64DataUris(article.featuredImage)
+          : article.featuredImage,
+      };
     },
     [`article-by-slug-${slug}`],
     {
