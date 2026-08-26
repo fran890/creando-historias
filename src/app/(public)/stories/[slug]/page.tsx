@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
 import { getCachedArticleBySlug, getCachedRelatedArticles } from "@/lib/cache/articles";
+import { getOptimizedImageUrl } from "@/lib/images";
 
 interface Props {
   params: { slug: string };
@@ -130,7 +131,7 @@ export default async function StoryPage({ params }: Props) {
                 <div className="w-full h-64 sm:h-96 bg-gray-100 dark:bg-gray-800 relative">
                   <img
                     itemProp="image"
-                    src={validFeaturedImage}
+                    src={getOptimizedImageUrl(validFeaturedImage, 1200, 75)}
                     alt={article.title}
                     loading="eager"
                     // @ts-ignore
@@ -254,8 +255,10 @@ export default async function StoryPage({ params }: Props) {
                       {rel.featuredImage && isValidImageUrl(rel.featuredImage) && (
                         <div className="h-36 overflow-hidden bg-gray-200 dark:bg-gray-800">
                           <img
-                            src={rel.featuredImage}
+                            src={getOptimizedImageUrl(rel.featuredImage, 400, 75)}
                             alt={rel.title}
+                            loading="lazy"
+                            decoding="async"
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                           />
                         </div>

@@ -2,6 +2,7 @@
 
 import React from "react";
 import InContentAd from "@/components/ads/InContentAd";
+import { optimizeHtmlImages } from "@/lib/images";
 
 interface ArticleReaderProps {
   content: string;
@@ -18,21 +19,28 @@ const MAX_ADS_PER_PAGE = 2;
  * - Drop-cap styling for the first paragraph to enhance editorial aesthetics.
  */
 export default function ArticleReader({ content, className = "", enableInArticleAds = true }: ArticleReaderProps) {
-  if (enableInArticleAds && content.includes("</p>")) {
-    const rawParagraphs = content.split("</p>");
+  const optimizedContent = optimizeHtmlImages(content);
+
+  if (enableInArticleAds && optimizedContent.includes("</p>")) {
+    const rawParagraphs = optimizedContent.split("</p>");
     const paragraphs = rawParagraphs.filter((p) => p.trim().length > 0);
     const elements: React.ReactNode[] = [];
     let insertedAdsCount = 0;
 
     paragraphs.forEach((p, index) => {
-      const fullHtml = p + "</p>";
+      let fullHtml = p.trim();
+      if (!fullHtml.startsWith("<p")) {
+        fullHtml = `<p>${fullHtml}</p>`;
+      } else {
+        fullHtml = `${fullHtml}</p>`;
+      }
       const isFirstParagraph = index === 0;
 
       elements.push(
-        <p
+        <div
           key={`p-${index}`}
           className={`my-5 font-sans text-base sm:text-lg text-gray-800 dark:text-gray-200 leading-relaxed sm:leading-relaxed ${
-            isFirstParagraph ? "first-letter:text-4xl first-letter:font-serif first-letter:font-extrabold first-letter:text-brand-500 first-letter:mr-2 first-letter:float-left first-letter:leading-none" : ""
+            isFirstParagraph ? "[&>p:first-of-type]:first-letter:text-4xl [&>p:first-of-type]:first-letter:font-serif [&>p:first-of-type]:first-letter:font-extrabold [&>p:first-of-type]:first-letter:text-brand-500 [&>p:first-of-type]:first-letter:mr-2 [&>p:first-of-type]:first-letter:float-left [&>p:first-of-type]:first-letter:leading-none" : ""
           }`}
           dangerouslySetInnerHTML={{ __html: fullHtml }}
         />
