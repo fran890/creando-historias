@@ -29,6 +29,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Creando-Historias Team" }],
   icons: {
     icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
   },
 };
 
