@@ -23,6 +23,7 @@ interface UserProfileProps {
 
 export default function ProfileForm({ user }: UserProfileProps) {
   const [name, setName] = useState(user.name);
+  const [username, setUsername] = useState(user.username);
   const [bio, setBio] = useState(user.bio || "");
   const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl || "");
   const [isUploading, setIsUploading] = useState(false);
@@ -75,12 +76,13 @@ export default function ProfileForm({ user }: UserProfileProps) {
       const res = await fetch("/api/user/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, bio, avatarUrl }),
+        body: JSON.stringify({ name, username, bio, avatarUrl }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al guardar el perfil");
 
+      setUsername(data.user.username);
       setMessage({ type: "success", text: "Perfil actualizado correctamente" });
     } catch (err: any) {
       setMessage({ type: "error", text: err.message || "Error al guardar" });
@@ -176,6 +178,28 @@ export default function ProfileForm({ user }: UserProfileProps) {
           required
           className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
         />
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+          Nombre de usuario publico
+        </label>
+        <div className="relative">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-bold">@</span>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            minLength={3}
+            maxLength={30}
+            pattern="[A-Za-z0-9_-]+"
+            className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+          />
+        </div>
+        <p className="text-[11px] text-gray-400">
+          Este nombre se usa en tu URL publica: /author/{username || "usuario"}
+        </p>
       </div>
 
       <div className="space-y-2">
