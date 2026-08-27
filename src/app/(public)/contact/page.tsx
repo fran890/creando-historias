@@ -32,7 +32,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <p className="opacity-70 text-[10px] uppercase tracking-wider">Email Oficial</p>
-                <p className="text-sm font-bold">soporte@creandohistorias.com</p>
+                <p className="text-sm font-bold">soporte@creando-historias.com</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
