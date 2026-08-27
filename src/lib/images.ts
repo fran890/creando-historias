@@ -63,3 +63,17 @@ export function optimizeHtmlImages(html: string, width: number = 800, quality: n
     return `<img ${p1}src="${optimizedSrc}" loading="lazy" decoding="async" ${p2}>`;
   });
 }
+
+export function extractImageUrlsFromHtml(html: string | null | undefined): string[] {
+  if (!html) return [];
+
+  const urls = new Set<string>();
+  const imageSrcPattern = /<img\s+[^>]*src=["']([^"']+)["'][^>]*>/gi;
+  let match: RegExpExecArray | null;
+
+  while ((match = imageSrcPattern.exec(html)) !== null) {
+    if (match[1]) urls.add(match[1]);
+  }
+
+  return Array.from(urls);
+}

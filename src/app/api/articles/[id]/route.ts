@@ -4,7 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { ArticleSchema } from "@/lib/validations/article";
 import { validateArticleOwnership, sanitizeArticleInputForUserAsync } from "@/lib/security/ownership";
 import { calculateReadingTime } from "@/lib/security/sanitizer";
-import { stripBase64DataUris } from "@/lib/images";
+import { extractImageUrlsFromHtml, stripBase64DataUris } from "@/lib/images";
+import { deleteFromCloudflareR2ByUrl } from "@/lib/storage/r2";
 import { recordAuditLog } from "@/services/audit.service";
 import { z } from "zod";
 
@@ -186,7 +187,22 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       return NextResponse.json({ error: ownership.reason }, { status });
     }
 
+    const linkedImageUrls = Array.from(
+      new Set([
+        ownership.article.featuredImage,
+        ...extractImageUrlsFromHtml(ownership.article.content),
+      ].filter(Boolean) as string[])
+    );
+
     await prisma.article.delete({ where: { id: params.id } });
+
+    const imageDeleteResults = await Promise.allSettled(
+      linkedImageUrls.map((url) => deleteFromCloudflareR2ByUrl(url))
+    );
+    const failedImageDeletes = imageDeleteResults.filter((result) => result.status === "rejected");
+    if (failedImageDeletes.length > 0) {
+      console.warn(`Failed to delete ${failedImageDeletes.length} linked R2 image(s) for article ${params.id}`);
+    }
 
     await recordAuditLog({
       actorId: user!.userId,

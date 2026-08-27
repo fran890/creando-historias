@@ -74,6 +74,99 @@
   }
 }
 
+@layer components {
+  .story-editor-content {
+    min-height: 350px;
+    caret-color: #e91e63;
+  }
+
+  .story-editor-content p {
+    margin: 0.75rem 0;
+  }
+
+  .story-editor-content h1 {
+    margin: 1.25rem 0 0.75rem;
+    font-family: 'Roboto Slab', serif;
+    font-size: 2.25rem;
+    line-height: 1.15;
+    font-weight: 900;
+    color: #111827;
+  }
+
+  .story-editor-content h2 {
+    margin: 1.15rem 0 0.65rem;
+    font-family: 'Roboto Slab', serif;
+    font-size: 1.65rem;
+    line-height: 1.2;
+    font-weight: 800;
+    color: #111827;
+  }
+
+  .story-editor-content ul,
+  .story-editor-content ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .story-editor-content ul {
+    list-style: disc;
+  }
+
+  .story-editor-content ol {
+    list-style: decimal;
+  }
+
+  .story-editor-content li {
+    margin: 0.35rem 0;
+    padding-left: 0.15rem;
+  }
+
+  .story-editor-content blockquote {
+    margin: 1rem 0;
+    border-left: 4px solid #e91e63;
+    padding: 0.75rem 1rem;
+    background: rgba(233, 30, 99, 0.06);
+    color: #374151;
+    font-style: italic;
+  }
+
+  .story-editor-content a {
+    color: #c2185b;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .story-editor-content img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0;
+    border-radius: 0.75rem;
+  }
+
+  .story-editor-content .is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    color: #9ca3af;
+    pointer-events: none;
+  }
+
+  .dark .story-editor-content h1,
+  .dark .story-editor-content h2 {
+    color: #f9fafb;
+  }
+
+  .dark .story-editor-content blockquote {
+    background: rgba(233, 30, 99, 0.12);
+    color: #d1d5db;
+  }
+
+  .dark .story-editor-content a {
+    color: #f472b6;
+  }
+}
+
 @layer utilities {
   /* Glassmorphism Panels */
   .glass-panel {

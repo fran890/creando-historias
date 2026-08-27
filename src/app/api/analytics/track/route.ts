@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { trackArticleView } from "@/services/analytics.service";
+import { getCurrentUser } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
@@ -8,6 +9,11 @@ export async function POST(req: Request) {
 
     if (!articleId || !authorId) {
       return NextResponse.json({ error: "Parámetros requeridos faltantes" }, { status: 400 });
+    }
+
+    const viewer = await getCurrentUser();
+    if (viewer?.role === "ADMIN") {
+      return NextResponse.json({ success: true, skipped: true, reason: "ADMIN_VIEW" });
     }
 
     const userAgent = req.headers.get("user-agent") || "";

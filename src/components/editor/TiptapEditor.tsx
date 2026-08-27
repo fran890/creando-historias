@@ -28,7 +28,7 @@ export default function TiptapEditor({ content, onChange, placeholder = "Escribe
     },
     editorProps: {
       attributes: {
-        class: "prose prose-lg dark:prose-invert max-w-none focus:outline-none min-h-[350px] p-4 text-gray-900 dark:text-gray-100",
+        class: "story-editor-content prose prose-lg dark:prose-invert max-w-none focus:outline-none min-h-[350px] p-4 text-gray-900 dark:text-gray-100",
       },
     },
   });

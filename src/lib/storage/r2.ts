@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 
 const accountId = process.env.R2_ACCOUNT_ID;
 const accessKeyId = process.env.R2_ACCESS_KEY_ID;
@@ -57,4 +57,46 @@ export async function uploadToCloudflareR2({
   const publicUrl = `${baseUrl}/${uniqueKey}`;
 
   return { url: publicUrl };
+}
+
+function getConfiguredPublicBaseUrl(): string | null {
+  if (publicDomain) return publicDomain.replace(/\/$/, "");
+  if (bucketName && accountId) return `https://${bucketName}.${accountId}.r2.dev`;
+  return null;
+}
+
+export function getCloudflareR2ObjectKeyFromUrl(url: string | null | undefined): string | null {
+  if (!url || url.startsWith("data:") || url.startsWith("/")) return null;
+
+  const baseUrl = getConfiguredPublicBaseUrl();
+  if (!baseUrl) return null;
+
+  try {
+    const parsedUrl = new URL(url);
+    const parsedBase = new URL(baseUrl);
+
+    if (parsedUrl.origin !== parsedBase.origin) return null;
+
+    const key = decodeURIComponent(parsedUrl.pathname.replace(/^\/+/, ""));
+    return key || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function deleteFromCloudflareR2ByUrl(url: string | null | undefined): Promise<boolean> {
+  const key = getCloudflareR2ObjectKeyFromUrl(url);
+
+  if (!key || !isR2Configured || !r2Client) {
+    return false;
+  }
+
+  await r2Client.send(
+    new DeleteObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+    })
+  );
+
+  return true;
 }
