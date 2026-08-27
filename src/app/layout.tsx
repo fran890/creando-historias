@@ -28,8 +28,7 @@ export const metadata: Metadata = {
   keywords: ["historias", "artículos", "blog", "editorial", "lectura", "creadores"],
   authors: [{ name: "Creando-Historias Team" }],
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
+    icon: "/logo-sin-fondo.png"
   },
 };
 
