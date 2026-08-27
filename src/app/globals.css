@@ -167,6 +167,66 @@
   }
 }
 
+.admin-light-theme {
+  background: #f9fafb;
+  color: #111827;
+}
+
+.admin-light-theme header {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(229, 231, 235, 0.9) !important;
+}
+
+.admin-light-theme .bg-gray-950,
+.admin-light-theme .bg-gray-900,
+.admin-light-theme .bg-gray-900\/60,
+.admin-light-theme .bg-gray-900\/98 {
+  background-color: #ffffff !important;
+}
+
+.admin-light-theme .bg-gray-800,
+.admin-light-theme .bg-gray-800\/40,
+.admin-light-theme .bg-gray-800\/50,
+.admin-light-theme .bg-gray-800\/60,
+.admin-light-theme .bg-gray-800\/80 {
+  background-color: #f3f4f6 !important;
+}
+
+.admin-light-theme .border-gray-800,
+.admin-light-theme .border-gray-800\/50,
+.admin-light-theme .border-gray-700 {
+  border-color: #e5e7eb !important;
+}
+
+.admin-light-theme .divide-gray-800 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #e5e7eb !important;
+}
+
+.admin-light-theme .text-gray-100,
+.admin-light-theme .text-gray-200,
+.admin-light-theme .text-gray-300 {
+  color: #374151 !important;
+}
+
+.admin-light-theme .text-gray-400 {
+  color: #6b7280 !important;
+}
+
+.admin-light-theme .text-white:not(.bg-blue-600):not(.bg-green-600):not(.bg-emerald-600):not(.bg-red-600):not(.bg-red-600\/80):not(.bg-amber-600\/80):not(.bg-gradient-to-r):not(.bg-gradient-to-tr) {
+  color: #111827 !important;
+}
+
+.admin-light-theme input,
+.admin-light-theme textarea,
+.admin-light-theme select {
+  color: #111827;
+}
+
+.admin-light-theme input::placeholder,
+.admin-light-theme textarea::placeholder {
+  color: #9ca3af;
+}
+
 @layer utilities {
   /* Glassmorphism Panels */
   .glass-panel {

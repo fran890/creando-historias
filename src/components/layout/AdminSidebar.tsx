@@ -41,16 +41,16 @@ export default function AdminSidebar() {
   return (
     <>
       {/* Mobile Sticky Navigation Bar (< lg screens) */}
-      <div className="lg:hidden sticky top-16 z-40 w-full bg-gray-900/98 backdrop-blur-md border-b border-gray-800 px-4 py-2.5 flex items-center justify-between shadow-md">
+      <div className="lg:hidden sticky top-16 z-40 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 px-4 py-2.5 flex items-center justify-between shadow-sm">
         <div className="flex items-center space-x-2">
-          <div className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg bg-brand-50 text-brand-600 border border-brand-200 flex items-center justify-center">
             <ShieldAlert className="w-4 h-4" />
           </div>
           <div>
-            <div className="flex items-center space-x-1.5 text-xs font-bold text-white">
+            <div className="flex items-center space-x-1.5 text-xs font-bold text-gray-900">
               <span>Admin</span>
               <ChevronRight className="w-3 h-3 text-gray-500" />
-              <span className="text-blue-400 flex items-center space-x-1">
+              <span className="text-brand-600 flex items-center space-x-1">
                 <ActiveIcon className="w-3.5 h-3.5 inline mr-1" />
                 {activeLink.label}
               </span>
@@ -61,7 +61,7 @@ export default function AdminSidebar() {
         <button
           type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-1.5 text-gray-300 hover:text-white rounded-lg bg-gray-800 border border-gray-700 transition"
+          className="p-1.5 text-gray-600 hover:text-brand-600 rounded-lg bg-gray-100 border border-gray-200 transition"
           aria-label="Abrir menú de administración"
         >
           {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -70,8 +70,8 @@ export default function AdminSidebar() {
 
       {/* Mobile Dropdown Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden sticky top-[6.25rem] z-40 bg-gray-900 border-b border-gray-800 p-4 space-y-2 shadow-2xl animate-in slide-in-from-top-2 duration-200">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 px-2">
+        <div className="lg:hidden sticky top-[6.25rem] z-40 bg-white border-b border-gray-200 p-4 space-y-2 shadow-xl animate-in slide-in-from-top-2 duration-200">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-gray-500 px-2">
             Secciones del Panel
           </div>
           <div className="grid grid-cols-2 gap-1.5">
@@ -86,8 +86,8 @@ export default function AdminSidebar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center space-x-2.5 p-2.5 rounded-xl text-xs font-semibold transition ${
                     isActive
-                      ? "bg-blue-600 text-white shadow-xs"
-                      : "bg-gray-800/80 text-gray-300 hover:bg-gray-800"
+                      ? "bg-gradient-to-r from-brand-500 to-brand-800 text-white shadow-xs"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   <Icon className="w-4 h-4 flex-shrink-0" />
@@ -100,9 +100,9 @@ export default function AdminSidebar() {
       )}
 
       {/* Desktop Vertical Sidebar (>= lg screens) */}
-      <aside className="hidden lg:block w-64 bg-gray-900 text-gray-300 min-h-[calc(100vh-4rem)] p-4 space-y-6 flex-shrink-0 border-r border-gray-800">
-        <div className="flex items-center space-x-2.5 px-3.5 py-2.5 bg-amber-950/60 border border-amber-800/50 rounded-2xl text-amber-300 text-xs font-bold uppercase tracking-wider">
-          <ShieldAlert className="w-4 h-4 text-amber-400 flex-shrink-0" />
+      <aside className="hidden lg:block w-64 bg-white text-gray-700 min-h-[calc(100vh-4rem)] p-4 space-y-6 flex-shrink-0 border-r border-gray-200">
+        <div className="flex items-center space-x-2.5 px-3.5 py-2.5 bg-brand-50 border border-brand-200 rounded-2xl text-brand-600 text-xs font-bold uppercase tracking-wider">
+          <ShieldAlert className="w-4 h-4 text-brand-500 flex-shrink-0" />
           <span>Panel Admin</span>
         </div>
 
@@ -117,8 +117,8 @@ export default function AdminSidebar() {
                 href={link.href}
                 className={`flex items-center space-x-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition ${
                   isActive
-                    ? "bg-blue-600 text-white shadow-xs"
-                    : "hover:bg-gray-800 text-gray-400 hover:text-white"
+                    ? "bg-gradient-to-r from-brand-500 to-brand-800 text-white shadow-xs"
+                    : "hover:bg-gray-100 text-gray-600 hover:text-gray-900"
                 }`}
               >
                 <Icon className="w-4 h-4" />
