@@ -43,8 +43,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const hasValidImage = isValidImageUrl(article.featuredImage);
 
   return {
-    title: `${article.title} | Creando Historias`,
-    description: article.excerpt || `Lee ${article.title} por ${article.author.name} en Creando Historias.`,
+    title: `${article.title} | Creando-Historias`,
+    description: article.excerpt || `Lee ${article.title} por ${article.author.name} en Creando-Historias.`,
     alternates: {
       canonical: canonicalUrl,
     },

@@ -23,10 +23,13 @@ const robotoSlab = Roboto_Slab({
 });
 
 export const metadata: Metadata = {
-  title: "CreandoHistorias – Plataforma Editorial Multiusuario",
+  title: "Creando-Historias – Plataforma Editorial Multiusuario",
   description: "Plataforma editorial multiusuario con atribución transparente de ingresos, lectura optimizada y analíticas en tiempo real.",
   keywords: ["historias", "artículos", "blog", "editorial", "lectura", "creadores"],
-  authors: [{ name: "CreandoHistorias Team" }],
+  authors: [{ name: "Creando-Historias Team" }],
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export const viewport: Viewport = {

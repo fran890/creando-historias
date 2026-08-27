@@ -13,7 +13,7 @@ const ITEMS_PER_PAGE = 12;
 export async function generateMetadata({ params }: Props) {
   const tag = await prisma.tag.findUnique({ where: { slug: params.slug } });
   if (!tag) return { title: "Etiqueta no encontrada" };
-  return { title: `Etiqueta: #${tag.name} - CreandoHistorias` };
+  return { title: `Etiqueta: #${tag.name} - Creando-Historias` };
 }
 
 export default async function TagPage({ params, searchParams }: Props) {

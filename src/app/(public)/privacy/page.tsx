@@ -18,7 +18,7 @@ export default function PrivacyPage() {
         <section className="space-y-2">
           <h2 className="font-serif text-xl font-bold text-gray-900 dark:text-white">1. Información que recopilamos</h2>
           <p>
-            En CreandoHistorias recopilamos información técnica mínima necesaria para ofrecer una experiencia de lectura fluida y realizar analíticas anónimas de tráfico. Esto incluye tipo de dispositivo, país de origen y páginas visitadas.
+            En Creando-Historias recopilamos información técnica mínima necesaria para ofrecer una experiencia de lectura fluida y realizar analíticas anónimas de tráfico. Esto incluye tipo de dispositivo, país de origen y páginas visitadas.
           </p>
         </section>
 

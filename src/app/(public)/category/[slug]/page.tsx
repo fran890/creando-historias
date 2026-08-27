@@ -13,7 +13,7 @@ const ITEMS_PER_PAGE = 12;
 export async function generateMetadata({ params }: Props) {
   const category = await prisma.category.findUnique({ where: { slug: params.slug } });
   if (!category) return { title: "Categoría no encontrada" };
-  return { title: `Categoría: ${category.name} - CreandoHistorias` };
+  return { title: `Categoría: ${category.name} - Creando-Historias` };
 }
 
 export default async function CategoryPage({ params, searchParams }: Props) {

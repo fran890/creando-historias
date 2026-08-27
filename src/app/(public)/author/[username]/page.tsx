@@ -20,7 +20,7 @@ const ITEMS_PER_PAGE = 12;
 export async function generateMetadata({ params }: Props) {
   const author = await prisma.user.findUnique({ where: { username: params.username } });
   if (!author) return { title: "Autor no encontrado" };
-  return { title: `${author.name} – CreandoHistorias` };
+  return { title: `${author.name} – Creando-Historias` };
 }
 
 export default async function AuthorProfilePage({ params, searchParams }: Props) {

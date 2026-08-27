@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, Heart, Sparkles } from "lucide-react";
+import { Heart, Sparkles } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -12,11 +12,11 @@ export default function Footer() {
           {/* Brand Info Column */}
           <div className="md:col-span-4 space-y-4">
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-brand-500 via-brand-600 to-brand-800 text-white flex items-center justify-center shadow-glow">
-                <BookOpen className="w-5 h-5" />
+              <div className="w-9 h-9 rounded-2xl bg-white/95 border border-brand-900/20 flex items-center justify-center shadow-glow overflow-hidden">
+                <img src="/logo-sin-fondo.png" alt="Creando-Historias" className="w-7 h-7 object-contain" />
               </div>
               <span className="font-display text-2xl font-black tracking-tight text-white">
-                Creando<span className="gradient-text">Historias</span>
+                Creando-<span className="gradient-text">Historias</span>
               </span>
             </Link>
             <p className="text-xs leading-relaxed text-gray-400 max-w-sm">
@@ -97,7 +97,7 @@ export default function Footer() {
 
         {/* Footer Bottom Metadata Bar */}
         <div className="border-t border-gray-800/80 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500 font-medium">
-          <p>&copy; {new Date().getFullYear()} CreandoHistorias. Todos los derechos reservados.</p>
+          <p>&copy; {new Date().getFullYear()} Creando-Historias. Todos los derechos reservados.</p>
           <p className="flex items-center space-x-1">
             <span>Diseñado con</span>
             <Heart className="w-3.5 h-3.5 text-brand-500 fill-brand-500" />

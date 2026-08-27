@@ -19,7 +19,7 @@ export default function ContactPage() {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
         <div className="md:col-span-5 bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 rounded-3xl p-8 text-white space-y-6 shadow-xl flex flex-col justify-between">
           <div className="space-y-4">
-            <h2 className="font-display text-2xl font-bold">CreandoHistorias</h2>
+            <h2 className="font-display text-2xl font-bold">Creando-Historias</h2>
             <p className="text-xs opacity-90 leading-relaxed">
               Atención personalizada a nuestros creadores de contenido, autores y lectores.
             </p>

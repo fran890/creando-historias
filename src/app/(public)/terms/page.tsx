@@ -18,7 +18,7 @@ export default function TermsPage() {
         <section className="space-y-2">
           <h2 className="font-serif text-xl font-bold text-gray-900 dark:text-white">1. Aceptación de los Términos</h2>
           <p>
-            Al acceder a la plataforma CreandoHistorias, aceptas cumplir con estos términos y condiciones. Si no estás de acuerdo con alguna parte, no debes utilizar nuestros servicios.
+            Al acceder a la plataforma Creando-Historias, aceptas cumplir con estos términos y condiciones. Si no estás de acuerdo con alguna parte, no debes utilizar nuestros servicios.
           </p>
         </section>
 

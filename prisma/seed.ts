@@ -38,7 +38,7 @@ async function main() {
       passwordHash: passwordHashAdmin,
       role: "ADMIN",
       avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400",
-      bio: "Administrador general y editor jefe de CreandoHistorias.",
+      bio: "Administrador general y editor jefe de Creando-Historias.",
     },
   });
 
@@ -183,7 +183,7 @@ async function main() {
       title: "Visión General de la Plataforma y Estándares Editoriales 2026",
       slug: "vision-general-de-la-plataforma",
       excerpt: "Un mensaje especial de la administración sobre nuestras políticas de calidad y distribución.",
-      content: "<p>Bienvenidos a CreandoHistorias. Como administradores, impulsamos la calidad editorial y la atribución justa para cada autor...</p>",
+      content: "<p>Bienvenidos a Creando-Historias. Como administradores, impulsamos la calidad editorial y la atribución justa para cada autor...</p>",
       featuredImage: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200",
       status: "PUBLISHED",
       categoryId: catCulture.id,

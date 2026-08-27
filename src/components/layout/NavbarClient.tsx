@@ -44,11 +44,11 @@ export default function NavbarClient({ user, hydrateSession = false }: NavbarCli
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center space-x-3 group">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-500 via-brand-600 to-brand-800 text-white flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform duration-300">
-            <BookOpen className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-2xl bg-white dark:bg-gray-900 border border-brand-100 dark:border-brand-900/60 flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform duration-300 overflow-hidden">
+            <img src="/logo-sin-fondo.png" alt="Creando-Historias" className="w-8 h-8 object-contain" />
           </div>
           <span className="font-display text-xl sm:text-2xl font-black tracking-tight text-gray-900 dark:text-white">
-            Creando<span className="gradient-text">Historias</span>
+            Creando-<span className="gradient-text">Historias</span>
           </span>
         </Link>
 
