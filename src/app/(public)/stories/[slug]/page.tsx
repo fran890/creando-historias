@@ -357,7 +357,6 @@ export default async function StoryPage({ params }: Props) {
           {/* Bottom Ad */}
           <InContentAd />
         </main>
-        </div>
       </div>
     </div>
   );
