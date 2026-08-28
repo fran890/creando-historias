@@ -151,7 +151,7 @@ export default async function StoryPage({ params }: Props) {
                     </Link>
                   )}
 
-                  <h1 itemProp="headline" className="font-serif text-3xl sm:text-5xl font-black text-gray-900 dark:text-white leading-tight">
+                  <h1 itemProp="headline" className="font-serif text-3xl sm:text-4xl lg:text-[40px] font-black text-gray-900 dark:text-white leading-[1.25] tracking-tight">
                     {article.title}
                   </h1>
 
