@@ -129,16 +129,19 @@ export async function getCachedRelatedArticles(articleId: string, categoryId: st
 }
 
 /**
- * High-performance cached home page data retriever.
+ * High-performance cached home page data retriever with pagination support.
  */
-export async function getCachedHomePageArticles() {
+export async function getCachedHomePageArticles(page: number = 1, limit: number = 8) {
+  const safePage = Math.max(1, page);
+  const skip = (safePage - 1) * limit;
+
   const getHomeData = unstable_cache(
     async () => {
       const [featuredArticles, recentArticles, categories, totalPublishedCount] = await Promise.all([
         prisma.article.findMany({
           where: { status: "PUBLISHED" },
           orderBy: { viewCount: "desc" },
-          take: 4,
+          take: 5,
           select: {
             id: true,
             title: true,
@@ -154,7 +157,8 @@ export async function getCachedHomePageArticles() {
         prisma.article.findMany({
           where: { status: "PUBLISHED" },
           orderBy: { publishedAt: "desc" },
-          take: 12,
+          skip,
+          take: limit,
           select: {
             id: true,
             title: true,
@@ -175,14 +179,17 @@ export async function getCachedHomePageArticles() {
         prisma.article.count({ where: { status: "PUBLISHED" } }),
       ]);
 
+      const totalPages = Math.max(1, Math.ceil(totalPublishedCount / limit));
+
       return {
         featuredArticles,
         recentArticles,
         categories,
         totalPublishedCount,
+        totalPages,
       };
     },
-    ["homepage-articles-data"],
+    [`homepage-articles-data-p${safePage}-l${limit}`],
     {
       tags: ["articles-homepage", "articles-all"],
       revalidate: 3600, // 1 hour, invalidated on article publish/edit

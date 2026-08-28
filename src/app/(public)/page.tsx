@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCachedHomePageArticles } from "@/lib/cache/articles";
 import SidebarAd from "@/components/ads/SidebarAd";
+import Pagination from "@/components/common/Pagination";
 import { Clock, Eye, User, Sparkles, Folder, TrendingUp, BookOpen, ArrowRight, Zap } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -11,10 +12,15 @@ function isValidImageUrl(url: string | null | undefined): url is string {
   return !!url && (url.startsWith("http://") || url.startsWith("https://"));
 }
 
-export default async function HomePage() {
-  const homeData = await getCachedHomePageArticles();
+interface HomePageProps {
+  searchParams?: { page?: string };
+}
 
-  const { featuredArticles, recentArticles, categories, totalPublishedCount } = homeData;
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const currentPage = Math.max(1, parseInt(searchParams?.page || "1", 10) || 1);
+  const homeData = await getCachedHomePageArticles(currentPage, 8);
+
+  const { featuredArticles, recentArticles, categories, totalPublishedCount, totalPages } = homeData;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
@@ -46,8 +52,6 @@ export default async function HomePage() {
           </span>
         </div>
       </section>
-
-
 
       {/* Categories Bar */}
       {categories.length > 0 && (
@@ -128,7 +132,6 @@ export default async function HomePage() {
             </section>
           )}
 
-
           {/* Recent Articles Feed */}
           <section className="space-y-5">
             <div className="flex items-center space-x-2">
@@ -141,55 +144,62 @@ export default async function HomePage() {
                 <p className="text-gray-500">No hay publicaciones públicas disponibles por el momento.</p>
               </div>
             ) : (
-              <div className="space-y-4">
-                {recentArticles.map((art, idx) => (
-                  <div key={art.id}>
-                    <article className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 hover:border-gray-400 dark:hover:border-gray-600 transition flex flex-col sm:flex-row gap-4 shadow-xs">
-                      {art.featuredImage && isValidImageUrl(art.featuredImage) && (
-                        <div className="w-full sm:w-32 h-32 sm:h-24 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0">
-                          <img
-                            src={art.featuredImage}
-                            alt={art.title}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      )}
-                      <div className="flex-grow space-y-1.5 min-w-0 flex flex-col justify-between">
-                        <div className="space-y-1">
-                          <div className="flex items-center space-x-2 text-xs text-gray-500">
-                            <Link href={`/author/${art.author.username}`} className="font-semibold text-gray-900 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-300">
-                              {art.author.name}
-                            </Link>
-                            <span>&bull;</span>
-                            <span suppressHydrationWarning>{art.publishedAt ? formatDistanceToNow(new Date(art.publishedAt), { addSuffix: true, locale: es }) : ""}</span>
-                            {art.category && (
-                              <>
-                                <span>&bull;</span>
-                                <span className="font-semibold text-gray-700 dark:text-gray-300">{art.category.name}</span>
-                              </>
-                            )}
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  {recentArticles.map((art) => (
+                    <div key={art.id}>
+                      <article className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 hover:border-gray-400 dark:hover:border-gray-600 transition flex flex-col sm:flex-row gap-4 shadow-xs">
+                        {art.featuredImage && isValidImageUrl(art.featuredImage) && (
+                          <div className="w-full sm:w-32 h-32 sm:h-24 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0">
+                            <img
+                              src={art.featuredImage}
+                              alt={art.title}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
-                          <h3 className="font-serif text-base font-bold text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition leading-snug line-clamp-2">
-                            <Link href={`/stories/${art.slug}`}>{art.title}</Link>
-                          </h3>
-                          <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">{art.excerpt}</p>
+                        )}
+                        <div className="flex-grow space-y-1.5 min-w-0 flex flex-col justify-between">
+                          <div className="space-y-1">
+                            <div className="flex items-center space-x-2 text-xs text-gray-500">
+                              <Link href={`/author/${art.author.username}`} className="font-semibold text-gray-900 dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-300">
+                                {art.author.name}
+                              </Link>
+                              <span>&bull;</span>
+                              <span suppressHydrationWarning>{art.publishedAt ? formatDistanceToNow(new Date(art.publishedAt), { addSuffix: true, locale: es }) : ""}</span>
+                              {art.category && (
+                                <>
+                                  <span>&bull;</span>
+                                  <span className="font-semibold text-gray-700 dark:text-gray-300">{art.category.name}</span>
+                                </>
+                              )}
+                            </div>
+                            <h3 className="font-serif text-base font-bold text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-300 transition leading-snug line-clamp-2">
+                              <Link href={`/stories/${art.slug}`}>{art.title}</Link>
+                            </h3>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">{art.excerpt}</p>
+                          </div>
+                          <div className="flex items-center justify-between text-xs text-gray-500 pt-1">
+                            <span className="flex items-center space-x-1">
+                              <Clock className="w-3 h-3 text-gray-400" />
+                              <span>{art.readingTime} min</span>
+                            </span>
+                            <Link href={`/stories/${art.slug}`} className="inline-flex items-center space-x-1 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+                              <span>Leer artículo</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </Link>
+                          </div>
                         </div>
-                        <div className="flex items-center justify-between text-xs text-gray-500 pt-1">
-                          <span className="flex items-center space-x-1">
-                            <Clock className="w-3 h-3 text-gray-400" />
-                            <span>{art.readingTime} min</span>
-                          </span>
-                          <Link href={`/stories/${art.slug}`} className="inline-flex items-center space-x-1 text-xs font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                            <span>Leer artículo</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </Link>
-                        </div>
-                      </div>
-                    </article>
+                      </article>
+                    </div>
+                  ))}
+                </div>
 
-
-                  </div>
-                ))}
+                {/* Pagination Numerator */}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  baseUrl="/"
+                />
               </div>
             )}
           </section>
