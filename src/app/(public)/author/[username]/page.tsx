@@ -73,7 +73,7 @@ export default async function AuthorProfilePage({ params, searchParams }: Props)
     <div className="relative pb-24 bg-gray-50 dark:bg-gray-950 min-h-screen">
       <AdSenseScript />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+      <div className="max-w-[750px] mx-auto px-4 sm:px-6 py-8 space-y-10">
         <div>
           <Link
             href="/"
