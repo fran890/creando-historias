@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import NavigationProgress from "@/components/common/NavigationProgress";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import { Inter, Outfit, Roboto_Slab } from "next/font/google";
 
 const inter = Inter({
@@ -58,6 +59,7 @@ export default function RootLayout({
       <body className="h-full antialiased bg-gray-50 text-gray-900 dark:bg-[#090d16] dark:text-gray-100 font-sans selection:bg-brand-500 selection:text-white">
         <Suspense fallback={null}>
           <NavigationProgress />
+          <GoogleAnalytics />
         </Suspense>
         {children}
       </body>
