@@ -245,7 +245,7 @@ export default async function StoryPage({ params }: Props) {
                       className="flex flex-col bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-800/80 rounded-3xl overflow-hidden shadow-xs card-hover-glow group"
                     >
                       {rel.featuredImage && isValidImageUrl(rel.featuredImage) ? (
-                        <div className="h-36 overflow-hidden bg-gray-200 dark:bg-gray-800">
+                        <Link href={`/stories/${rel.slug}`} className="h-36 overflow-hidden bg-gray-200 dark:bg-gray-800 block">
                           <img
                             src={rel.featuredImage}
                             alt={rel.title}
@@ -253,11 +253,11 @@ export default async function StoryPage({ params }: Props) {
                             decoding="async"
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                           />
-                        </div>
+                        </Link>
                       ) : (
-                        <div className="h-36 bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-300 dark:text-gray-600">
+                        <Link href={`/stories/${rel.slug}`} className="h-36 bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-300 dark:text-gray-600 block">
                           <BookOpen className="w-8 h-8" />
-                        </div>
+                        </Link>
                       )}
                       <div className="p-5 space-y-2 flex-grow flex flex-col justify-between">
                         <div>
@@ -289,7 +289,7 @@ export default async function StoryPage({ params }: Props) {
                         className="flex flex-col bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-800/80 rounded-3xl overflow-hidden shadow-xs card-hover-glow group"
                       >
                         {rel.featuredImage && isValidImageUrl(rel.featuredImage) ? (
-                          <div className="h-36 overflow-hidden bg-gray-200 dark:bg-gray-800">
+                          <Link href={`/stories/${rel.slug}`} className="h-36 overflow-hidden bg-gray-200 dark:bg-gray-800 block">
                             <img
                               src={rel.featuredImage}
                               alt={rel.title}
@@ -297,11 +297,11 @@ export default async function StoryPage({ params }: Props) {
                               decoding="async"
                               className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                             />
-                          </div>
+                          </Link>
                         ) : (
-                          <div className="h-36 bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-300 dark:text-gray-600">
+                          <Link href={`/stories/${rel.slug}`} className="h-36 bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-300 dark:text-gray-600 block">
                             <BookOpen className="w-8 h-8" />
-                          </div>
+                          </Link>
                         )}
                         <div className="p-5 space-y-2 flex-grow flex flex-col justify-between">
                           <div>

@@ -78,9 +78,9 @@ export default async function TagPage({ params, searchParams }: Props) {
             {publishedArticles.map((art) => (
               <article key={art.id} className="flex flex-col bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-xs hover:border-brand-300 transition group">
                 {art.featuredImage && (
-                  <div className="h-44 overflow-hidden bg-gray-100 dark:bg-gray-800">
+                  <Link href={`/stories/${art.slug}`} className="h-44 overflow-hidden bg-gray-100 dark:bg-gray-800 block">
                     <img src={art.featuredImage} alt={art.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-                  </div>
+                  </Link>
                 )}
                 <div className="p-5 flex flex-col justify-between flex-grow space-y-3">
                   <div className="space-y-1.5">

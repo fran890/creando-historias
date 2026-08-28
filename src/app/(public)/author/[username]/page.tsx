@@ -147,13 +147,13 @@ export default async function AuthorProfilePage({ params, searchParams }: Props)
                       <div key={art.id} className="contents">
                         <article className="flex flex-col bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm hover:shadow-md transition group">
                           {art.featuredImage && (
-                            <div className="h-48 overflow-hidden bg-gray-100 dark:bg-gray-800 relative">
+                            <Link href={`/stories/${art.slug}`} className="h-48 overflow-hidden bg-gray-100 dark:bg-gray-800 relative block">
                               <img
                                 src={art.featuredImage}
                                 alt={art.title}
                                 className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                               />
-                            </div>
+                            </Link>
                           )}
 
                           <div className="p-6 flex flex-col justify-between flex-grow space-y-4">

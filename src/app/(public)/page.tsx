@@ -92,13 +92,16 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                     }`}
                   >
                     {art.featuredImage && isValidImageUrl(art.featuredImage) && (
-                      <div className={`${idx === 0 ? "h-56 sm:h-72" : "h-40"} overflow-hidden bg-gray-100 dark:bg-gray-800 relative`}>
+                      <Link
+                        href={`/stories/${art.slug}`}
+                        className={`block ${idx === 0 ? "h-56 sm:h-72" : "h-40"} overflow-hidden bg-gray-100 dark:bg-gray-800 relative`}
+                      >
                         <img
                           src={art.featuredImage}
                           alt={art.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                         />
-                      </div>
+                      </Link>
                     )}
                     <div className="p-5 flex flex-col justify-between flex-grow space-y-3">
                       <div className="space-y-1.5">
@@ -150,13 +153,16 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                     <div key={art.id}>
                       <article className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 hover:border-gray-400 dark:hover:border-gray-600 transition flex flex-col sm:flex-row gap-4 shadow-xs">
                         {art.featuredImage && isValidImageUrl(art.featuredImage) && (
-                          <div className="w-full sm:w-32 h-32 sm:h-24 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0">
+                          <Link
+                            href={`/stories/${art.slug}`}
+                            className="w-full sm:w-32 h-32 sm:h-24 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0 block"
+                          >
                             <img
                               src={art.featuredImage}
                               alt={art.title}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                             />
-                          </div>
+                          </Link>
                         )}
                         <div className="flex-grow space-y-1.5 min-w-0 flex flex-col justify-between">
                           <div className="space-y-1">
