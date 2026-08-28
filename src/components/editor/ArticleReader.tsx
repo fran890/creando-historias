@@ -9,24 +9,29 @@ interface ArticleReaderProps {
 }
 
 const AD_CLIENT_ID = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-6105500451798195";
+const IS_ADSENSE_ENABLED = process.env.NEXT_PUBLIC_ENABLE_ADSENSE !== "false";
 
 function createAdBlockHtml(blockNumber: number): string {
-  const slots: Record<number, string> = {
-    1: "2852108163",
-    2: "6599781488",
-    3: "2927561565",
-    4: "6364097902",
-    5: "3737934564",
-    6: "8651229759",
+  if (!IS_ADSENSE_ENABLED) return "";
+
+  // Optionally read user's custom slot IDs from env, or omit data-ad-slot for universal auto-responsive ads
+  const slotEnvMap: Record<number, string | undefined> = {
+    1: process.env.NEXT_PUBLIC_ADSENSE_SLOT_1,
+    2: process.env.NEXT_PUBLIC_ADSENSE_SLOT_2,
+    3: process.env.NEXT_PUBLIC_ADSENSE_SLOT_3,
+    4: process.env.NEXT_PUBLIC_ADSENSE_SLOT_4,
+    5: process.env.NEXT_PUBLIC_ADSENSE_SLOT_5,
+    6: process.env.NEXT_PUBLIC_ADSENSE_SLOT_6,
   };
-  const slotId = slots[blockNumber] || "2852108163";
+  const customSlotId = slotEnvMap[blockNumber];
+  const slotAttribute = customSlotId ? `data-ad-slot="${customSlotId}"` : "";
 
   return `<div class="code-block code-block-${blockNumber}" style="margin: 28px auto; text-align: center; display: block; clear: both;">
 <!-- grasa equipo ${blockNumber} -->
 <ins class="adsbygoogle"
      style="display:block"
      data-ad-client="${AD_CLIENT_ID}"
-     data-ad-slot="${slotId}"
+     ${slotAttribute}
      data-ad-format="auto"
      data-full-width-responsive="true"></ins>
 </div>`;
@@ -34,6 +39,7 @@ function createAdBlockHtml(blockNumber: number): string {
 
 function inject6AdBlocks(htmlContent: string): string {
   if (!htmlContent) return "";
+  if (!IS_ADSENSE_ENABLED) return htmlContent;
 
   // Split HTML into blocks by paragraph (<p>) or subheading (<h2>)
   const parts = htmlContent.split(/(?=<p[\s>]|<h2[\s>])/gi);
@@ -74,7 +80,7 @@ export default function ArticleReader({ content, className = "" }: ArticleReader
   const optimizedContent = inject6AdBlocks(optimizeHtmlImages(content));
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (!IS_ADSENSE_ENABLED || typeof window === "undefined") return;
     if (!containerRef.current) return;
 
     const insElements = containerRef.current.querySelectorAll("ins.adsbygoogle");
