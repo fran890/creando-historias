@@ -219,6 +219,39 @@ export default async function StoryPage({ params }: Props) {
               </div>
             </article>
 
+            {/* Author Card - Full Width Central Column */}
+            <div className="w-full bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-800/80 rounded-3xl p-6 sm:p-8 space-y-4 shadow-xs">
+              <div className="flex items-center space-x-2 text-xs font-bold text-brand-500 uppercase tracking-wider border-b border-gray-100 dark:border-gray-800 pb-3">
+                <User className="w-4 h-4" />
+                <span>Sobre el autor</span>
+              </div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <Link href={`/author/${article.author.username}`} className="flex items-center space-x-4 group">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-500 to-brand-800 text-white flex items-center justify-center font-bold font-serif text-xl overflow-hidden shadow-glow flex-shrink-0 group-hover:scale-105 transition duration-300">
+                    {article.author.avatarUrl ? (
+                      <img src={article.author.avatarUrl} alt={article.author.name} className="w-full h-full object-cover" />
+                    ) : (
+                      article.author.name.charAt(0)
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-900 dark:text-white group-hover:text-brand-500 transition text-lg">
+                      {article.author.name}
+                    </p>
+                    <p className="text-xs text-gray-500 font-medium">@{article.author.username}</p>
+                  </div>
+                </Link>
+                <Link
+                  href={`/author/${article.author.username}`}
+                  className="inline-flex items-center space-x-1.5 px-5 py-2.5 bg-gray-100 dark:bg-gray-800/60 hover:bg-brand-500 hover:text-white text-xs font-bold rounded-2xl transition shadow-xs"
+                >
+                  <span>Ver todas sus historias</span>
+                </Link>
+              </div>
+              {article.author.bio && (
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed font-sans pt-1 border-t border-gray-100 dark:border-gray-800/60">{article.author.bio}</p>
+              )}
+            </div>
 
             {/* Recommendations Grid */}
             {relatedArticles.length > 0 && (
@@ -279,8 +312,6 @@ export default async function StoryPage({ params }: Props) {
                   ))}
                 </div>
 
-
-
                 {relatedArticles.length > 3 && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {relatedArticles.slice(3, 6).map((rel) => (
@@ -334,40 +365,6 @@ export default async function StoryPage({ params }: Props) {
           <aside className="lg:col-span-4">
             <div className="lg:sticky lg:top-20 space-y-6">
               <SidebarAd />
-
-              {/* Author Card */}
-              <div className="bg-white dark:bg-gray-900 border border-gray-200/80 dark:border-gray-800/80 rounded-3xl p-6 space-y-4 shadow-xs">
-                <div className="flex items-center space-x-2 text-xs font-bold text-brand-500 uppercase tracking-wider border-b border-gray-100 dark:border-gray-800 pb-3">
-                  <User className="w-4 h-4" />
-                  <span>Sobre el autor</span>
-                </div>
-                <Link href={`/author/${article.author.username}`} className="flex items-center space-x-3 group">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-500 to-brand-800 text-white flex items-center justify-center font-bold font-serif text-lg overflow-hidden shadow-glow">
-                    {article.author.avatarUrl ? (
-                      <img src={article.author.avatarUrl} alt={article.author.name} className="w-full h-full object-cover" />
-                    ) : (
-                      article.author.name.charAt(0)
-                    )}
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900 dark:text-white group-hover:text-brand-500 transition text-base">
-                      {article.author.name}
-                    </p>
-                    <p className="text-xs text-gray-500 font-medium">@{article.author.username}</p>
-                  </div>
-                </Link>
-                {article.author.bio && (
-                  <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed font-sans">{article.author.bio}</p>
-                )}
-                <Link
-                  href={`/author/${article.author.username}`}
-                  className="block w-full text-center py-2.5 bg-gray-100 dark:bg-gray-800/60 hover:bg-brand-500 hover:text-white text-xs font-bold rounded-2xl transition"
-                >
-                  Ver todas sus historias
-                </Link>
-              </div>
-
-
             </div>
           </aside>
         </div>

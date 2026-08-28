@@ -24,55 +24,54 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
-      {/* Clean & Elegant Hero Section */}
-      <section className="bg-white dark:bg-gray-900/60 border border-gray-200/80 dark:border-gray-800/80 rounded-3xl p-8 sm:p-12 text-center space-y-5 max-w-4xl mx-auto shadow-xs">
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 text-xs font-semibold">
-          <Sparkles className="w-3.5 h-3.5 opacity-70" />
-          <span>Plataforma Editorial Abierta</span>
-        </div>
-
-        <h1 className="font-serif text-3xl sm:text-5xl font-black tracking-tight text-gray-900 dark:text-white leading-tight sm:leading-tight">
-          Historias que inspiran, <br className="hidden sm:inline" />
-          conocimiento que transforma
-        </h1>
-
-        <p className="text-base text-gray-600 dark:text-gray-400 font-sans max-w-2xl mx-auto leading-relaxed">
-          Descubre artículos de calidad redactados por autores expertos en diversas materias.
-        </p>
-
-        {/* Clean Stats Highlight Pills */}
-        <div className="pt-2 flex flex-wrap items-center justify-center gap-3 text-xs font-semibold text-gray-600 dark:text-gray-400">
-          <span className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-xl bg-gray-50 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80">
-            <BookOpen className="w-3.5 h-3.5 text-gray-500 opacity-80" />
-            <span>{totalPublishedCount} Historias Publicadas</span>
-          </span>
-          <span className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-xl bg-gray-50 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80">
-            <Zap className="w-3.5 h-3.5 text-gray-500 opacity-80" />
-            <span>Lectura Rápida & Sin Interrupciones</span>
-          </span>
-        </div>
-      </section>
-
-      {/* Categories Bar */}
-      {categories.length > 0 && (
-        <section className="flex flex-wrap gap-2 justify-center border-y border-gray-200/80 dark:border-gray-800/80 py-3.5">
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/category/${cat.slug}`}
-              className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition text-gray-700 dark:text-gray-300"
-            >
-              <Folder className="w-3 h-3 opacity-60" />
-              <span>{cat.name}</span>
-            </Link>
-          ))}
-        </section>
-      )}
-
       {/* Main 2-Column Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-2">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Main Content Column (8 cols) */}
         <div className="lg:col-span-8 space-y-8">
+          {/* Clean & Elegant Hero Section */}
+          <section className="bg-white dark:bg-gray-900/60 border border-gray-200/80 dark:border-gray-800/80 rounded-3xl p-8 sm:p-12 text-center space-y-5 w-full shadow-xs">
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 text-xs font-semibold">
+              <Sparkles className="w-3.5 h-3.5 opacity-70" />
+              <span>Plataforma Editorial Abierta</span>
+            </div>
+
+            <h1 className="font-serif text-3xl sm:text-5xl font-black tracking-tight text-gray-900 dark:text-white leading-tight sm:leading-tight">
+              Historias que inspiran, <br className="hidden sm:inline" />
+              conocimiento que transforma
+            </h1>
+
+            <p className="text-base text-gray-600 dark:text-gray-400 font-sans max-w-2xl mx-auto leading-relaxed">
+              Descubre artículos de calidad redactados por autores expertos en diversas materias.
+            </p>
+
+            {/* Clean Stats Highlight Pills */}
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-3 text-xs font-semibold text-gray-600 dark:text-gray-400">
+              <span className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-xl bg-gray-50 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80">
+                <BookOpen className="w-3.5 h-3.5 text-gray-500 opacity-80" />
+                <span>{totalPublishedCount} Historias Publicadas</span>
+              </span>
+              <span className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-xl bg-gray-50 dark:bg-gray-800/80 border border-gray-200/80 dark:border-gray-700/80">
+                <Zap className="w-3.5 h-3.5 text-gray-500 opacity-80" />
+                <span>Lectura Rápida & Sin Interrupciones</span>
+              </span>
+            </div>
+          </section>
+
+          {/* Categories Bar */}
+          {categories.length > 0 && (
+            <section className="w-full flex flex-wrap gap-2 justify-center border-y border-gray-200/80 dark:border-gray-800/80 py-3.5">
+              {categories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={`/category/${cat.slug}`}
+                  className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition text-gray-700 dark:text-gray-300"
+                >
+                  <Folder className="w-3 h-3 opacity-60" />
+                  <span>{cat.name}</span>
+                </Link>
+              ))}
+            </section>
+          )}
           {/* Featured Stories Section */}
           {featuredArticles.length > 0 && (
             <section className="space-y-5">
