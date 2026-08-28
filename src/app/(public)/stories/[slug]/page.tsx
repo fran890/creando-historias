@@ -99,7 +99,7 @@ export default async function StoryPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="max-w-[750px] mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center justify-between">
           <Link
@@ -139,7 +139,7 @@ export default async function StoryPage({ params }: Props) {
             )}
 
             <div className="p-6 sm:p-10 space-y-6">
-              <header className="space-y-4">
+              <header className="space-y-4 max-w-[750px] mx-auto">
                 {article.category && (
                   <Link
                     href={`/category/${article.category.slug}`}
@@ -200,7 +200,7 @@ export default async function StoryPage({ params }: Props) {
               </div>
 
               {article.tags.length > 0 && (
-                <div className="pt-6 border-t border-gray-100 dark:border-gray-800/80 flex items-center flex-wrap gap-2">
+                <div className="pt-6 border-t border-gray-100 dark:border-gray-800/80 flex items-center flex-wrap gap-2 max-w-[750px] mx-auto">
                   <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Etiquetas:</span>
                   {article.tags.map(({ tag }) => (
                     <Link

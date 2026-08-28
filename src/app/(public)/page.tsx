@@ -22,7 +22,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const { featuredArticles, recentArticles, categories, totalPublishedCount, totalPages } = homeData;
 
   return (
-    <div className="max-w-[750px] mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-8">
       {/* Modern & Inspiring Hero Section */}
       <section className="bg-gradient-to-b from-white via-gray-50/70 to-white dark:from-gray-900 dark:via-gray-900/90 dark:to-gray-900 border border-gray-200/80 dark:border-gray-800/80 rounded-3xl p-8 sm:p-10 text-center space-y-5 w-full shadow-xs">
         <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 border border-gray-200/80 dark:border-gray-700/80 text-xs font-semibold">

@@ -58,7 +58,7 @@ export default async function TagPage({ params, searchParams }: Props) {
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   return (
-    <div className="max-w-[750px] mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-8">
       <div className="border-b border-gray-200 dark:border-gray-800 pb-6 space-y-2">
         <div className="flex items-center space-x-2 text-brand-500 font-bold text-xs uppercase tracking-wider">
           <TagIcon className="w-4 h-4" />
