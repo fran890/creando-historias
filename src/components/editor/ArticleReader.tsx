@@ -14,7 +14,6 @@ const IS_ADSENSE_ENABLED = process.env.NEXT_PUBLIC_ENABLE_ADSENSE !== "false";
 function createAdBlockHtml(blockNumber: number): string {
   if (!IS_ADSENSE_ENABLED) return "";
 
-  // Optionally read user's custom slot IDs from env, or omit data-ad-slot for universal auto-responsive ads
   const slotEnvMap: Record<number, string | undefined> = {
     1: process.env.NEXT_PUBLIC_ADSENSE_SLOT_1,
     2: process.env.NEXT_PUBLIC_ADSENSE_SLOT_2,
@@ -26,38 +25,43 @@ function createAdBlockHtml(blockNumber: number): string {
   const customSlotId = slotEnvMap[blockNumber];
   const slotAttribute = customSlotId ? `data-ad-slot="${customSlotId}"` : "";
 
-  return `<div class="code-block code-block-${blockNumber}" style="margin: 28px auto; text-align: center; display: block; clear: both;">
-<!-- grasa equipo ${blockNumber} -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="${AD_CLIENT_ID}"
-     ${slotAttribute}
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
+  return `<div class="article-ad-box ad-slot-${blockNumber}" data-ad-block="${blockNumber}">
+  <span class="ad-label">Publicidad</span>
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="${AD_CLIENT_ID}"
+       ${slotAttribute}
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
 </div>`;
 }
 
-function inject6AdBlocks(htmlContent: string): string {
+function injectSmartAdBlocks(htmlContent: string): string {
   if (!htmlContent) return "";
   if (!IS_ADSENSE_ENABLED) return htmlContent;
 
   // Split HTML into blocks by paragraph (<p>) or subheading (<h2>)
   const parts = htmlContent.split(/(?=<p[\s>]|<h2[\s>])/gi);
-  if (parts.length <= 1) {
+  const totalParts = parts.length;
+
+  if (totalParts <= 1) {
     return htmlContent + createAdBlockHtml(1);
   }
 
-  const totalParts = parts.length;
-  // Distribute 6 ad blocks evenly across the total number of paragraphs/headings
-  const step = Math.max(1, Math.floor(totalParts / 6));
-  const targetIndices = [
-    Math.min(1, totalParts - 1),
-    Math.min(1 + step, totalParts - 1),
-    Math.min(1 + step * 2, totalParts - 1),
-    Math.min(1 + step * 3, totalParts - 1),
-    Math.min(1 + step * 4, totalParts - 1),
-    Math.min(1 + step * 5, totalParts - 1),
-  ];
+  // Calculate optimal ad block count based on content length (prevents ad overload & unfilled slots)
+  let maxAds = 1;
+  if (totalParts >= 15) maxAds = 5;
+  else if (totalParts >= 10) maxAds = 4;
+  else if (totalParts >= 6) maxAds = 3;
+  else if (totalParts >= 3) maxAds = 2;
+
+  const step = Math.max(1, Math.floor(totalParts / maxAds));
+  const targetIndices: number[] = [];
+
+  for (let i = 0; i < maxAds; i++) {
+    const idx = Math.min(1 + i * step, totalParts - 1);
+    targetIndices.push(idx);
+  }
 
   const uniqueIndices = Array.from(new Set(targetIndices)).sort((a, b) => a - b);
 
@@ -66,7 +70,7 @@ function inject6AdBlocks(htmlContent: string): string {
 
   parts.forEach((part, index) => {
     result += part;
-    if (uniqueIndices.includes(index) && blockCounter <= 6) {
+    if (uniqueIndices.includes(index) && blockCounter <= maxAds) {
       result += createAdBlockHtml(blockCounter);
       blockCounter++;
     }
@@ -77,13 +81,15 @@ function inject6AdBlocks(htmlContent: string): string {
 
 export default function ArticleReader({ content, className = "" }: ArticleReaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const optimizedContent = inject6AdBlocks(optimizeHtmlImages(content));
+  const optimizedContent = injectSmartAdBlocks(optimizeHtmlImages(content));
 
   useEffect(() => {
     if (!IS_ADSENSE_ENABLED || typeof window === "undefined") return;
     if (!containerRef.current) return;
 
-    const insElements = containerRef.current.querySelectorAll("ins.adsbygoogle");
+    const insElements = containerRef.current.querySelectorAll<HTMLModElement>("ins.adsbygoogle");
+
+    // Push ads to Google AdSense
     insElements.forEach((ins) => {
       if (!ins.getAttribute("data-adsbygoogle-status") && !ins.getAttribute("data-ad-status")) {
         try {
@@ -91,6 +97,31 @@ export default function ArticleReader({ content, className = "" }: ArticleReader
         } catch {}
       }
     });
+
+    // Observer to smoothly handle unfilled ad slot collapses without layout shift
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === "attributes" && mutation.attributeName === "data-ad-status") {
+          const target = mutation.target as HTMLElement;
+          const status = target.getAttribute("data-ad-status");
+          const parentBox = target.closest(".article-ad-box") as HTMLElement;
+
+          if (parentBox) {
+            if (status === "unfilled") {
+              parentBox.classList.add("ad-unfilled-collapsed");
+            } else if (status === "filled") {
+              parentBox.classList.add("ad-filled-visible");
+            }
+          }
+        }
+      });
+    });
+
+    insElements.forEach((ins) => {
+      observer.observe(ins, { attributes: true, attributeFilter: ["data-ad-status"] });
+    });
+
+    return () => observer.disconnect();
   }, [content]);
 
   return (

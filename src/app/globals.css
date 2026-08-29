@@ -59,18 +59,64 @@
     top: 0 !important;
   }
 
-  /* AdSense Auto Collapse for Unfilled / Empty slots */
-  ins.adsbygoogle[data-ad-status="unfilled"] {
-    display: none !important;
-    height: 0 !important;
+  /* Reserved Ad Container (Prevents Jarring Layout Shifts & Flickering) */
+  .article-ad-box,
+  .ad-container {
+    margin: 2.25rem auto;
+    width: 100%;
+    max-width: 728px;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(243, 244, 246, 0.4);
+    border: 1px dashed rgba(209, 213, 219, 0.5);
+    border-radius: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .ad-container:has(ins[data-ad-status="unfilled"]) {
-    display: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    min-height: 0 !important;
+  .dark .article-ad-box,
+  .dark .ad-container {
+    background-color: rgba(17, 24, 39, 0.4);
+    border-color: rgba(55, 65, 81, 0.5);
+  }
+
+  .article-ad-box .ad-label,
+  .ad-container .ad-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin-bottom: 6px;
+    pointer-events: none;
+  }
+
+  /* Filled Ad: Clean transparent background */
+  .article-ad-box.ad-filled-visible,
+  .article-ad-box:has(ins[data-ad-status="filled"]),
+  .ad-container:has(ins[data-ad-status="filled"]) {
     border: none !important;
+    background: transparent !important;
+    min-height: auto;
+  }
+
+  /* Unfilled Ad: Smooth collapse transition without layout jump */
+  .article-ad-box.ad-unfilled-collapsed,
+  .article-ad-box:has(ins[data-ad-status="unfilled"]),
+  .ad-container:has(ins[data-ad-status="unfilled"]),
+  ins.adsbygoogle[data-ad-status="unfilled"] {
+    opacity: 0 !important;
+    max-height: 0 !important;
+    min-height: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    pointer-events: none !important;
   }
 }
 
@@ -350,14 +396,12 @@
     border: 1px solid rgba(31, 41, 55, 0.8);
   }
 
-  /* Gradient Text */
   .gradient-text {
     background: linear-gradient(135deg, #e91e63 0%, #9c27b0 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  /* Hover Card Glow */
   .card-hover-glow {
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
