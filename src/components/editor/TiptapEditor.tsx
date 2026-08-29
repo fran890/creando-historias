@@ -121,7 +121,7 @@ export default function TiptapEditor({
       />
 
       {/* Sticky Toolbar */}
-      <div className="sticky top-0 z-40 flex flex-wrap items-center gap-1 p-2.5 bg-white/98 dark:bg-gray-900/98 backdrop-blur-md rounded-t-xl border-b border-gray-200 dark:border-gray-700 shadow-md transition-all">
+      <div className="sticky top-16 z-30 flex flex-wrap items-center gap-1 p-2.5 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-t-xl border-b border-gray-200 dark:border-gray-700 shadow-md transition-all">
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
