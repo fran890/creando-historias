@@ -1,7 +1,6 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
-import Script from "next/script";
 import NavigationProgress from "@/components/common/NavigationProgress";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import { Inter, Outfit, Roboto_Slab } from "next/font/google";
@@ -53,15 +52,18 @@ export default function RootLayout({
   return (
     <html lang="es" className={`h-full scroll-smooth ${inter.variable} ${outfit.variable} ${robotoSlab.variable}`}>
       <head>
+        {/* Literal HTML Script tag for AdSense Site Verification Crawler Detection */}
+        <script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT_ID}`}
+          crossOrigin="anonymous"
+        />
         {/* Google Analytics (gtag.js) */}
-        <Script
+        <script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-080W450VN1"
-          strategy="afterInteractive"
         />
-        <Script
-          id="google-analytics"
-          strategy="afterInteractive"
+        <script
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
@@ -71,13 +73,6 @@ export default function RootLayout({
               gtag('config', 'G-080W450VN1');
             `,
           }}
-        />
-        {/* Google AdSense Script (Mandatory for Site Monetization & Verification across all pages including Homepage) */}
-        <Script
-          async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT_ID}`}
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
         />
       </head>
       <body className="h-full antialiased bg-gray-50 text-gray-900 dark:bg-[#090d16] dark:text-gray-100 font-sans selection:bg-brand-500 selection:text-white">
