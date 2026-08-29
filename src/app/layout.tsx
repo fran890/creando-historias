@@ -62,12 +62,22 @@ export default function RootLayout({
   return (
     <html lang="es" className={`h-full scroll-smooth ${inter.variable} ${outfit.variable} ${robotoSlab.variable}`}>
       <head>
-        {/* Literal HTML Script tag for AdSense Site Verification & Mobile Script Detection */}
+        {/* Literal HTML Script tag for AdSense Site Verification (Desktop & Mobile Crawlers) */}
         <script
           async
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT_ID}`}
-          data-ad-client={AD_CLIENT_ID}
           crossOrigin="anonymous"
+        />
+        {/* AdSense Auto-Ads Desktop & Mobile Page-Level Signal */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (adsbygoogle = window.adsbygoogle || []).push({
+                google_ad_client: "${AD_CLIENT_ID}",
+                enable_page_level_ads: true
+              });
+            `,
+          }}
         />
         {/* Google Analytics (gtag.js) */}
         <script
