@@ -52,10 +52,11 @@ export default function RootLayout({
   return (
     <html lang="es" className={`h-full scroll-smooth ${inter.variable} ${outfit.variable} ${robotoSlab.variable}`}>
       <head>
-        {/* Literal HTML Script tag for AdSense Site Verification Crawler Detection */}
+        {/* Literal HTML Script tag for AdSense Site Verification & Mobile Script Detection */}
         <script
           async
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT_ID}`}
+          data-ad-client={AD_CLIENT_ID}
           crossOrigin="anonymous"
         />
         {/* Google Analytics (gtag.js) */}
