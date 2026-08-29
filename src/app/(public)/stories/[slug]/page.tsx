@@ -139,7 +139,7 @@ export default async function StoryPage({ params }: Props) {
             )}
 
             <div className="p-4 sm:p-10 space-y-6">
-              <header className="space-y-4 max-w-[750px] mx-auto">
+              <div className="article-header space-y-4 max-w-[750px] mx-auto">
                 {article.category && (
                   <Link
                     href={`/category/${article.category.slug}`}
@@ -192,7 +192,7 @@ export default async function StoryPage({ params }: Props) {
                     </span>
                   </div>
                 </div>
-              </header>
+              </div>
 
               {/* Article Body */}
               <div itemProp="articleBody" className="font-sans text-gray-800 dark:text-gray-200 leading-relaxed text-base sm:text-lg">
