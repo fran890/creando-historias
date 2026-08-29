@@ -33,33 +33,63 @@ function stripBase64FromHtml(html: string): string {
   );
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const article = await getCachedArticleBySlug(params.slug);
+function getAbsoluteImageUrl(url: string | null | undefined, baseUrl: string): string {
+  if (!url) return `${baseUrl}/logo-sin-fondo.png`;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  if (url.startsWith("/")) return `${baseUrl}${url}`;
+  return `${baseUrl}/${url}`;
+}
 
-  if (!article) return {};
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const rawSlug = params?.slug || "";
+  const slug = decodeURIComponent(rawSlug);
+  const article = await getCachedArticleBySlug(slug);
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://creando-historias-beta.vercel.app";
-  const canonicalUrl = `${baseUrl}/stories/${params.slug}`;
-  const hasValidImage = isValidImageUrl(article.featuredImage);
+
+  if (!article || article.status !== "PUBLISHED") {
+    return {
+      title: "Artículo no encontrado | Creando-Historias",
+      description: "El artículo solicitado no existe o no está publicado.",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const canonicalUrl = `${baseUrl}/stories/${article.slug}`;
+  const ogImageUrl = getAbsoluteImageUrl(article.featuredImage, baseUrl);
+  const titleText = `${article.title} | Creando-Historias`;
+  const descriptionText = article.excerpt || `Lee "${article.title}" escrito por ${article.author.name} en Creando-Historias.`;
 
   return {
-    title: `${article.title} | Creando-Historias`,
-    description: article.excerpt || `Lee ${article.title} por ${article.author.name} en Creando-Historias.`,
+    title: titleText,
+    description: descriptionText,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
       title: article.title,
-      description: article.excerpt || undefined,
+      description: descriptionText,
       url: canonicalUrl,
+      siteName: "Creando-Historias",
+      locale: "es_ES",
       type: "article",
-      images: hasValidImage ? [{ url: article.featuredImage as string }] : [],
+      publishedTime: article.publishedAt ? new Date(article.publishedAt).toISOString() : undefined,
+      authors: [article.author.name],
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: article.title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: article.title,
-      description: article.excerpt || undefined,
-      images: hasValidImage ? [article.featuredImage as string] : [],
+      description: descriptionText,
+      images: [ogImageUrl],
+      creator: `@${article.author.username}`,
     },
   };
 }

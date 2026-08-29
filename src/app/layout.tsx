@@ -6,6 +6,7 @@ import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import { Inter, Outfit, Roboto_Slab } from "next/font/google";
 
 const AD_CLIENT_ID = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-6105500451798195";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://creando-historias-beta.vercel.app";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,12 +27,21 @@ const robotoSlab = Roboto_Slab({
 });
 
 export const metadata: Metadata = {
-  title: "Creando-Historias – Plataforma Editorial Multiusuario",
+  metadataBase: new URL(APP_URL),
+  title: {
+    default: "Creando-Historias – Plataforma Editorial Multiusuario",
+    template: "%s | Creando-Historias",
+  },
   description: "Plataforma editorial multiusuario con atribución transparente de ingresos, lectura optimizada y analíticas en tiempo real.",
   keywords: ["historias", "artículos", "blog", "editorial", "lectura", "creadores"],
   authors: [{ name: "Creando-Historias Team" }],
   icons: {
     icon: "/logo-sin-fondo.png"
+  },
+  openGraph: {
+    siteName: "Creando-Historias",
+    locale: "es_ES",
+    type: "website",
   },
 };
 
