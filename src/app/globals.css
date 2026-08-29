@@ -52,11 +52,16 @@
     overflow-x: auto;
   }
 
-  /* AdSense Floating Top Header Displacement Fix */
-  body {
+  /* AdSense Floating Top Header Displacement & Scroll Bounce Fix */
+  html,
+  body,
+  html.google-anno-top,
+  body.google-anno-top {
     top: 0 !important;
     margin-top: 0 !important;
     padding-top: 0 !important;
+    scroll-padding-top: 0 !important;
+    overscroll-behavior-y: auto !important;
   }
 
   header,
@@ -79,10 +84,18 @@
     margin-top: 0 !important;
   }
 
-  /* Keep AdSense top anchor container below fixed navbar z-index */
+  /* Position AdSense top anchor container below fixed navbar (64px) without pushing body or snapping scroll */
+  .google-anno-top,
+  iframe[id*="aswift_0"].google-anno-top,
+  iframe[id*="aswift"].google-anno-top,
+  div[class*="google-anno-top"] {
+    top: 64px !important;
+    position: fixed !important;
+    z-index: 9990 !important;
+  }
+
   div[id*="google_ads_iframe"],
   iframe[id*="aswift"],
-  .google-anno-top,
   div[class*="google-anno"] {
     z-index: 9990 !important;
   }
