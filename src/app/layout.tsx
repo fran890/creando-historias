@@ -4,9 +4,9 @@ import { Suspense } from "react";
 import NavigationProgress from "@/components/common/NavigationProgress";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import { Inter, Outfit, Roboto_Slab } from "next/font/google";
+import { getValidMetadataBase } from "@/lib/url";
 
 const AD_CLIENT_ID = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-6105500451798195";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://creando-historias-beta.vercel.app";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +27,7 @@ const robotoSlab = Roboto_Slab({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(APP_URL),
+  metadataBase: getValidMetadataBase(process.env.NEXT_PUBLIC_APP_URL),
   title: {
     default: "Creando-Historias – Plataforma Editorial Multiusuario",
     template: "%s | Creando-Historias",

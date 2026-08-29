@@ -33,6 +33,8 @@ function stripBase64FromHtml(html: string): string {
   );
 }
 
+import { getValidBaseUrl } from "@/lib/url";
+
 function getAbsoluteImageUrl(url: string | null | undefined, baseUrl: string): string {
   if (!url) return `${baseUrl}/logo-sin-fondo.png`;
   if (url.startsWith("http://") || url.startsWith("https://")) return url;
@@ -45,7 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const slug = decodeURIComponent(rawSlug);
   const article = await getCachedArticleBySlug(slug);
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://creando-historias-beta.vercel.app";
+  const baseUrl = getValidBaseUrl(process.env.NEXT_PUBLIC_APP_URL);
 
   if (!article || article.status !== "PUBLISHED") {
     return {
