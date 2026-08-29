@@ -20,7 +20,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-xs leading-relaxed text-gray-400 max-w-sm">
-              Plataforma editorial abierta donde los creadores comparten conocimiento, historias fascinantes y reflexiones inspiradoras. Publicaciones de alta calidad con atribución transparente de ingresos.
+              Plataforma editorial abierta donde los creadores comparten conocimiento, historias fascinantes y reflexiones inspiradoras. Publicaciones de alta calidad para una comunidad curiosa y diversa.
             </p>
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-950/60 border border-brand-800/60 text-brand-300 text-[11px] font-bold">
               <Sparkles className="w-3.5 h-3.5" />

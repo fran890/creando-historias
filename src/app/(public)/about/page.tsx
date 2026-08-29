@@ -1,10 +1,9 @@
-import Metadata from "next";
 import Link from "next/link";
-import { Sparkles, BookOpen, Users, DollarSign, ShieldCheck, Heart, ArrowRight } from "lucide-react";
+import { Sparkles, BookOpen, Users, Compass, ShieldCheck, Heart, ArrowRight } from "lucide-react";
 
 export const metadata = {
   title: "Sobre Nosotros | Creando-Historias",
-  description: "Conoce más sobre Creando-Historias, nuestra misión editorial, valores y cómo apoyamos a los creadores de contenido.",
+  description: "Conoce más sobre Creando-Historias, nuestra misión editorial, valores y nuestro compromiso con el conocimiento libre y la creatividad.",
 };
 
 export default function AboutPage() {
@@ -20,7 +19,7 @@ export default function AboutPage() {
           Sobre <span className="gradient-text">Creando-Historias</span>
         </h1>
         <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 leading-relaxed font-sans">
-          Somos una plataforma editorial moderna construida para conectar creadores apasionados con lectores curiosos, promoviendo contenido de alta calidad y monetización justa.
+          Somos una plataforma editorial moderna construida para conectar creadores apasionados con lectores curiosos, promoviendo contenido de alta calidad, aprendizaje continuo e ideas inspiradoras.
         </p>
       </div>
 
@@ -38,11 +37,11 @@ export default function AboutPage() {
 
         <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 border border-gray-200 dark:border-gray-800 space-y-4 shadow-xs hover:border-brand-500/50 transition-colors">
           <div className="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800 flex items-center justify-center text-brand-500">
-            <DollarSign className="w-6 h-6" />
+            <Compass className="w-6 h-6" />
           </div>
-          <h3 className="font-display text-xl font-bold text-gray-900 dark:text-white">Ingresos Transparentes</h3>
+          <h3 className="font-display text-xl font-bold text-gray-900 dark:text-white">Conocimiento & Exploración</h3>
           <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed font-sans">
-            Ofrecemos atribución directa y justa de ingresos publicitarios para los autores, recompensando el impacto de cada publicación.
+            Promovemos el acceso libre a artículos, relatos y análisis redactados por voces diversas apasionadas por compartir sus descubrimientos y perspectivas.
           </p>
         </div>
 
@@ -66,7 +65,7 @@ export default function AboutPage() {
             ¿Por qué creamos esta plataforma?
           </h2>
           <p className="text-sm text-gray-300 leading-relaxed font-sans">
-            Creando-Historias nació de la visión de simplificar la publicación digital sin comprometer el valor editorial ni la privacidad. Creemos en un ecosistema abierto donde cada voz tenga el alcance que merece y las herramientas adecuadas para hacer crecer su audiencia.
+            Creando-Historias nació de la visión de simplificar la publicación digital sin comprometer el valor editorial ni la privacidad. Creemos en un ecosistema abierto donde cada voz tenga el alcance que merece y las herramientas adecuadas para conectar con su audiencia.
           </p>
         </div>
 
