@@ -72,6 +72,11 @@ export default function Footer() {
             <h3 className="text-white font-display text-xs font-bold tracking-wider uppercase">Legal & Privacidad</h3>
             <ul className="space-y-2.5 text-xs font-medium">
               <li>
+                <Link href="/about" className="hover:text-brand-400 transition-colors">
+                  Sobre Nosotros
+                </Link>
+              </li>
+              <li>
                 <Link href="/privacy" className="hover:text-brand-400 transition-colors">
                   Política de Privacidad
                 </Link>
