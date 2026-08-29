@@ -22,9 +22,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const { featuredArticles, recentArticles, categories, totalPublishedCount, totalPages } = homeData;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <div className="max-w-4xl mx-auto px-0 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8">
       {/* Modern & Inspiring Hero Section */}
-      <section className="bg-gradient-to-b from-white via-gray-50/70 to-white dark:from-gray-900 dark:via-gray-900/90 dark:to-gray-900 border border-gray-200/80 dark:border-gray-800/80 rounded-3xl p-8 sm:p-10 text-center space-y-5 w-full shadow-xs">
+      <section className="bg-gradient-to-b from-white via-gray-50/70 to-white dark:from-gray-900 dark:via-gray-900/90 dark:to-gray-900 border-x-0 sm:border border-gray-200/80 dark:border-gray-800/80 rounded-none sm:rounded-3xl p-6 sm:p-10 text-center space-y-5 w-full shadow-xs">
         <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 border border-gray-200/80 dark:border-gray-700/80 text-xs font-semibold">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           <span>Plataforma Editorial Abierta</span>
@@ -146,7 +146,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             <div className="space-y-4">
               {recentArticles.map((art) => (
                 <div key={art.id}>
-                  <article className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-5 hover:border-gray-400 dark:hover:border-gray-600 transition flex flex-col sm:flex-row gap-4 shadow-xs">
+                  <article className="bg-white dark:bg-gray-900 border-x-0 sm:border border-gray-200 dark:border-gray-800 rounded-none sm:rounded-2xl p-4 sm:p-5 hover:border-gray-400 dark:hover:border-gray-600 transition flex flex-col sm:flex-row gap-4 shadow-xs">
                     {art.featuredImage && isValidImageUrl(art.featuredImage) && (
                       <Link
                         href={`/stories/${art.slug}`}

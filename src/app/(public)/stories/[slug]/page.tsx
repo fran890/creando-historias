@@ -99,9 +99,9 @@ export default async function StoryPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <div className="max-w-4xl mx-auto px-0 sm:px-6 py-2 sm:py-6 space-y-4 sm:space-y-6">
         {/* Navigation Breadcrumb */}
-        <div className="flex items-center justify-between">
+        <div className="px-4 sm:px-0 flex items-center justify-between">
           <Link
             href="/"
             className="inline-flex items-center space-x-1.5 text-xs font-bold text-gray-500 hover:text-brand-500 transition"
@@ -119,7 +119,7 @@ export default async function StoryPage({ params }: Props) {
           <article
             itemScope
             itemType="https://schema.org/BlogPosting"
-            className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-200/80 dark:border-gray-800/80 shadow-xs overflow-hidden"
+            className="bg-white dark:bg-gray-900 rounded-none sm:rounded-3xl border-x-0 sm:border border-gray-200/80 dark:border-gray-800/80 shadow-xs overflow-hidden"
           >
             {/* Featured Image Header */}
             {validFeaturedImage && (
@@ -138,7 +138,7 @@ export default async function StoryPage({ params }: Props) {
               </div>
             )}
 
-            <div className="p-6 sm:p-10 space-y-6">
+            <div className="p-4 sm:p-10 space-y-6">
               <header className="space-y-4 max-w-[750px] mx-auto">
                 {article.category && (
                   <Link

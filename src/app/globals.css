@@ -52,11 +52,39 @@
     overflow-x: auto;
   }
 
-  /* AdSense Floating Header Fix */
+  /* AdSense Floating Top Header Displacement Fix */
+  body {
+    top: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  header,
+  header.sticky {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 99999 !important;
+    margin-top: 0 !important;
+    transform: none !important;
+  }
+
   .google-anno-top ~ header,
   body.google-anno-top header,
-  div[class*="google-anno"] ~ header {
+  div[class*="google-anno"] ~ header,
+  div[id*="google_ads_iframe"] ~ header,
+  ins.adsbygoogle[data-anchor-status] ~ header {
     top: 0 !important;
+    position: sticky !important;
+    z-index: 99999 !important;
+    margin-top: 0 !important;
+  }
+
+  /* Keep AdSense top anchor container below fixed navbar z-index */
+  div[id*="google_ads_iframe"],
+  iframe[id*="aswift"],
+  .google-anno-top,
+  div[class*="google-anno"] {
+    z-index: 9990 !important;
   }
 
   /* Reserved Ad Container (Prevents Jarring Layout Shifts & Flickering) */
