@@ -1,16 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link2, Check, Copy } from "lucide-react";
 
 interface CopyLinkButtonProps {
   slug: string;
   variant?: "full" | "icon" | "pill";
   className?: string;
+  requireAuth?: boolean;
 }
 
-export default function CopyLinkButton({ slug, variant = "full", className = "" }: CopyLinkButtonProps) {
+export default function CopyLinkButton({
+  slug,
+  variant = "full",
+  className = "",
+  requireAuth = true,
+}: CopyLinkButtonProps) {
   const [copied, setCopied] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(requireAuth ? null : true);
+
+  useEffect(() => {
+    if (!requireAuth) return;
+
+    let isMounted = true;
+    fetch("/api/auth/session", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted) {
+          setIsAuthenticated(Boolean(data?.user));
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setIsAuthenticated(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [requireAuth]);
+
+  if (requireAuth && !isAuthenticated) {
+    return null;
+  }
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.preventDefault();
