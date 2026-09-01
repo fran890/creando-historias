@@ -1,27 +1,55 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import AdminStoryActions from "./AdminStoryActions";
+import Pagination from "@/components/common/Pagination";
 import { PlusCircle, ShieldAlert, CheckCircle2, Clock, FileText } from "lucide-react";
 
-export default async function AdminStoriesPage() {
-  const articles = await prisma.article.findMany({
-    orderBy: { updatedAt: "desc" },
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      excerpt: true,
-      status: true,
-      updatedAt: true,
-      author: { select: { name: true, username: true, role: true } },
-      category: { select: { name: true } },
-    },
-  });
+interface Props {
+  searchParams?: { page?: string };
+}
 
-  const pendingArticles = articles.filter((a) => a.status === "PENDING_REVIEW");
-  const publishedArticles = articles.filter((a) => a.status === "PUBLISHED");
-  const draftArticles = articles.filter((a) => a.status === "DRAFT");
-  const rejectedArticles = articles.filter((a) => a.status === "REJECTED");
+export default async function AdminStoriesPage({ searchParams }: Props) {
+  const currentPage = Math.max(1, parseInt(searchParams?.page || "1", 10) || 1);
+  const pageSize = 10;
+
+  const totalCount = await prisma.article.count();
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  const [articles, pendingArticles, pendingCount, publishedCount, draftCount, rejectedCount] = await Promise.all([
+    prisma.article.findMany({
+      orderBy: { updatedAt: "desc" },
+      skip: (currentPage - 1) * pageSize,
+      take: pageSize,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        status: true,
+        updatedAt: true,
+        author: { select: { name: true, username: true, role: true } },
+        category: { select: { name: true } },
+      },
+    }),
+    prisma.article.findMany({
+      where: { status: "PENDING_REVIEW" },
+      orderBy: { updatedAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        status: true,
+        updatedAt: true,
+        author: { select: { name: true, username: true, role: true } },
+        category: { select: { name: true } },
+      },
+    }),
+    prisma.article.count({ where: { status: "PENDING_REVIEW" } }),
+    prisma.article.count({ where: { status: "PUBLISHED" } }),
+    prisma.article.count({ where: { status: "DRAFT" } }),
+    prisma.article.count({ where: { status: "REJECTED" } }),
+  ]);
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
@@ -47,7 +75,7 @@ export default async function AdminStoriesPage() {
         <div className="p-4 bg-amber-950/40 border border-amber-800/60 rounded-2xl flex items-center space-x-3">
           <ShieldAlert className="w-6 h-6 text-amber-400" />
           <div>
-            <div className="text-2xl font-bold text-amber-300">{pendingArticles.length}</div>
+            <div className="text-2xl font-bold text-amber-300">{pendingCount}</div>
             <div className="text-[11px] font-semibold text-amber-400">Por Moderar (Pendientes)</div>
           </div>
         </div>
@@ -55,7 +83,7 @@ export default async function AdminStoriesPage() {
         <div className="p-4 bg-green-950/40 border border-green-800/60 rounded-2xl flex items-center space-x-3">
           <CheckCircle2 className="w-6 h-6 text-green-400" />
           <div>
-            <div className="text-2xl font-bold text-green-300">{publishedArticles.length}</div>
+            <div className="text-2xl font-bold text-green-300">{publishedCount}</div>
             <div className="text-[11px] font-semibold text-green-400">Publicadas</div>
           </div>
         </div>
@@ -63,7 +91,7 @@ export default async function AdminStoriesPage() {
         <div className="p-4 bg-gray-800/60 border border-gray-700 rounded-2xl flex items-center space-x-3">
           <Clock className="w-6 h-6 text-gray-400" />
           <div>
-            <div className="text-2xl font-bold text-gray-200">{draftArticles.length}</div>
+            <div className="text-2xl font-bold text-gray-200">{draftCount}</div>
             <div className="text-[11px] font-semibold text-gray-400">En Borrador (No listas)</div>
           </div>
         </div>
@@ -71,7 +99,7 @@ export default async function AdminStoriesPage() {
         <div className="p-4 bg-red-950/40 border border-red-800/60 rounded-2xl flex items-center space-x-3">
           <FileText className="w-6 h-6 text-red-400" />
           <div>
-            <div className="text-2xl font-bold text-red-300">{rejectedArticles.length}</div>
+            <div className="text-2xl font-bold text-red-300">{rejectedCount}</div>
             <div className="text-[11px] font-semibold text-red-400">Rechazadas</div>
           </div>
         </div>
@@ -114,7 +142,7 @@ export default async function AdminStoriesPage() {
         )}
       </section>
 
-      {/* Section 2: All Other Stories List */}
+      {/* Section 2: All Other Stories List with Pagination */}
       <section className="space-y-4 pt-4">
         <div className="border-b border-gray-800 pb-3">
           <h2 className="font-serif text-xl font-bold text-white">Todas las Historias en la Plataforma</h2>
@@ -151,6 +179,8 @@ export default async function AdminStoriesPage() {
             </div>
           ))}
         </div>
+
+        <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/admin/stories" />
       </section>
     </div>
   );

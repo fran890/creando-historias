@@ -1,10 +1,24 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import Pagination from "@/components/common/Pagination";
 import { UserCheck, Eye, BookOpen } from "lucide-react";
 
-export default async function AdminAuthorsPage() {
+interface Props {
+  searchParams?: { page?: string };
+}
+
+export default async function AdminAuthorsPage({ searchParams }: Props) {
+  const currentPage = Math.max(1, parseInt(searchParams?.page || "1", 10) || 1);
+  const pageSize = 8;
+
+  const totalAuthors = await prisma.user.count({ where: { role: "AUTHOR" } });
+  const totalPages = Math.ceil(totalAuthors / pageSize);
+
   const authors = await prisma.user.findMany({
     where: { role: "AUTHOR" },
+    orderBy: { createdAt: "desc" },
+    skip: (currentPage - 1) * pageSize,
+    take: pageSize,
     include: {
       _count: { select: { articles: true, views: true } },
     },
@@ -43,6 +57,8 @@ export default async function AdminAuthorsPage() {
           </div>
         ))}
       </div>
+
+      <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/admin/authors" />
     </div>
   );
 }
