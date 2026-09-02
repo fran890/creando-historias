@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCachedHomePageArticles } from "@/lib/cache/articles";
 import Pagination from "@/components/common/Pagination";
+import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
 import { Clock, User, Folder, TrendingUp, BookOpen, ArrowRight, Zap } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -69,21 +70,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       )}
 
       {/* Homepage AdSense Slot */}
-      <div className="article-ad-box w-full my-4">
-        <span className="ad-label">Publicidad</span>
-        <ins
-          className="adsbygoogle"
-          style={{ display: "block", width: "100%" }}
-          data-ad-client="ca-pub-6105500451798195"
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: "(adsbygoogle = window.adsbygoogle || []).push({});",
-          }}
-        />
-      </div>
+      <HeaderBannerAd />
 
       {/* Featured Stories Section */}
       {featuredArticles.length > 0 && (
