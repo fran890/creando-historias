@@ -6,6 +6,7 @@ interface PaginationProps {
   totalPages: number;
   baseUrl?: string;
   pageParam?: string;
+  showSinglePage?: boolean;
 }
 
 export default function Pagination({
@@ -13,8 +14,10 @@ export default function Pagination({
   totalPages,
   baseUrl = "",
   pageParam = "page",
+  showSinglePage = true,
 }: PaginationProps) {
-  if (totalPages <= 1) return null;
+  if (totalPages <= 0) return null;
+  if (!showSinglePage && totalPages <= 1) return null;
 
   const buildUrl = (page: number) => {
     // Check if baseUrl already contains query parameters
