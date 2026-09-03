@@ -392,14 +392,10 @@ export default async function StoryPage({ params }: Props) {
               )}
             </section>
           )}
-
-          {/* Bottom Ad */}
-          <InContentAd />
         </main>
 
         {/* Desktop Right Sidebar with Ads */}
         <aside className="hidden lg:block w-[300px] flex-shrink-0 space-y-6">
-          <SidebarAd />
           <SidebarAd />
         </aside>
         </div>

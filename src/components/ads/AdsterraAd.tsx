@@ -11,9 +11,8 @@ interface AdsterraAdProps {
 }
 
 /**
- * Reusable Adsterra ad component.
- * Dynamically injects the atOptions config + invoke.js script into the DOM
- * at mount time so the ad renders correctly in React/Next.js.
+ * Adsterra iframe banner ad component.
+ * Each ad key can only show ONCE per page.
  */
 export default function AdsterraAd({
   adKey = "6dbb818f76a41d9fd7b276a64638934f",
@@ -28,10 +27,8 @@ export default function AdsterraAd({
   useEffect(() => {
     const container = containerRef.current;
     if (!container || loadedRef.current) return;
-
     loadedRef.current = true;
 
-    // 1. Inject atOptions config script (executes synchronously)
     const optionsScript = document.createElement("script");
     optionsScript.textContent = `
       atOptions = {
@@ -44,25 +41,21 @@ export default function AdsterraAd({
     `;
     container.appendChild(optionsScript);
 
-    // 2. Inject invoke.js (loads async, reads atOptions, creates the ad iframe)
     const invokeScript = document.createElement("script");
     invokeScript.src = `https://wailsilence.com/${adKey}/invoke.js`;
-    invokeScript.async = false; // ensure it runs after optionsScript
+    invokeScript.async = false;
     container.appendChild(invokeScript);
 
     return () => {
       loadedRef.current = false;
-      if (container) {
-        container.innerHTML = "";
-      }
+      if (container) container.innerHTML = "";
     };
   }, [adKey, format, width, height]);
 
   return (
     <div
       ref={containerRef}
-      className={`adsterra-ad flex justify-center items-center overflow-hidden w-full ${className}`}
-      style={{ minHeight: height > 0 ? height : undefined }}
+      className={`adsterra-ad flex justify-center items-center overflow-hidden w-full max-w-full ${className}`}
     />
   );
 }
