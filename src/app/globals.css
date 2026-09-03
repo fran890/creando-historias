@@ -439,3 +439,152 @@
     box-shadow: 0 12px 30px -10px rgba(156, 39, 176, 0.3);
   }
 }
+
+/* ==========================================================================
+   Adsterra Banner & Native Ad Styles
+   ========================================================================== */
+
+/* Fix general iframe height collapse from global base styles */
+.adsterra-ad iframe,
+.adsterra-header-wrapper iframe {
+  max-width: 100% !important;
+}
+
+/* Header Banner Responsive Scaling to fill available width */
+.adsterra-header-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  min-height: 70px;
+}
+
+.adsterra-header-wrapper iframe {
+  width: 468px !important;
+  height: 60px !important;
+  transform-origin: center center;
+  transition: transform 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .adsterra-header-wrapper {
+    min-height: 80px;
+  }
+  .adsterra-header-wrapper iframe {
+    transform: scale(1.22);
+  }
+}
+
+@media (min-width: 768px) {
+  .adsterra-header-wrapper {
+    min-height: 95px;
+  }
+  .adsterra-header-wrapper iframe {
+    transform: scale(1.42);
+  }
+}
+
+/* Adsterra Native Banner in Sidebar (4-card vertical stack) */
+.adsterra-native-banner {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+[id^="container-666fc12a09a07ad15eeca1a70b387d4b"] {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex-grow: 1 !important;
+}
+
+[class*="container-666fc12a09a07ad15eeca1a70b387d4b__stand"] {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  width: 100% !important;
+  height: 100% !important;
+  justify-content: space-between !important;
+}
+
+[class*="container-666fc12a09a07ad15eeca1a70b387d4b__bn-container"] {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(229, 231, 235, 0.9) !important;
+  padding: 8px !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.dark [class*="container-666fc12a09a07ad15eeca1a70b387d4b__bn-container"] {
+  background: rgba(17, 24, 39, 0.8) !important;
+  border: 1px solid rgba(55, 65, 81, 0.7) !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+[class*="container-666fc12a09a07ad15eeca1a70b387d4b__bn-container"]:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08) !important;
+}
+
+[class*="container-666fc12a09a07ad15eeca1a70b387d4b__bn"] {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  position: relative !important;
+}
+
+[class*="container-666fc12a09a07ad15eeca1a70b387d4b__img-container"] {
+  width: 100% !important;
+  height: 135px !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+
+[class*="container-666fc12a09a07ad15eeca1a70b387d4b__img"] {
+  width: 100% !important;
+  height: 100% !important;
+  background-size: cover !important;
+  background-position: center !important;
+  transition: transform 0.3s ease !important;
+}
+
+[class*="container-666fc12a09a07ad15eeca1a70b387d4b__bn"]:hover [class*="container-666fc12a09a07ad15eeca1a70b387d4b__img"] {
+  transform: scale(1.04) !important;
+}
+
+[class*="container-666fc12a09a07ad15eeca1a70b387d4b__title"] {
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+  font-weight: 700 !important;
+  margin-top: 8px !important;
+  padding: 0 2px !important;
+  color: #111827 !important;
+  text-align: left !important;
+  width: 100% !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.dark [class*="container-666fc12a09a07ad15eeca1a70b387d4b__title"] {
+  color: #f9fafb !important;
+}
+
+[class*="container-666fc12a09a07ad15eeca1a70b387d4b__link"] {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 10 !important;
+}
+

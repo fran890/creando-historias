@@ -60,9 +60,32 @@ export default function RootLayout({
   return (
     <html lang="es" className={`h-full scroll-smooth ${inter.variable} ${outfit.variable} ${robotoSlab.variable}`}>
       <head>
-        {/* Adsterra Global Scripts (Popunder + Social Bar) */}
-        <script src="https://wailsilence.com/tb6f07jgez?key=7204855da51379426dbb0d5c6c8933b7" />
-        <script src="https://wailsilence.com/5a/77/9f/5a779ffcc3c9736641795d9d4408d678.js" />
+        {/* Adsterra Global Scripts: Social Bar, Floating Cards, Bottom Tab & Popunder */}
+        <script
+          async
+          data-cfasync="false"
+          src="https://pl31171504.profitableratecpmnetwork.com/6a/94/d8/6a94d8ced66908f1c8e6e72a1022ef24.js"
+        />
+        <script
+          async
+          data-cfasync="false"
+          src="https://wailsilence.com/6a/94/d8/6a94d8ced66908f1c8e6e72a1022ef24.js"
+        />
+        <script
+          async
+          data-cfasync="false"
+          src="https://wailsilence.com/5a/77/9f/5a779ffcc3c9736641795d9d4408d678.js"
+        />
+        <script
+          async
+          data-cfasync="false"
+          src="https://pl31171502.profitableratecpmnetwork.com/5a/77/9f/5a779ffcc3c9736641795d9d4408d678.js"
+        />
+        <script
+          async
+          data-cfasync="false"
+          src="https://wailsilence.com/tb6f07jgez?key=7204855da51379426dbb0d5c6c8933b7"
+        />
         {/* Google Analytics (gtag.js) */}
         <script
           async
