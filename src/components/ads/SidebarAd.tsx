@@ -1,8 +1,13 @@
 "use client";
 
-export default function SidebarAd() {
+interface SidebarAdProps {
+  slotId?: string;
+  className?: string;
+}
+
+export default function SidebarAd({ slotId, className = "" }: SidebarAdProps) {
   return (
-    <div className="w-full my-4 sticky top-24 flex flex-col items-center justify-center overflow-hidden">
+    <div className={`w-full my-4 sticky top-24 flex flex-col items-center justify-center overflow-hidden ${className}`}>
       <div className="w-full bg-gray-100/70 dark:bg-gray-900/50 border border-gray-200/60 dark:border-gray-800/60 rounded-2xl p-3 flex flex-col items-center justify-center text-center overflow-hidden min-h-[250px] shadow-xs">
         <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1 pointer-events-none">
           Publicidad
