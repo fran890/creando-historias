@@ -9,6 +9,10 @@ interface StickyFloatingAdProps {
   className?: string;
 }
 
+/**
+ * Mobile & Desktop Bottom Sticky Floating Ad Banner:
+ * Uses official 320x50 Mobile Leaderboard key (38e93328cc31a4d67bb5967d1a57b595).
+ */
 export default function StickyFloatingAd({ slotId, className = "" }: StickyFloatingAdProps) {
   const [closed, setClosed] = useState(false);
 
@@ -28,10 +32,14 @@ export default function StickyFloatingAd({ slotId, className = "" }: StickyFloat
         <X className="w-3.5 h-3.5" />
       </button>
       <div
-        className="w-full max-w-[468px] flex justify-center items-center overflow-hidden scale-90 sm:scale-100"
-        style={{ minHeight: "52px", touchAction: "pan-y" }}
+        className="w-full max-w-[320px] flex justify-center items-center overflow-hidden"
+        style={{ minHeight: "50px", touchAction: "pan-y" }}
       >
-        <AdsterraAd width={468} height={60} />
+        <AdsterraAd
+          adKey="38e93328cc31a4d67bb5967d1a57b595"
+          width={320}
+          height={50}
+        />
       </div>
     </div>
   );

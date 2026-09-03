@@ -459,54 +459,19 @@
   max-width: 100% !important;
 }
 
-/* Header Banner Responsive Scaling to fill available width & prevent touch-blocking */
-.adsterra-header-wrapper {
+/* Adsterra Display Banner Responsive Container (728x90 desktop, 320x50 mobile) */
+.adsterra-ad {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  min-height: 70px;
   touch-action: pan-y;
 }
 
-.adsterra-header-wrapper iframe {
+.adsterra-ad iframe {
   max-width: 100% !important;
-  height: 60px !important;
-  transform-origin: center center;
-  transition: transform 0.2s ease;
   touch-action: pan-y;
-}
-
-@media (max-width: 639px) {
-  .adsterra-header-wrapper {
-    min-height: 52px;
-  }
-  .adsterra-header-wrapper iframe {
-    width: 468px !important;
-    transform: scale(0.72);
-    margin: -8px 0;
-  }
-}
-
-@media (min-width: 640px) {
-  .adsterra-header-wrapper {
-    min-height: 80px;
-  }
-  .adsterra-header-wrapper iframe {
-    width: 468px !important;
-    transform: scale(1.22);
-  }
-}
-
-@media (min-width: 768px) {
-  .adsterra-header-wrapper {
-    min-height: 95px;
-  }
-  .adsterra-header-wrapper iframe {
-    width: 468px !important;
-    transform: scale(1.42);
-  }
 }
 
 /* Adsterra Native Banner in Sidebar (4-card vertical stack) */

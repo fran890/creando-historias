@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import ArticleReader from "@/components/editor/ArticleReader";
 import InContentAd from "@/components/ads/InContentAd";
 import SidebarAd from "@/components/ads/SidebarAd";
+import ArticleNativeAd from "@/components/ads/ArticleNativeAd";
 import StickyFloatingAd from "@/components/ads/StickyFloatingAd";
 import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
 import CopyLinkButton from "@/components/common/CopyLinkButton";
@@ -197,6 +198,9 @@ export default async function StoryPage({ params }: Props) {
                     {article.excerpt}
                   </p>
                 )}
+
+                {/* Publicidad recomendada en móvil: debajo de título y subtítulo */}
+                <ArticleNativeAd placement="header" />
 
                 {/* Author & Meta Row */}
                 <div className="flex items-center justify-between py-4 border-y border-gray-100 dark:border-gray-800/80 text-sm text-gray-600 dark:text-gray-400 flex-wrap gap-4">
@@ -394,9 +398,9 @@ export default async function StoryPage({ params }: Props) {
           )}
         </main>
 
-        {/* Right Sidebar with Native Ads (mobile: full-width below, desktop: sticky sidebar) */}
-        <aside className="w-full lg:w-[300px] flex-shrink-0 space-y-6">
-          <SidebarAd />
+        {/* Right Sidebar with Native Ads (desktop) */}
+        <aside className="hidden lg:block w-[300px] flex-shrink-0 space-y-6">
+          <ArticleNativeAd placement="sidebar" />
         </aside>
         </div>
       </div>
