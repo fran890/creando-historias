@@ -1,37 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { registerAdUnit } from "@/lib/adsense";
-import { isManualAdSenseMode } from "@/lib/adsense-config";
-
-interface SidebarAdProps {
-  slotId?: string;
-}
-
-export default function SidebarAd({ slotId }: SidebarAdProps) {
-  const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-6105500451798195";
-  const effectiveSlotId = slotId || process.env.NEXT_PUBLIC_ADSENSE_SIDEBAR_SLOT_ID;
-  const adRef = useRef<HTMLModElement>(null);
-  const isManualMode = isManualAdSenseMode();
-
-  useEffect(() => {
-    if (!isManualMode) return;
-    return registerAdUnit(adRef.current);
-  }, [isManualMode]);
-
-  if (!isManualMode) return null;
-
+export default function SidebarAd() {
   return (
-    <div className="ad-container sticky top-24 w-full my-4 text-center overflow-hidden flex items-center justify-center">
-      <ins
-        ref={adRef}
-        className="adsbygoogle"
-        style={{ display: "block", width: "100%" }}
-        data-ad-client={adClientId}
-        {...(effectiveSlotId ? { "data-ad-slot": effectiveSlotId } : {})}
-        data-ad-format="rectangle"
-        data-full-width-responsive="true"
-      />
+    <div className="w-full my-4 sticky top-24 flex flex-col items-center justify-center overflow-hidden">
+      <div className="w-full bg-gray-100/70 dark:bg-gray-900/50 border border-gray-200/60 dark:border-gray-800/60 rounded-2xl p-3 flex flex-col items-center justify-center text-center overflow-hidden min-h-[250px] shadow-xs">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1 pointer-events-none">
+          Publicidad
+        </span>
+        <div id="container-666fc12a09a07ad15eeca1a70b387d4b" className="w-full flex justify-center items-center overflow-hidden min-h-[200px]" />
+      </div>
     </div>
   );
 }

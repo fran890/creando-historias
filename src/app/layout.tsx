@@ -6,8 +6,6 @@ import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import { Inter, Outfit, Roboto_Slab } from "next/font/google";
 import { getValidMetadataBase } from "@/lib/url";
 
-const AD_CLIENT_ID = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-6105500451798195";
-
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -64,13 +62,21 @@ export default function RootLayout({
       <head>
         {/* Adsterra Scripts */}
         <script
-          async
-          data-cfasync="false"
-          src="https://pl31171503.profitableratecpmnetwork.com/666fc12a09a07ad15eeca1a70b387d4b/invoke.js"
+          dangerouslySetInnerHTML={{
+            __html: `
+              atOptions = {
+                'key' : '6dbb818f76a41d9fd7b276a64638934f',
+                'format' : 'iframe',
+                'height' : 60,
+                'width' : 468,
+                'params' : {}
+              };
+            `,
+          }}
         />
-        <script src="https://pl31171502.profitableratecpmnetwork.com/5a/77/9f/5a779ffcc3c9736641795d9d4408d678.js" />
-        <script src="https://www.profitableratecpmnetwork.com/tb6f07jgez?key=7204855da51379426dbb0d5c6c8933b7" />
-        <script src="https://pl31171504.profitableratecpmnetwork.com/6a/94/d8/6a94d8ced66908f1c8e6e72a1022ef24.js" />
+        <script src="https://wailsilence.com/6dbb818f76a41d9fd7b276a64638934f/invoke.js" />
+        <script src="https://wailsilence.com/tb6f07jgez?key=7204855da51379426dbb0d5c6c8933b7" />
+        <script src="https://wailsilence.com/5a/77/9f/5a779ffcc3c9736641795d9d4408d678.js" />
         {/* Google Analytics (gtag.js) */}
         <script
           async
@@ -88,9 +94,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="h-full antialiased bg-gray-50 text-gray-900 dark:bg-[#090d16] dark:text-gray-100 font-sans selection:bg-brand-500 selection:text-white">
-        {/* Adsterra Banner Container */}
-        <div id="container-666fc12a09a07ad15eeca1a70b387d4b" />
+      <body className="h-full antialiased bg-gray-50 text-gray-900 dark:bg-[#090d16] dark:text-gray-100 font-sans selection:bg-brand-500 selection:text-white overflow-x-hidden">
         <Suspense fallback={null}>
           <NavigationProgress />
           <GoogleAnalytics />

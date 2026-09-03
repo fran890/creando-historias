@@ -1,37 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { registerAdUnit } from "@/lib/adsense";
-import { isManualAdSenseMode } from "@/lib/adsense-config";
-
-interface HeaderBannerAdProps {
-  slotId?: string;
-}
-
-export default function HeaderBannerAd({ slotId }: HeaderBannerAdProps) {
-  const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-6105500451798195";
-  const effectiveSlotId = slotId || process.env.NEXT_PUBLIC_ADSENSE_HEADER_SLOT_ID;
-  const adRef = useRef<HTMLModElement>(null);
-  const isManualMode = isManualAdSenseMode();
-
-  useEffect(() => {
-    if (!isManualMode) return;
-    return registerAdUnit(adRef.current);
-  }, [isManualMode]);
-
-  if (!isManualMode) return null;
-
+export default function HeaderBannerAd() {
   return (
-    <div className="ad-container w-full my-6 text-center overflow-hidden flex items-center justify-center">
-      <ins
-        ref={adRef}
-        className="adsbygoogle"
-        style={{ display: "block", width: "100%" }}
-        data-ad-client={adClientId}
-        {...(effectiveSlotId ? { "data-ad-slot": effectiveSlotId } : {})}
-        data-ad-format="auto"
-        data-full-width-responsive="true"
-      />
+    <div className="w-full max-w-7xl mx-auto px-4 py-3 my-2 flex flex-col items-center justify-center overflow-hidden">
+      <div className="w-full bg-gray-100/70 dark:bg-gray-900/50 border border-gray-200/60 dark:border-gray-800/60 rounded-2xl p-3 flex flex-col items-center justify-center text-center overflow-hidden min-h-[90px] shadow-xs">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1 pointer-events-none">
+          Publicidad
+        </span>
+        <div id="container-666fc12a09a07ad15eeca1a70b387d4b" className="w-full flex justify-center items-center overflow-hidden min-h-[60px]" />
+      </div>
     </div>
   );
 }

@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma";
 import SidebarAd from "@/components/ads/SidebarAd";
 import NativeMatchedAd from "@/components/ads/NativeMatchedAd";
 import StickyFloatingAd from "@/components/ads/StickyFloatingAd";
-import AdSenseScript from "@/components/ads/AdSenseScript";
 import { getSafePublicImageUrl } from "@/lib/images";
 import { BookOpen, Eye, Clock, Calendar, ArrowLeft, Folder, ChevronLeft, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
@@ -71,7 +70,6 @@ export default async function AuthorProfilePage({ params, searchParams }: Props)
 
   return (
     <div className="relative pb-24 bg-gray-50 dark:bg-gray-950 min-h-screen">
-      <AdSenseScript />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-10">
         <div>
