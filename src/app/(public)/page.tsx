@@ -29,7 +29,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       {/* Homepage Ad Banner */}
       <HeaderBannerAd />
 
-      <div className="flex gap-8">
+      <div className="flex flex-col lg:flex-row gap-8">
         {/* Main Content Column */}
         <div className="w-full min-w-0 space-y-6 sm:space-y-8">
           {/* Modern & Inspiring Hero Section */}
@@ -215,8 +215,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       </section>
         </div>
 
-        {/* Desktop Right Sidebar with Ad */}
-        <aside className="hidden lg:block w-[300px] flex-shrink-0 space-y-6">
+        {/* Right Sidebar with Native Ads (mobile: full-width below feed, desktop: sticky sidebar) */}
+        <aside className="w-full lg:w-[300px] flex-shrink-0 space-y-6">
           <SidebarAd />
         </aside>
       </div>

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import Pagination from "@/components/common/Pagination";
 import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
 import SidebarAd from "@/components/ads/SidebarAd";
+import StickyFloatingAd from "@/components/ads/StickyFloatingAd";
 import { Clock, Folder } from "lucide-react";
 
 interface Props {
@@ -61,7 +62,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       {/* Category Ad Banner */}
       <HeaderBannerAd />
 
-      <div className="flex gap-8">
+      <div className="flex flex-col lg:flex-row gap-8">
         {/* Main Content Column */}
         <main className="w-full min-w-0 space-y-8">
           <div className="border-b border-gray-200 dark:border-gray-800 pb-6 space-y-2">
@@ -117,11 +118,14 @@ export default async function CategoryPage({ params, searchParams }: Props) {
           )}
         </main>
 
-        {/* Desktop Right Sidebar with Ad */}
-        <aside className="hidden lg:block w-[300px] flex-shrink-0 space-y-6">
+        {/* Right Sidebar with Native Ads (mobile: full-width below, desktop: sticky sidebar) */}
+        <aside className="w-full lg:w-[300px] flex-shrink-0 space-y-6">
           <SidebarAd />
         </aside>
       </div>
+
+      {/* Sticky bottom ad (mobile/tablet) */}
+      <StickyFloatingAd />
     </div>
   );
 }

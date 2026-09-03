@@ -152,7 +152,7 @@ export default async function StoryPage({ params }: Props) {
         </div>
 
         {/* Article + Sidebar Layout */}
-        <div className="flex gap-8">
+        <div className="flex flex-col lg:flex-row gap-8">
         {/* Main Article Column */}
         <main className="w-full min-w-0 space-y-6">
           <article
@@ -394,8 +394,8 @@ export default async function StoryPage({ params }: Props) {
           )}
         </main>
 
-        {/* Desktop Right Sidebar with Ads */}
-        <aside className="hidden lg:block w-[300px] flex-shrink-0 space-y-6">
+        {/* Right Sidebar with Native Ads (mobile: full-width below, desktop: sticky sidebar) */}
+        <aside className="w-full lg:w-[300px] flex-shrink-0 space-y-6">
           <SidebarAd />
         </aside>
         </div>

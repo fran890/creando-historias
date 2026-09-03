@@ -535,6 +535,14 @@
   justify-content: space-between !important;
 }
 
+@media (min-width: 520px) and (max-width: 1023px) {
+  [class*="container-666fc12a09a07ad15eeca1a70b387d4b__stand"] {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+  }
+}
+
 [class*="container-666fc12a09a07ad15eeca1a70b387d4b__bn-container"] {
   width: 100% !important;
   display: flex !important;

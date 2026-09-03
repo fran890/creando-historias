@@ -101,6 +101,12 @@ export default function RootLayout({
           <GoogleAnalytics />
         </Suspense>
         {children}
+        {/* Adsterra: SocialBar_1 in body ensures floating bottom tab attaches reliably */}
+        <script
+          async
+          data-cfasync="false"
+          src="https://wailsilence.com/6a/94/d8/6a94d8ced66908f1c8e6e72a1022ef24.js"
+        />
       </body>
     </html>
   );
