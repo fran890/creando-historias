@@ -3,11 +3,20 @@
 @tailwind utilities;
 
 @layer base {
-  html,
-  body {
-    max-width: 100vw;
-    overflow-x: hidden;
+  html {
+    overflow-x: clip;
     font-family: 'Inter', sans-serif;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body {
+    overflow-x: clip;
+    overflow-y: auto;
+    width: 100%;
+    min-height: 100%;
+    font-family: 'Inter', sans-serif;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
 
   /* Custom Smooth Scrollbar */
@@ -450,7 +459,7 @@
   max-width: 100% !important;
 }
 
-/* Header Banner Responsive Scaling to fill available width */
+/* Header Banner Responsive Scaling to fill available width & prevent touch-blocking */
 .adsterra-header-wrapper {
   width: 100%;
   display: flex;
@@ -458,13 +467,26 @@
   align-items: center;
   overflow: hidden;
   min-height: 70px;
+  touch-action: pan-y;
 }
 
 .adsterra-header-wrapper iframe {
-  width: 468px !important;
+  max-width: 100% !important;
   height: 60px !important;
   transform-origin: center center;
   transition: transform 0.2s ease;
+  touch-action: pan-y;
+}
+
+@media (max-width: 639px) {
+  .adsterra-header-wrapper {
+    min-height: 52px;
+  }
+  .adsterra-header-wrapper iframe {
+    width: 468px !important;
+    transform: scale(0.72);
+    margin: -8px 0;
+  }
 }
 
 @media (min-width: 640px) {
@@ -472,6 +494,7 @@
     min-height: 80px;
   }
   .adsterra-header-wrapper iframe {
+    width: 468px !important;
     transform: scale(1.22);
   }
 }
@@ -481,6 +504,7 @@
     min-height: 95px;
   }
   .adsterra-header-wrapper iframe {
+    width: 468px !important;
     transform: scale(1.42);
   }
 }

@@ -58,7 +58,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className={`h-full scroll-smooth ${inter.variable} ${outfit.variable} ${robotoSlab.variable}`}>
+    <html lang="es" className={`min-h-full scroll-smooth ${inter.variable} ${outfit.variable} ${robotoSlab.variable}`}>
       <head>
         {/* Adsterra: SocialBar_1 (31071005) - Floating Cards & Bottom Tab */}
         <script
@@ -95,7 +95,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="h-full antialiased bg-gray-50 text-gray-900 dark:bg-[#090d16] dark:text-gray-100 font-sans selection:bg-brand-500 selection:text-white overflow-x-hidden">
+      <body className="min-h-screen antialiased bg-gray-50 text-gray-900 dark:bg-[#090d16] dark:text-gray-100 font-sans selection:bg-brand-500 selection:text-white">
         <Suspense fallback={null}>
           <NavigationProgress />
           <GoogleAnalytics />
