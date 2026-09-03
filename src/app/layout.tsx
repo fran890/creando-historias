@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import NavigationProgress from "@/components/common/NavigationProgress";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import AdsterraPopunder from "@/components/ads/AdsterraPopunder";
 import { Inter, Outfit, Roboto_Slab } from "next/font/google";
 import { getValidMetadataBase } from "@/lib/url";
 
@@ -66,18 +67,6 @@ export default function RootLayout({
           data-cfasync="false"
           src="https://wailsilence.com/6a/94/d8/6a94d8ced66908f1c8e6e72a1022ef24.js"
         />
-        {/* Adsterra: Popunder_1 (31071003) */}
-        <script
-          async
-          data-cfasync="false"
-          src="https://wailsilence.com/5a/77/9f/5a779ffcc3c9736641795d9d4408d678.js"
-        />
-        {/* Adsterra: Smartlink_1 (31071006) */}
-        <script
-          async
-          data-cfasync="false"
-          src="https://wailsilence.com/tb6f07jgez?key=7204855da51379426dbb0d5c6c8933b7"
-        />
         {/* Google Analytics (gtag.js) */}
         <script
           async
@@ -99,14 +88,9 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <NavigationProgress />
           <GoogleAnalytics />
+          <AdsterraPopunder />
         </Suspense>
         {children}
-        {/* Adsterra: SocialBar_1 in body ensures floating bottom tab attaches reliably */}
-        <script
-          async
-          data-cfasync="false"
-          src="https://wailsilence.com/6a/94/d8/6a94d8ced66908f1c8e6e72a1022ef24.js"
-        />
       </body>
     </html>
   );
