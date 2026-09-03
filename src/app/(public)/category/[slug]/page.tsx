@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { Clock, Eye, Folder, ChevronLeft, ChevronRight } from "lucide-react";
+import Pagination from "@/components/common/Pagination";
+import { Clock, Folder } from "lucide-react";
 
 interface Props {
   params: { slug: string };
@@ -95,7 +96,6 @@ export default async function CategoryPage({ params, searchParams }: Props) {
                         <Clock className="w-3 h-3 text-gray-400" />
                         <span>{art.readingTime} min</span>
                       </span>
-
                     </div>
                   </div>
                 </div>
@@ -103,44 +103,8 @@ export default async function CategoryPage({ params, searchParams }: Props) {
             ))}
           </div>
 
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center space-x-4 pt-6 border-t border-gray-200 dark:border-gray-800">
-              {page > 1 ? (
-                <Link
-                  href={`/category/${category.slug}?page=${page - 1}`}
-                  className="inline-flex items-center space-x-1 px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-brand-500 hover:text-white transition"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  <span>Anterior</span>
-                </Link>
-              ) : (
-                <span className="inline-flex items-center space-x-1 px-4 py-2 opacity-40 text-xs font-bold text-gray-400 cursor-not-allowed">
-                  <ChevronLeft className="w-4 h-4" />
-                  <span>Anterior</span>
-                </span>
-              )}
-
-              <span className="text-xs font-semibold text-gray-500">
-                Página {page} de {totalPages}
-              </span>
-
-              {page < totalPages ? (
-                <Link
-                  href={`/category/${category.slug}?page=${page + 1}`}
-                  className="inline-flex items-center space-x-1 px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-brand-500 hover:text-white transition"
-                >
-                  <span>Siguiente</span>
-                  <ChevronRight className="w-4 h-4" />
-                </Link>
-              ) : (
-                <span className="inline-flex items-center space-x-1 px-4 py-2 opacity-40 text-xs font-bold text-gray-400 cursor-not-allowed">
-                  <span>Siguiente</span>
-                  <ChevronRight className="w-4 h-4" />
-                </span>
-              )}
-            </div>
-          )}
+          {/* Standard Pagination Controls */}
+          <Pagination currentPage={page} totalPages={totalPages} baseUrl={`/category/${category.slug}`} />
         </div>
       )}
     </div>

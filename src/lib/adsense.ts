@@ -12,34 +12,12 @@
 
 let adsenseLoadState: "idle" | "loading" | "loaded" | "error" = "idle";
 let adsenseLoadPromise: Promise<void> | null = null;
-let userHasInteracted = false;
 const pendingUnits: HTMLElement[] = [];
 
 const AD_CLIENT_ID = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-6105500451798195";
 
 // Enable flag: can be explicitly set to "false" in env while account is under review
 const IS_ADSENSE_ENABLED = process.env.NEXT_PUBLIC_ENABLE_ADSENSE !== "false";
-
-/**
- * Listen for initial user scroll/touch/move interaction before loading AdSense scripts.
- */
-if (typeof window !== "undefined" && IS_ADSENSE_ENABLED) {
-  const onUserInteraction = () => {
-    userHasInteracted = true;
-    window.removeEventListener("scroll", onUserInteraction);
-    window.removeEventListener("touchstart", onUserInteraction);
-    window.removeEventListener("mousemove", onUserInteraction);
-    
-    // Flush any pending units once user interacts
-    if (pendingUnits.length > 0) {
-      loadAdSenseScript().catch(() => {});
-    }
-  };
-
-  window.addEventListener("scroll", onUserInteraction, { passive: true, once: true });
-  window.addEventListener("touchstart", onUserInteraction, { passive: true, once: true });
-  window.addEventListener("mousemove", onUserInteraction, { passive: true, once: true });
-}
 
 /**
  * Loads the AdSense script tag into the document head exactly once.
@@ -53,7 +31,7 @@ function loadAdSenseScript(): Promise<void> {
 
   adsenseLoadPromise = new Promise<void>((resolve, reject) => {
     const existing = document.querySelector(
-      `script[src*="adsbygoogle.js?client=${AD_CLIENT_ID}"]`
+      `script[src*="adsbygoogle.js"]`
     );
     if (existing) {
       adsenseLoadState = "loaded";
@@ -109,7 +87,7 @@ function pushUnit(element: HTMLElement): void {
 
 /**
  * Register an ad unit element.
- * Defers loading until element is in viewport AND user has scrolled/interacted.
+ * Triggers loading as soon as element is in viewport.
  */
 export function registerAdUnit(element: HTMLElement | null): () => void {
   if (!element || !IS_ADSENSE_ENABLED) return () => {};
@@ -132,24 +110,22 @@ export function registerAdUnit(element: HTMLElement | null): () => void {
             observer?.disconnect();
             observer = null;
 
-            pendingUnits.push(element);
-
-            // Only trigger download if user has actually scrolled/interacted with the page
-            if (userHasInteracted || window.scrollY > 50) {
-              if (adsenseLoadState === "loaded") {
-                pushUnit(element);
-              } else {
-                loadAdSenseScript().catch(() => {});
-              }
+            if (adsenseLoadState === "loaded") {
+              pushUnit(element);
+            } else {
+              pendingUnits.push(element);
+              loadAdSenseScript().then(() => pushUnit(element)).catch(() => {});
             }
             break;
           }
         }
       },
-      { rootMargin: "50px" }
+      { rootMargin: "100px" }
     );
 
     observer.observe(element);
+  } else {
+    pushUnit(element);
   }
 
   return () => {

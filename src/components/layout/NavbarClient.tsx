@@ -95,16 +95,7 @@ export default function NavbarClient({ user, hydrateSession = false }: NavbarCli
                 <LogOut className="w-4 h-4" />
               </button>
             </div>
-          ) : (
-            <Link
-              href="/login"
-              prefetch={false}
-              className="inline-flex items-center space-x-2 text-xs font-bold px-4 py-2 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-800 text-white hover:opacity-95 transition shadow-glow active:scale-95"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Acceso Autores</span>
-            </Link>
-          )}
+          ) : null}
         </div>
 
         {/* Mobile Search & Hamburger Menu Actions */}
@@ -193,17 +184,7 @@ export default function NavbarClient({ user, hydrateSession = false }: NavbarCli
                   </button>
                 </div>
               </>
-            ) : (
-              <div className="pt-2 border-t border-gray-200 dark:border-gray-800">
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block w-full text-center py-2.5 bg-gradient-to-r from-brand-500 to-brand-800 text-white font-bold text-sm rounded-2xl shadow-glow"
-                >
-                  Iniciar sesión
-                </Link>
-              </div>
-            )}
+            ) : null}
           </nav>
         </div>
       )}

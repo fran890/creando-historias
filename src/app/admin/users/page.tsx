@@ -1,9 +1,22 @@
 import { prisma } from "@/lib/prisma";
 import UserManagementClient from "./UserManagementClient";
+import Pagination from "@/components/common/Pagination";
 
-export default async function AdminUsersPage() {
+interface Props {
+  searchParams?: { page?: string };
+}
+
+export default async function AdminUsersPage({ searchParams }: Props) {
+  const currentPage = Math.max(1, parseInt(searchParams?.page || "1", 10) || 1);
+  const pageSize = 10;
+
+  const totalUsers = await prisma.user.count();
+  const totalPages = Math.ceil(totalUsers / pageSize);
+
   const users = await prisma.user.findMany({
     orderBy: { createdAt: "desc" },
+    skip: (currentPage - 1) * pageSize,
+    take: pageSize,
     include: { _count: { select: { articles: true, views: true } } },
   });
 
@@ -15,6 +28,8 @@ export default async function AdminUsersPage() {
       </div>
 
       <UserManagementClient users={users} />
+
+      <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/admin/users" />
     </div>
   );
 }

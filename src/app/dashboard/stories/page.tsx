@@ -4,13 +4,27 @@ import { prisma } from "@/lib/prisma";
 import { PlusCircle, Edit3, Eye } from "lucide-react";
 import { format } from "date-fns";
 import CopyLinkButton from "@/components/common/CopyLinkButton";
+import Pagination from "@/components/common/Pagination";
 
-export default async function AuthorStoriesPage() {
+interface Props {
+  searchParams?: { page?: string };
+}
+
+export default async function AuthorStoriesPage({ searchParams }: Props) {
   const user = (await getCurrentUser())!;
+  const currentPage = Math.max(1, parseInt(searchParams?.page || "1", 10) || 1);
+  const pageSize = 10;
+
+  const totalCount = await prisma.article.count({
+    where: { authorId: user.userId },
+  });
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   const articles = await prisma.article.findMany({
     where: { authorId: user.userId },
     orderBy: { updatedAt: "desc" },
+    skip: (currentPage - 1) * pageSize,
+    take: pageSize,
     include: { category: true },
   });
 
@@ -94,6 +108,8 @@ export default async function AuthorStoriesPage() {
           </div>
         )}
       </div>
+
+      <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/dashboard/stories" />
     </div>
   );
 }
