@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import Pagination from "@/components/common/Pagination";
+import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
+import SidebarAd from "@/components/ads/SidebarAd";
 import { Clock, Folder } from "lucide-react";
 
 interface Props {
@@ -55,58 +57,71 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-      <div className="border-b border-gray-200 dark:border-gray-800 pb-6 space-y-2">
-        <div className="flex items-center space-x-2 text-brand-500 font-bold text-xs uppercase tracking-wider">
-          <Folder className="w-4 h-4" />
-          <span>Categoría</span>
-        </div>
-        <h1 className="font-serif text-3xl sm:text-4xl font-black text-gray-900 dark:text-white">{category.name}</h1>
-        {category.description && <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{category.description}</p>}
-        <p className="text-xs text-gray-400 font-medium pt-1">{totalCount} publicaciones en total</p>
-      </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8">
+      {/* Category Ad Banner */}
+      <HeaderBannerAd />
 
-      {articles.length === 0 ? (
-        <p className="text-gray-500 py-12 text-center bg-white dark:bg-gray-900 rounded-3xl border border-dashed border-gray-300 dark:border-gray-800">
-          No hay publicaciones disponibles en esta categoría.
-        </p>
-      ) : (
-        <div className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {articles.map((art) => (
-              <article key={art.id} className="flex flex-col bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-xs hover:border-brand-300 transition group">
-                {art.featuredImage && (
-                  <Link href={`/stories/${art.slug}`} className="h-44 overflow-hidden bg-gray-100 dark:bg-gray-800 block">
-                    <img src={art.featuredImage} alt={art.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-                  </Link>
-                )}
-                <div className="p-5 flex flex-col justify-between flex-grow space-y-3">
-                  <div className="space-y-1.5">
-                    <h2 className="font-serif text-lg font-bold text-gray-900 dark:text-white hover:text-brand-500 transition line-clamp-2">
-                      <Link href={`/stories/${art.slug}`}>{art.title}</Link>
-                    </h2>
-                    {art.excerpt && <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">{art.excerpt}</p>}
-                  </div>
-                  <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100 dark:border-gray-800">
-                    <Link href={`/author/${art.author.username}`} className="font-semibold text-gray-700 hover:text-brand-500">
-                      Por {art.author.name}
-                    </Link>
-                    <div className="flex items-center space-x-3">
-                      <span className="flex items-center space-x-1">
-                        <Clock className="w-3 h-3 text-gray-400" />
-                        <span>{art.readingTime} min</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            ))}
+      <div className="flex gap-8">
+        {/* Main Content Column */}
+        <main className="w-full min-w-0 space-y-8">
+          <div className="border-b border-gray-200 dark:border-gray-800 pb-6 space-y-2">
+            <div className="flex items-center space-x-2 text-brand-500 font-bold text-xs uppercase tracking-wider">
+              <Folder className="w-4 h-4" />
+              <span>Categoría</span>
+            </div>
+            <h1 className="font-serif text-3xl sm:text-4xl font-black text-gray-900 dark:text-white">{category.name}</h1>
+            {category.description && <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{category.description}</p>}
+            <p className="text-xs text-gray-400 font-medium pt-1">{totalCount} publicaciones en total</p>
           </div>
 
-          {/* Standard Pagination Controls */}
-          <Pagination currentPage={page} totalPages={totalPages} baseUrl={`/category/${category.slug}`} />
-        </div>
-      )}
+          {articles.length === 0 ? (
+            <p className="text-gray-500 py-12 text-center bg-white dark:bg-gray-900 rounded-3xl border border-dashed border-gray-300 dark:border-gray-800">
+              No hay publicaciones disponibles en esta categoría.
+            </p>
+          ) : (
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {articles.map((art) => (
+                  <article key={art.id} className="flex flex-col bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-xs hover:border-brand-300 transition group">
+                    {art.featuredImage && (
+                      <Link href={`/stories/${art.slug}`} className="h-44 overflow-hidden bg-gray-100 dark:bg-gray-800 block">
+                        <img src={art.featuredImage} alt={art.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                      </Link>
+                    )}
+                    <div className="p-5 flex flex-col justify-between flex-grow space-y-3">
+                      <div className="space-y-1.5">
+                        <h2 className="font-serif text-lg font-bold text-gray-900 dark:text-white hover:text-brand-500 transition line-clamp-2">
+                          <Link href={`/stories/${art.slug}`}>{art.title}</Link>
+                        </h2>
+                        {art.excerpt && <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">{art.excerpt}</p>}
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100 dark:border-gray-800">
+                        <Link href={`/author/${art.author.username}`} className="font-semibold text-gray-700 hover:text-brand-500">
+                          Por {art.author.name}
+                        </Link>
+                        <div className="flex items-center space-x-3">
+                          <span className="flex items-center space-x-1">
+                            <Clock className="w-3 h-3 text-gray-400" />
+                            <span>{art.readingTime} min</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              {/* Standard Pagination Controls */}
+              <Pagination currentPage={page} totalPages={totalPages} baseUrl={`/category/${category.slug}`} />
+            </div>
+          )}
+        </main>
+
+        {/* Desktop Right Sidebar with Ad */}
+        <aside className="hidden lg:block w-[300px] flex-shrink-0 space-y-6">
+          <SidebarAd />
+        </aside>
+      </div>
     </div>
   );
 }

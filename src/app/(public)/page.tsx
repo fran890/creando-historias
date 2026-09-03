@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCachedHomePageArticles } from "@/lib/cache/articles";
 import Pagination from "@/components/common/Pagination";
 import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
+import SidebarAd from "@/components/ads/SidebarAd";
 import StickyFloatingAd from "@/components/ads/StickyFloatingAd";
 import { Clock, User, Folder, TrendingUp, BookOpen, ArrowRight, Zap } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -24,8 +25,14 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const { featuredArticles, recentArticles, categories, totalPublishedCount, totalPages } = homeData;
 
   return (
-    <div className="max-w-4xl mx-auto px-0 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8">
-      {/* Modern & Inspiring Hero Section */}
+    <div className="max-w-7xl mx-auto px-0 sm:px-6 py-4 sm:py-8 space-y-6 sm:space-y-8">
+      {/* Homepage Ad Banner */}
+      <HeaderBannerAd />
+
+      <div className="flex gap-8">
+        {/* Main Content Column */}
+        <div className="w-full min-w-0 space-y-6 sm:space-y-8">
+          {/* Modern & Inspiring Hero Section */}
       <section className="bg-gradient-to-b from-white via-gray-50/70 to-white dark:from-gray-900 dark:via-gray-900/90 dark:to-gray-900 border-x-0 sm:border border-gray-200/80 dark:border-gray-800/80 rounded-none sm:rounded-3xl p-6 sm:p-10 text-center space-y-5 w-full shadow-xs">
         <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 border border-gray-200/80 dark:border-gray-700/80 text-xs font-semibold">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -69,9 +76,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           ))}
         </section>
       )}
-
-      {/* Homepage Ad Banner */}
-      <HeaderBannerAd />
 
       {/* Featured Stories Section */}
       {featuredArticles.length > 0 && (
@@ -209,6 +213,14 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           </div>
         )}
       </section>
+        </div>
+
+        {/* Desktop Right Sidebar with Ad */}
+        <aside className="hidden lg:block w-[300px] flex-shrink-0 space-y-6">
+          <SidebarAd />
+        </aside>
+      </div>
+
       {/* Sticky bottom ad */}
       <StickyFloatingAd />
     </div>
