@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCachedHomePageArticles } from "@/lib/cache/articles";
 import Pagination from "@/components/common/Pagination";
 import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
+import StickyFloatingAd from "@/components/ads/StickyFloatingAd";
 import { Clock, User, Folder, TrendingUp, BookOpen, ArrowRight, Zap } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -69,7 +70,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         </section>
       )}
 
-      {/* Homepage AdSense Slot */}
+      {/* Homepage Ad Banner */}
       <HeaderBannerAd />
 
       {/* Featured Stories Section */}
@@ -208,6 +209,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           </div>
         )}
       </section>
+      {/* Sticky bottom ad */}
+      <StickyFloatingAd />
     </div>
   );
 }

@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import ArticleReader from "@/components/editor/ArticleReader";
 import InContentAd from "@/components/ads/InContentAd";
 import SidebarAd from "@/components/ads/SidebarAd";
+import StickyFloatingAd from "@/components/ads/StickyFloatingAd";
+import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
 import CopyLinkButton from "@/components/common/CopyLinkButton";
 import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
 import { Clock, Eye, Calendar, ArrowLeft, BookOpen, Sparkles, User, Share2 } from "lucide-react";
@@ -131,7 +133,10 @@ export default async function StoryPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="max-w-4xl mx-auto px-0 sm:px-6 py-2 sm:py-6 space-y-4 sm:space-y-6">
+      {/* Header Ad Banner */}
+      <HeaderBannerAd />
+
+      <div className="max-w-7xl mx-auto px-0 sm:px-6 py-2 sm:py-6 space-y-4 sm:space-y-6">
         {/* Navigation Breadcrumb */}
         <div className="px-4 sm:px-0 flex items-center justify-between">
           <Link
@@ -146,8 +151,10 @@ export default async function StoryPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Main Article Reading Layout (Single Centered Column) */}
-        <main className="w-full space-y-6">
+        {/* Article + Sidebar Layout */}
+        <div className="flex gap-8">
+        {/* Main Article Column */}
+        <main className="w-full min-w-0 space-y-6">
           <article
             itemScope
             itemType="https://schema.org/BlogPosting"
@@ -389,7 +396,17 @@ export default async function StoryPage({ params }: Props) {
           {/* Bottom Ad */}
           <InContentAd />
         </main>
+
+        {/* Desktop Right Sidebar with Ads */}
+        <aside className="hidden lg:block w-[300px] flex-shrink-0 space-y-6">
+          <SidebarAd />
+          <SidebarAd />
+        </aside>
+        </div>
       </div>
+
+      {/* Sticky Floating Bottom Ad (mobile/tablet) */}
+      <StickyFloatingAd />
     </div>
   );
 }

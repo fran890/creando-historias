@@ -60,21 +60,7 @@ export default function RootLayout({
   return (
     <html lang="es" className={`h-full scroll-smooth ${inter.variable} ${outfit.variable} ${robotoSlab.variable}`}>
       <head>
-        {/* Adsterra Scripts */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              atOptions = {
-                'key' : '6dbb818f76a41d9fd7b276a64638934f',
-                'format' : 'iframe',
-                'height' : 60,
-                'width' : 468,
-                'params' : {}
-              };
-            `,
-          }}
-        />
-        <script src="https://wailsilence.com/6dbb818f76a41d9fd7b276a64638934f/invoke.js" />
+        {/* Adsterra Global Scripts (Popunder + Social Bar) */}
         <script src="https://wailsilence.com/tb6f07jgez?key=7204855da51379426dbb0d5c6c8933b7" />
         <script src="https://wailsilence.com/5a/77/9f/5a779ffcc3c9736641795d9d4408d678.js" />
         {/* Google Analytics (gtag.js) */}

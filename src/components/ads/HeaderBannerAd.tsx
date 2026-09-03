@@ -1,5 +1,7 @@
 "use client";
 
+import AdsterraAd from "./AdsterraAd";
+
 interface HeaderBannerAdProps {
   slotId?: string;
   className?: string;
@@ -7,12 +9,12 @@ interface HeaderBannerAdProps {
 
 export default function HeaderBannerAd({ slotId, className = "" }: HeaderBannerAdProps) {
   return (
-    <div className={`w-full max-w-7xl mx-auto px-4 py-3 my-2 flex flex-col items-center justify-center overflow-hidden ${className}`}>
-      <div className="w-full bg-gray-100/70 dark:bg-gray-900/50 border border-gray-200/60 dark:border-gray-800/60 rounded-2xl p-3 flex flex-col items-center justify-center text-center overflow-hidden min-h-[90px] shadow-xs">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-1 pointer-events-none">
+    <div className={`w-full max-w-7xl mx-auto px-4 py-2 ${className}`}>
+      <div className="w-full bg-white/80 dark:bg-gray-900/60 border border-gray-200/60 dark:border-gray-800/60 rounded-2xl p-2 sm:p-3 flex flex-col items-center justify-center text-center overflow-hidden shadow-xs">
+        <span className="text-[9px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-600 mb-1 select-none">
           Publicidad
         </span>
-        <div id="container-666fc12a09a07ad15eeca1a70b387d4b" className="w-full flex justify-center items-center overflow-hidden min-h-[60px]" />
+        <AdsterraAd width={468} height={60} />
       </div>
     </div>
   );
