@@ -62,23 +62,15 @@ export default function RootLayout({
   return (
     <html lang="es" className={`h-full scroll-smooth ${inter.variable} ${outfit.variable} ${robotoSlab.variable}`}>
       <head>
-        {/* Literal HTML Script tag for AdSense Site Verification (Desktop & Mobile Crawlers) */}
+        {/* Adsterra Scripts */}
         <script
           async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${AD_CLIENT_ID}`}
-          crossOrigin="anonymous"
+          data-cfasync="false"
+          src="https://pl31171503.profitableratecpmnetwork.com/666fc12a09a07ad15eeca1a70b387d4b/invoke.js"
         />
-        {/* AdSense Auto-Ads Desktop & Mobile Page-Level Signal */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (adsbygoogle = window.adsbygoogle || []).push({
-                google_ad_client: "${AD_CLIENT_ID}",
-                enable_page_level_ads: true
-              });
-            `,
-          }}
-        />
+        <script src="https://pl31171502.profitableratecpmnetwork.com/5a/77/9f/5a779ffcc3c9736641795d9d4408d678.js" />
+        <script src="https://www.profitableratecpmnetwork.com/tb6f07jgez?key=7204855da51379426dbb0d5c6c8933b7" />
+        <script src="https://pl31171504.profitableratecpmnetwork.com/6a/94/d8/6a94d8ced66908f1c8e6e72a1022ef24.js" />
         {/* Google Analytics (gtag.js) */}
         <script
           async
@@ -97,6 +89,8 @@ export default function RootLayout({
         />
       </head>
       <body className="h-full antialiased bg-gray-50 text-gray-900 dark:bg-[#090d16] dark:text-gray-100 font-sans selection:bg-brand-500 selection:text-white">
+        {/* Adsterra Banner Container */}
+        <div id="container-666fc12a09a07ad15eeca1a70b387d4b" />
         <Suspense fallback={null}>
           <NavigationProgress />
           <GoogleAnalytics />
