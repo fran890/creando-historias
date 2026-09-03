@@ -60,27 +60,19 @@ export default function RootLayout({
   return (
     <html lang="es" className={`h-full scroll-smooth ${inter.variable} ${outfit.variable} ${robotoSlab.variable}`}>
       <head>
-        {/* Adsterra Global Scripts: Social Bar, Floating Cards, Bottom Tab & Popunder */}
-        <script
-          async
-          data-cfasync="false"
-          src="https://pl31171504.profitableratecpmnetwork.com/6a/94/d8/6a94d8ced66908f1c8e6e72a1022ef24.js"
-        />
+        {/* Adsterra: SocialBar_1 (31071005) - Floating Cards & Bottom Tab */}
         <script
           async
           data-cfasync="false"
           src="https://wailsilence.com/6a/94/d8/6a94d8ced66908f1c8e6e72a1022ef24.js"
         />
+        {/* Adsterra: Popunder_1 (31071003) */}
         <script
           async
           data-cfasync="false"
           src="https://wailsilence.com/5a/77/9f/5a779ffcc3c9736641795d9d4408d678.js"
         />
-        <script
-          async
-          data-cfasync="false"
-          src="https://pl31171502.profitableratecpmnetwork.com/5a/77/9f/5a779ffcc3c9736641795d9d4408d678.js"
-        />
+        {/* Adsterra: Smartlink_1 (31071006) */}
         <script
           async
           data-cfasync="false"
