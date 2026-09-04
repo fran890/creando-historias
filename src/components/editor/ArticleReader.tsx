@@ -7,39 +7,66 @@ interface ArticleReaderProps {
   content: string;
   className?: string;
   showInContentAd?: boolean;
+  maxInContentAds?: number;
 }
 
-function splitContentForInContentAd(html: string) {
+function splitContentForInContentAds(html: string, maxAds: number) {
   const paragraphEndMatches = Array.from(html.matchAll(/<\/p>/gi));
   if (paragraphEndMatches.length < 5) {
     return null;
   }
 
-  const thirdParagraphEnd = paragraphEndMatches[2];
-  const splitIndex = (thirdParagraphEnd.index ?? 0) + thirdParagraphEnd[0].length;
+  const adParagraphIndexes: number[] = [];
+  const firstAdAfterParagraph = 3;
+  const paragraphsBetweenAds = 4;
+  const minimumParagraphsAfterAd = 2;
 
-  return {
-    beforeAd: html.slice(0, splitIndex),
-    afterAd: html.slice(splitIndex),
-  };
+  for (
+    let paragraphNumber = firstAdAfterParagraph;
+    paragraphNumber <= paragraphEndMatches.length - minimumParagraphsAfterAd;
+    paragraphNumber += paragraphsBetweenAds
+  ) {
+    adParagraphIndexes.push(paragraphNumber - 1);
+    if (adParagraphIndexes.length >= maxAds) break;
+  }
+
+  if (adParagraphIndexes.length === 0) return null;
+
+  const chunks: string[] = [];
+  let previousSplitIndex = 0;
+
+  adParagraphIndexes.forEach((paragraphIndex) => {
+    const match = paragraphEndMatches[paragraphIndex];
+    const splitIndex = (match.index ?? 0) + match[0].length;
+    chunks.push(html.slice(previousSplitIndex, splitIndex));
+    previousSplitIndex = splitIndex;
+  });
+
+  chunks.push(html.slice(previousSplitIndex));
+
+  return chunks;
 }
 
 export default function ArticleReader({
   content,
   className = "",
   showInContentAd = false,
+  maxInContentAds = 4,
 }: ArticleReaderProps) {
   const optimizedContent = optimizeHtmlImages(content);
-  const contentParts = showInContentAd ? splitContentForInContentAd(optimizedContent) : null;
+  const contentParts = showInContentAd ? splitContentForInContentAds(optimizedContent, maxInContentAds) : null;
 
   if (contentParts) {
     return (
       <div
         className={`article-reader-content prose prose-lg md:prose-xl dark:prose-invert max-w-none font-sans text-lg sm:text-[19px] leading-[1.8] text-gray-900 dark:text-gray-100 ${className}`}
       >
-        <div dangerouslySetInnerHTML={{ __html: contentParts.beforeAd }} />
-        <InContentAd className="max-w-[750px]" />
-        <div dangerouslySetInnerHTML={{ __html: contentParts.afterAd }} />
+        {contentParts.map((html, index) => (
+          <div key={`article-content-chunk-${index}`}>
+            <div dangerouslySetInnerHTML={{ __html: html }} />
+            {index < contentParts.length - 1 && <InContentAd className="max-w-[750px]" />}
+          </div>
+        ))}
       </div>
     );
   }
