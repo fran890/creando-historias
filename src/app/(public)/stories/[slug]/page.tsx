@@ -4,6 +4,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import ArticleReader from "@/components/editor/ArticleReader";
 import ArticleNativeAd from "@/components/ads/ArticleNativeAd";
+import LeftSidebarAd from "@/components/ads/LeftSidebarAd";
 import StickyFloatingAd from "@/components/ads/StickyFloatingAd";
 import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
 import CopyLinkButton from "@/components/common/CopyLinkButton";
@@ -152,6 +153,11 @@ export default async function StoryPage({ params }: Props) {
 
         {/* Article + Sidebar Layout */}
         <div className="flex flex-col lg:flex-row gap-8">
+        {/* Left Sidebar with independent display ads (desktop) */}
+        <aside className="hidden lg:block w-[300px] flex-shrink-0 space-y-6">
+          <LeftSidebarAd />
+        </aside>
+
         {/* Main Article Column */}
         <main className="w-full min-w-0 space-y-6">
           <article
@@ -290,6 +296,11 @@ export default async function StoryPage({ params }: Props) {
               <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed font-sans pt-1 border-t border-gray-100 dark:border-gray-800/60">{article.author.bio}</p>
             )}
           </div>
+
+          {/* Mobile left sidebar placement: below content, before recommendations */}
+          <aside className="lg:hidden w-full px-4 sm:px-0">
+            <LeftSidebarAd mobile />
+          </aside>
 
           {/* Recommendations Grid */}
           {relatedArticles.length > 0 && (
