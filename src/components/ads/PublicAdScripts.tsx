@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import {
   ADSTERRA_ADS_ENABLED,
+  ADSTERRA_INTRUSIVE_FORMATS_ENABLED,
   ADSTERRA_KEYS,
   isAdsterraRouteAllowed,
 } from "@/lib/adsterra-config";
@@ -26,6 +27,7 @@ export default function PublicAdScripts() {
 
   useEffect(() => {
     if (!ADSTERRA_ADS_ENABLED || !isAdsterraRouteAllowed(pathname)) return;
+    if (!ADSTERRA_INTRUSIVE_FORMATS_ENABLED) return;
     if (window.innerWidth < DESKTOP_MIN_WIDTH) return;
 
     appendAdsterraScript("adsterra-social-bar", ADSTERRA_KEYS.socialBarScript);

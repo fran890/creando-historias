@@ -25,7 +25,7 @@ export default function CookiesPage() {
         <section className="space-y-2">
           <h2 className="font-serif text-xl font-bold text-gray-900 dark:text-white">2. Cookies de publicidad de terceros</h2>
           <p>
-            Proveedores publicitarios como Adsterra pueden utilizar cookies, identificadores anonimos y scripts externos para publicar anuncios, limitar la frecuencia, medir el rendimiento y detectar actividad no valida.
+            Proveedores publicitarios como Google AdSense y Adsterra pueden utilizar cookies, identificadores anonimos y scripts externos para publicar anuncios, limitar la frecuencia, medir el rendimiento y detectar actividad no valida.
           </p>
         </section>
       </div>

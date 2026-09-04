@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import {
   ADSTERRA_ADS_ENABLED,
+  ADSTERRA_INTRUSIVE_FORMATS_ENABLED,
   ADSTERRA_KEYS,
   isAdsterraRouteAllowed,
 } from "@/lib/adsterra-config";
@@ -19,6 +20,7 @@ export default function AdsterraPopunder() {
 
   useEffect(() => {
     if (!ADSTERRA_ADS_ENABLED || !isAdsterraRouteAllowed(pathname)) return;
+    if (!ADSTERRA_INTRUSIVE_FORMATS_ENABLED) return;
     if (document.getElementById("adsterra-popunder")) return;
 
     // Only load Popunder on desktop screens where it can safely open in background

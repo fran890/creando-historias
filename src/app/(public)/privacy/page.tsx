@@ -25,7 +25,7 @@ export default function PrivacyPage() {
         <section className="space-y-2">
           <h2 className="font-serif text-xl font-bold text-gray-900 dark:text-white">2. Uso de cookies y publicidad</h2>
           <p>
-            Utilizamos servicios de publicidad de terceros como Adsterra. Estos proveedores pueden usar cookies, identificadores del dispositivo y scripts externos para mostrar anuncios, medir impresiones y adaptar la publicidad segun la actividad del usuario en este u otros sitios web.
+            Utilizamos servicios de publicidad de terceros como Google AdSense y Adsterra. Estos proveedores pueden usar cookies, identificadores del dispositivo y scripts externos para mostrar anuncios, medir impresiones y adaptar la publicidad segun la actividad del usuario en este u otros sitios web.
           </p>
         </section>
 
