@@ -51,7 +51,7 @@ export default function ArticleReader({
   content,
   className = "",
   showInContentAd = false,
-  maxInContentAds = 4,
+  maxInContentAds = 5,
 }: ArticleReaderProps) {
   const optimizedContent = optimizeHtmlImages(content);
   const contentParts = showInContentAd ? splitContentForInContentAds(optimizedContent, maxInContentAds) : null;
