@@ -1,6 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+import {
+  ADSTERRA_ADS_ENABLED,
+  ADSTERRA_KEYS,
+  isAdsterraRouteAllowed,
+} from "@/lib/adsterra-config";
 
 /**
  * Adsterra Popunder Loader:
@@ -9,18 +15,22 @@ import { useEffect } from "react";
  * preventing users from reading article content.
  */
 export default function AdsterraPopunder() {
+  const pathname = usePathname();
+
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (!ADSTERRA_ADS_ENABLED || !isAdsterraRouteAllowed(pathname)) return;
+    if (document.getElementById("adsterra-popunder")) return;
 
     // Only load Popunder on desktop screens where it can safely open in background
     if (window.innerWidth >= 1024) {
       const script = document.createElement("script");
+      script.id = "adsterra-popunder";
       script.async = true;
       script.setAttribute("data-cfasync", "false");
-      script.src = "https://wailsilence.com/5a/77/9f/5a779ffcc3c9736641795d9d4408d678.js";
+      script.src = ADSTERRA_KEYS.popunderScript;
       document.body.appendChild(script);
     }
-  }, []);
+  }, [pathname]);
 
   return null;
 }

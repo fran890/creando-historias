@@ -3,14 +3,12 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import ArticleReader from "@/components/editor/ArticleReader";
-import InContentAd from "@/components/ads/InContentAd";
-import SidebarAd from "@/components/ads/SidebarAd";
 import ArticleNativeAd from "@/components/ads/ArticleNativeAd";
 import StickyFloatingAd from "@/components/ads/StickyFloatingAd";
 import HeaderBannerAd from "@/components/ads/HeaderBannerAd";
 import CopyLinkButton from "@/components/common/CopyLinkButton";
 import AnalyticsTracker from "@/components/analytics/AnalyticsTracker";
-import { Clock, Eye, Calendar, ArrowLeft, BookOpen, Sparkles, User, Share2 } from "lucide-react";
+import { Clock, Calendar, ArrowLeft, BookOpen, Sparkles, User } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -239,7 +237,7 @@ export default async function StoryPage({ params }: Props) {
 
               {/* Article Body */}
               <div itemProp="articleBody" className="font-sans text-gray-800 dark:text-gray-200 leading-relaxed text-base sm:text-lg">
-                <ArticleReader content={stripBase64FromHtml(article.content)} />
+                <ArticleReader content={stripBase64FromHtml(article.content)} showInContentAd />
               </div>
 
               {article.tags.length > 0 && (
