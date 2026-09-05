@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import AdsterraAd from "./AdsterraAd";
+import { ADSTERRA_KEYS } from "@/lib/adsterra-config";
 
 interface StickyFloatingAdProps {
   slotId?: string;
@@ -16,8 +17,16 @@ interface StickyFloatingAdProps {
  */
 export default function StickyFloatingAd({ slotId, className = "" }: StickyFloatingAdProps) {
   const [closed, setClosed] = useState(false);
+  const [isFloatingDevice, setIsFloatingDevice] = useState<boolean | null>(null);
 
-  if (closed) return null;
+  useEffect(() => {
+    const check = () => setIsFloatingDevice(window.innerWidth < 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  if (closed || !isFloatingDevice) return null;
 
   return (
     <div
@@ -37,7 +46,7 @@ export default function StickyFloatingAd({ slotId, className = "" }: StickyFloat
         style={{ minHeight: "52px", touchAction: "pan-y" }}
       >
         <AdsterraAd
-          adKey="6dbb818f76a41d9fd7b276a64638934f"
+          adKey={ADSTERRA_KEYS.display468x60}
           width={468}
           height={60}
         />

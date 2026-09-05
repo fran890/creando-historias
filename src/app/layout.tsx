@@ -3,7 +3,6 @@ import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import NavigationProgress from "@/components/common/NavigationProgress";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
-import AdsterraPopunder from "@/components/ads/AdsterraPopunder";
 import { Inter, Outfit, Roboto_Slab } from "next/font/google";
 import { getValidMetadataBase } from "@/lib/url";
 
@@ -61,12 +60,6 @@ export default function RootLayout({
   return (
     <html lang="es" className={`min-h-full scroll-smooth ${inter.variable} ${outfit.variable} ${robotoSlab.variable}`}>
       <head>
-        {/* Adsterra: SocialBar_1 (31071005) - Floating Cards & Bottom Tab */}
-        <script
-          async
-          data-cfasync="false"
-          src="https://wailsilence.com/6a/94/d8/6a94d8ced66908f1c8e6e72a1022ef24.js"
-        />
         {/* Google Analytics (gtag.js) */}
         <script
           async
@@ -88,7 +81,6 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <NavigationProgress />
           <GoogleAnalytics />
-          <AdsterraPopunder />
         </Suspense>
         {children}
       </body>

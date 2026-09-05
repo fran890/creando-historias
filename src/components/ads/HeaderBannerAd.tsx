@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import AdsterraAd from "./AdsterraAd";
+import { ADSTERRA_KEYS } from "@/lib/adsterra-config";
 
 interface HeaderBannerAdProps {
   slotId?: string;
@@ -39,7 +40,7 @@ export default function HeaderBannerAd({ slotId, className = "" }: HeaderBannerA
             style={{ touchAction: "pan-y" }}
           >
             <AdsterraAd
-              adKey="7dc4efd221856c7cc01bfcaa22b2c289"
+              adKey={ADSTERRA_KEYS.headerDesktop728x90}
               width={728}
               height={90}
             />
@@ -53,7 +54,7 @@ export default function HeaderBannerAd({ slotId, className = "" }: HeaderBannerA
             style={{ touchAction: "pan-y" }}
           >
             <AdsterraAd
-              adKey="38e93328cc31a4d67bb5967d1a57b595"
+              adKey={ADSTERRA_KEYS.headerMobile320x50}
               width={320}
               height={50}
             />

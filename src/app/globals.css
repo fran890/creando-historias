@@ -489,6 +489,21 @@
   touch-action: pan-y;
 }
 
+.adsterra-ad iframe[width="728"][height="90"] {
+  width: 728px !important;
+  height: 90px !important;
+}
+
+.adsterra-ad iframe[width="468"][height="60"] {
+  width: 468px !important;
+  height: 60px !important;
+}
+
+.adsterra-ad iframe[width="320"][height="50"] {
+  width: 320px !important;
+  height: 50px !important;
+}
+
 /* Adsterra Native Banner in Sidebar (4-card vertical stack) */
 .adsterra-native-banner {
   width: 100% !important;

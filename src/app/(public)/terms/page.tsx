@@ -6,19 +6,19 @@ export default function TermsPage() {
       <div className="border-b border-gray-200 dark:border-gray-800 pb-6 space-y-2">
         <div className="flex items-center space-x-2 text-brand-500 font-bold text-xs uppercase tracking-wider">
           <FileText className="w-4 h-4" />
-          <span>Términos y Condiciones</span>
+          <span>Terminos y Condiciones</span>
         </div>
         <h1 className="font-display text-3xl sm:text-4xl font-black text-gray-900 dark:text-white">
-          Términos de Servicio
+          Terminos de Servicio
         </h1>
-        <p className="text-xs text-gray-400 font-medium">Última actualización: Agosto 2026</p>
+        <p className="text-xs text-gray-400 font-medium">Ultima actualizacion: Agosto 2026</p>
       </div>
 
       <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 border border-gray-200 dark:border-gray-800 space-y-6 text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-sans shadow-xs">
         <section className="space-y-2">
-          <h2 className="font-serif text-xl font-bold text-gray-900 dark:text-white">1. Aceptación de los Términos</h2>
+          <h2 className="font-serif text-xl font-bold text-gray-900 dark:text-white">1. Aceptacion de los Terminos</h2>
           <p>
-            Al acceder a la plataforma Creando-Historias, aceptas cumplir con estos términos y condiciones. Si no estás de acuerdo con alguna parte, no debes utilizar nuestros servicios.
+            Al acceder a la plataforma Creando-Historias, aceptas cumplir con estos terminos y condiciones. Si no estas de acuerdo con alguna parte, no debes utilizar nuestros servicios.
           </p>
         </section>
 
@@ -32,7 +32,7 @@ export default function TermsPage() {
         <section className="space-y-2">
           <h2 className="font-serif text-xl font-bold text-gray-900 dark:text-white">3. Conducta del Usuario</h2>
           <p>
-            Queda estrictamente prohibida la publicación de contenido difamatorio, plagios o material violatorio de las políticas de Google AdSense.
+            Queda estrictamente prohibida la publicacion de contenido difamatorio, plagios, material ilegal o contenido que viole las politicas de nuestros proveedores de publicidad de terceros.
           </p>
         </section>
       </div>
