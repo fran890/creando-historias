@@ -168,7 +168,7 @@ export default function EditStoryClient({ article, categories, tags, userRole, c
           <h1 className="font-serif text-4xl font-bold text-gray-900 dark:text-white">{title || "Sin título"}</h1>
           {excerpt && <p className="text-lg text-gray-600 italic">{excerpt}</p>}
           {featuredImage && <img src={featuredImage} alt="Feature" className="rounded-2xl max-h-[400px] w-full object-cover" />}
-          <ArticleReader content={content} />
+          <ArticleReader content={content} showAds={false} />
         </div>
       ) : (
         <div className="space-y-6 bg-white dark:bg-gray-900 p-8 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm">

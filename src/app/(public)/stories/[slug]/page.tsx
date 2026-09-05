@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import ArticleReader from "@/components/editor/ArticleReader";
-import InContentAd from "@/components/ads/InContentAd";
 import SidebarAd from "@/components/ads/SidebarAd";
 import ArticleNativeAd from "@/components/ads/ArticleNativeAd";
 import StickyFloatingAd from "@/components/ads/StickyFloatingAd";

@@ -351,6 +351,21 @@
   .dark .article-reader-content a {
     color: #f472b6;
   }
+
+  /* In-content ad portal containers - reset prose styles */
+  .article-reader-content .in-content-ad-portal {
+    max-width: none;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding: 0;
+  }
+
+  @media (min-width: 640px) {
+    .article-reader-content .in-content-ad-portal {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
 }
 
 .admin-light-theme {
